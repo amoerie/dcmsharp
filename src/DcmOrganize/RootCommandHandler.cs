@@ -1,7 +1,4 @@
-﻿using System;
-using System.CommandLine;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.CommandLine;
 
 namespace DcmOrganize;
 

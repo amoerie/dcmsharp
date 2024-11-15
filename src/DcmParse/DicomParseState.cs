@@ -1,6 +1,4 @@
-﻿using System.Buffers;
-
-namespace DcmParser;
+﻿namespace DcmParser;
 
 internal struct DicomParseState
 {

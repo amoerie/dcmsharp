@@ -12,6 +12,7 @@
     <PackageVersion Include="FluentAssertions" Version="6.12.2" />
     <PackageVersion Include="fo-dicom" Version="5.1.4" />
     <PackageVersion Include="fo-dicom.Codecs" Version="5.15.2" />
+    <PackageVersion Include="fo-dicom.Imaging.ImageSharp" Version="5.1.4" />
     <PackageVersion Include="HtmlAgilityPack" Version="1.11.71" />
     <PackageVersion Include="KeyedSemaphores" Version="5.0.0" />
     <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.4.0" />

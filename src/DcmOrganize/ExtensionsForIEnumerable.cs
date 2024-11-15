@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace DcmOrganize;
+﻿namespace DcmOrganize;
 
 internal static class ExtensionsForIEnumerable
 {

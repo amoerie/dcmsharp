@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using FellowOakDicom;
+﻿using FellowOakDicom;
 
 namespace DcmFind
 {

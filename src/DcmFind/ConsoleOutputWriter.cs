@@ -1,8 +1,5 @@
-﻿using System;
-using System.Text;
-using System.Threading;
+﻿using System.Text;
 using System.Threading.Channels;
-using System.Threading.Tasks;
 
 namespace DcmFind;
 

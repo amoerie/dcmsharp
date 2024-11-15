@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using FellowOakDicom;
 using FluentAssertions;
 using Xunit;

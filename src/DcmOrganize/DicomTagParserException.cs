@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
-
-namespace DcmOrganize;
+﻿namespace DcmOrganize;
 
 public class DicomTagParserException : Exception
 {

@@ -1,4 +1,3 @@
-using System;
 using DcmAnonymize.Names;
 
 namespace DcmAnonymize.Patient;

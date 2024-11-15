@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-
-namespace DcmOrganize;
+﻿namespace DcmOrganize;
 
 public static  class HighestDirectoryNameDeterminer
 {

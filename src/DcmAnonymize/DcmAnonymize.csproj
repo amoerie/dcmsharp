@@ -8,6 +8,7 @@
     <PackageReference Include="CommandLineParser" />
     <PackageReference Include="fo-dicom" />
     <PackageReference Include="fo-dicom.Codecs" />
+    <PackageReference Include="fo-dicom.Imaging.ImageSharp" />
     <PackageReference Include="KeyedSemaphores" />
     <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" />

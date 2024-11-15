@@ -1,5 +1,4 @@
-﻿using System;
-using FellowOakDicom;
+﻿using FellowOakDicom;
 using FluentAssertions;
 using Xunit;
 

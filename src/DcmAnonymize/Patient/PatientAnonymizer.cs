@@ -1,8 +1,4 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.ComTypes;
-using System.Threading.Tasks;
 using DcmAnonymize.Names;
 using FellowOakDicom;
 using KeyedSemaphores;

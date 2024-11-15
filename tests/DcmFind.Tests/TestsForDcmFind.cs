@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
@@ -34,13 +31,13 @@ public class TestsForDcmFind : IDisposable
         _originalError = Console.Error;
         Console.SetOut(_outputWriter);
         Console.SetError(_errorOutputWriter);
-        
+
         _testFilesDirectory = new DirectoryInfo("./TestFiles");
         _testFile0 = new FileInfo(Path.Join(_testFilesDirectory.Name, "0.jpg"));
         _testFile1 = new FileInfo(Path.Join(_testFilesDirectory.Name, "1.dcm"));
         _testFile2 = new FileInfo(Path.Join(_testFilesDirectory.Name, "2.dcm"));
     }
-    
+
     public void Dispose()
     {
         _testOutputHelper.WriteLine(_output.ToString());
@@ -55,11 +52,11 @@ public class TestsForDcmFind : IDisposable
     {
         // Arrange
         var expected = new[] { _testFile1.FullName, _testFile2.FullName };
-        
+
         // Act
         var options = new ProgramOptions(false, 400);
         var statusCode = await new Program(options).MainAsync(Array.Empty<string>());
-        
+
         // Assert
         var actual = _output.ToString().Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
@@ -72,14 +69,14 @@ public class TestsForDcmFind : IDisposable
     {
         // Arrange
         var expected = new[] { _testFile1.FullName, _testFile2.FullName };
-        
+
         // Act
         var options = new ProgramOptions(false, 400);
         var statusCode = await new Program(options).MainAsync(new []
         {
             "--directory", _testFilesDirectory.FullName
         });
-        
+
         // Assert
         var actual = _output.ToString().Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
@@ -92,7 +89,7 @@ public class TestsForDcmFind : IDisposable
     {
         // Arrange
         var expected = new[] { _testFile2.FullName };
-        
+
         // Act
         var options = new ProgramOptions(false, 400);
         var statusCode = await new Program(options).MainAsync(new []
@@ -100,7 +97,7 @@ public class TestsForDcmFind : IDisposable
             "--directory", _testFilesDirectory.FullName,
             "--query", "AccessionNumber=CR2022062117111"
         });
-        
+
         // Assert
         var actual = _output.ToString().Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
@@ -113,7 +110,7 @@ public class TestsForDcmFind : IDisposable
     {
         // Arrange
         var expected = new[] { _testFile2.FullName };
-        
+
         // Act
         var options = new ProgramOptions(false, 400);
         var statusCode = await new Program(options).MainAsync(new []
@@ -122,7 +119,7 @@ public class TestsForDcmFind : IDisposable
             "--query", "AccessionNumber=CR2022062117111",
             "--limit", "1",
         });
-        
+
         // Assert
         var actual = _output.ToString().Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
@@ -139,7 +136,7 @@ public class TestsForDcmFind : IDisposable
             $"{_testFile0.FullName}\r{_testFile1.FullName}\r{_testFile2.FullName}\r{_testFile1.FullName}",
             _testFile2.FullName
         };
-        
+
         // Act
         var options = new ProgramOptions(true, 400);
         var statusCode = await new Program(options).MainAsync(new []
@@ -147,7 +144,7 @@ public class TestsForDcmFind : IDisposable
             "--directory", _testFilesDirectory.FullName,
             "--parallelism", "1"
         });
-        
+
         // Assert
         var actual = _output.ToString().Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());

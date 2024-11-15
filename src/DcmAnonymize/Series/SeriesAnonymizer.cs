@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Concurrent;
 using System.Globalization;
-using System.Threading.Tasks;
 using FellowOakDicom;
 using KeyedSemaphores;
 

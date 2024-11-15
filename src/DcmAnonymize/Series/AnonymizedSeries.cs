@@ -1,4 +1,3 @@
-using System;
 using FellowOakDicom;
 
 namespace DcmAnonymize.Series;

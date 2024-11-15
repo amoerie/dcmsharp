@@ -1,5 +1,3 @@
-using System;
-
 namespace DcmAnonymize.Patient;
 
 public class NationalNumberGenerator
@@ -10,7 +8,7 @@ public class NationalNumberGenerator
     {
         _random = new Random();
     }
-        
+
     public string GenerateRandomNationalNumber(DateTime birthDate, PatientSex? sex)
     {
         var year = birthDate.Year.ToString("0000").Substring(2, 2);

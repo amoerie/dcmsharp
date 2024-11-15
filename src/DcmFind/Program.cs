@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
-using System.Threading;
 using System.Threading.Channels;
-using System.Threading.Tasks;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -32,7 +26,7 @@ public class Program
     {
         return new Program().MainAsync(args);
     }
-    
+
     public async Task<int> MainAsync(string[] args)
     {
         var app = new CommandApp<FindCommand>();
@@ -126,7 +120,7 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
         var allTasks = new List<Task>();
         using var cts = new CancellationTokenSource();
         var cancellationToken = cts.Token;
-        
+
         // Setup channels
         var filesChannel = Channel.CreateBounded<string>(new BoundedChannelOptions(parallelism * 100)
         {
@@ -146,7 +140,7 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
             SingleReader = true,
             AllowSynchronousContinuations = false
         });
-        
+
         // Parse query
         var queries = new List<IQuery>();
         foreach (var q in settings.Query ?? Array.Empty<string>())
@@ -158,10 +152,10 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
 
             queries.Add(parsedQuery);
         }
-        
+
         // Enumerate files
         var fileEnumeratorTask = Task.Run(
-            async () => await FileEnumerator.EnumerateAsync(filesChannel.Writer, directory, filePattern, recursive, cancellationToken), 
+            async () => await FileEnumerator.EnumerateAsync(filesChannel.Writer, directory, filePattern, recursive, cancellationToken),
             cancellationToken
         );
         allTasks.Add(fileEnumeratorTask);
@@ -174,9 +168,9 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
                 async () => await DicomFileMatcher.MatchAsync(
                     filesChannel.Reader,
                     matchedFilesChannel.Writer,
-                    progress, 
+                    progress,
                     consoleOutputChannel.Writer,
-                    queries, 
+                    queries,
                     cancellationToken
                 ),
                 cancellationToken);
@@ -194,7 +188,7 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
         // Collect output
         var writeMatchedFilesToOutputTask = Task.Run(
             async () => await MatchedDicomFilesConsoleOutputWriter.WriteAsync(
-                matchedFilesChannel.Reader, 
+                matchedFilesChannel.Reader,
                 consoleOutputChannel.Writer,
                 limit,
                 cancellationToken
@@ -207,7 +201,7 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
         {
             await ConsoleOutputWriter.WriteAsync(consoleOutputChannel.Reader, _options, cancellationToken);
         }, cancellationToken);
-        
+
         allTasks.Add(writeOutputTask);
 
         await Task.WhenAll(allTasks);

@@ -1,9 +1,7 @@
-﻿using System;
-using System.CommandLine.Builder;
+﻿using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.Runtime.ExceptionServices;
-using System.Threading.Tasks;
 
 namespace DcmOrganize;
 

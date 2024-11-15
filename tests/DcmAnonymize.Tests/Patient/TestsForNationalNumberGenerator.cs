@@ -1,4 +1,3 @@
-using System;
 using DcmAnonymize.Patient;
 using FluentAssertions;
 using Xunit;
@@ -14,17 +13,17 @@ public class TestsForNationalNumberGenerator
     {
         _nationalNumberGenerator = new NationalNumberGenerator();
     }
-        
+
     [Fact]
     public void ShouldGenerateCorrectMaleNationalNumber()
     {
         // Arrange
         var birthDate = new DateTime(1994, 12, 5);
         var sex = PatientSex.Male;
-            
+
         // Act
         var nationalNumber = _nationalNumberGenerator.GenerateRandomNationalNumber(birthDate, sex);
-            
+
         // Assert
         var year = int.Parse(nationalNumber.Substring(0, 2));
         var month = int.Parse(nationalNumber.Substring(2, 2));
@@ -39,17 +38,17 @@ public class TestsForNationalNumberGenerator
         (index % 2).Should().Be(1); // Male should produce an odd index
         modulo.Should().Be((int) (97 - combined % 97));
     }
-        
+
     [Fact]
     public void ShouldGenerateCorrectFemaleNationalNumber()
     {
         // Arrange
         var birthDate = new DateTime(1994, 12, 5);
         var sex = PatientSex.Female;
-            
+
         // Act
         var nationalNumber = _nationalNumberGenerator.GenerateRandomNationalNumber(birthDate, sex);
-            
+
         // Assert
         var year = int.Parse(nationalNumber.Substring(0, 2));
         var month = int.Parse(nationalNumber.Substring(2, 2));
@@ -64,17 +63,17 @@ public class TestsForNationalNumberGenerator
         (index % 2).Should().Be(0); // Female should produce an even index
         modulo.Should().Be((int) (97 - combined % 97));
     }
-        
+
     [Fact]
     public void ShouldGenerateCorrectNationalNumberAfter2000()
     {
         // Arrange
         var birthDate = new DateTime(2001, 12, 5);
         var sex = PatientSex.Male;
-            
+
         // Act
         var nationalNumber = _nationalNumberGenerator.GenerateRandomNationalNumber(birthDate, sex);
-            
+
         // Assert
         var year = int.Parse(nationalNumber.Substring(0, 2));
         var month = int.Parse(nationalNumber.Substring(2, 2));

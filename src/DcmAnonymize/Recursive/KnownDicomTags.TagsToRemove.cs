@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using FellowOakDicom;
 
 namespace DcmAnonymize.Recursive;
@@ -300,7 +298,7 @@ public static partial class KnownDicomTags
         DicomTag.ReasonForVisit,
         DicomTag.ReasonForVisitCodeSequence,
         DicomTag.ReferencedDigitalSignatureSequence,
-        DicomTag.ReferencedPatientAliasSequence,
+        DicomTag.ReferencedPatientAliasSequenceRETIRED,
         DicomTag.ReferencedPatientPhotoSequence,
         DicomTag.ReferencedPatientSequence,
         DicomTag.ReferencedPerformedProcedureStepSequence,

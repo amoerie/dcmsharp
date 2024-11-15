@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DcmAnonymize.Blanking;
-using DcmAnonymize.Imaging;
 using DcmAnonymize.Instance;
 using DcmAnonymize.Names;
 using DcmAnonymize.Order;
