@@ -4,13 +4,13 @@ namespace DcmParse;
 
 public readonly record struct DicomDataset : IDisposable
 {
-    private readonly DicomDictionaryPool _pool;
+    private readonly DicomItemDictionaryPool _pool;
     private readonly DicomMemories _memories;
     private readonly Dictionary<uint, DicomItem> _items;
 
-    internal DicomDataset(DicomDictionaryPool dicomDictionaryPool, DicomMemories memories) : this()
+    internal DicomDataset(DicomItemDictionaryPool dicomItemDictionaryPool, DicomMemories memories) : this()
     {
-        _pool = dicomDictionaryPool ?? throw new ArgumentNullException(nameof(dicomDictionaryPool));
+        _pool = dicomItemDictionaryPool ?? throw new ArgumentNullException(nameof(dicomItemDictionaryPool));
         _memories = memories;
         _items = _pool.Rent();
     }
@@ -54,7 +54,7 @@ public readonly record struct DicomDataset : IDisposable
 
         if (item.Content.Items is { } sequence)
         {
-            value = sequence;
+            value = sequence.Items;
             return true;
         }
 
@@ -71,10 +71,12 @@ public readonly record struct DicomDataset : IDisposable
                 continue;
             }
 
-            foreach (var sequenceItem in sequenceItems)
+            foreach (var sequenceItem in sequenceItems.Items)
             {
                 sequenceItem.Dispose();
             }
+
+            sequenceItems.Dispose();
         }
 
         _pool.Return(_items);

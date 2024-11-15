@@ -1,3 +1,6 @@
+using System.Runtime.InteropServices;
+
 namespace DcmParse;
 
-internal readonly record struct DicomSequence(ushort Group, ushort Element, List<DicomDataset> Items);
+[StructLayout(LayoutKind.Auto)]
+public readonly record struct DicomSequence(ushort Group, ushort Element, DicomSequenceItems Items);

@@ -16,8 +16,9 @@ public sealed class DicomParser
 {
     private static readonly ArrayPool<byte> _shortArrayPool = ArrayPool<byte>.Shared;
     private static readonly ArrayPool<byte> _longArrayPool = ArrayPool<byte>.Create(25 * 1024 * 1024, 32);
-    private static readonly DicomDictionaryPool _dicomFilePool = new DicomDictionaryPool(maxPoolSize: 64, 256);
-    private static readonly DicomDictionaryPool _sequenceItemsPool = new DicomDictionaryPool(maxPoolSize: 256, 16);
+    private static readonly DicomItemDictionaryPool _largeDicomItemDictionaryPool = new DicomItemDictionaryPool(maxPoolSize: 64, 256);
+    private static readonly DicomItemDictionaryPool _smallDicomItemDictionaryPool = new DicomItemDictionaryPool(maxPoolSize: 256, 16);
+    private static readonly DicomSequenceItemsPool _sequenceItemsPool = new DicomSequenceItemsPool(maxPoolSize: 256, 8);
     private static readonly DicomMemoriesPool _memoriesPool = new DicomMemoriesPool(1024, 32);
 
     private readonly ILogger<DicomParser> _logger;
@@ -127,7 +128,7 @@ public sealed class DicomParser
 
     private async Task<DicomDataset> ReadPipeAsync(PipeReader reader, CancellationToken cancellationToken = default)
     {
-        var dicomDataset = new DicomDataset(_dicomFilePool, new DicomMemories(_memoriesPool));
+        var dicomDataset = new DicomDataset(_largeDicomItemDictionaryPool, new DicomMemories(_memoriesPool));
         long position;
 
         // Ensure DICOM3
@@ -336,7 +337,7 @@ public sealed class DicomParser
                                 }
 
                                 // Open a new sequence item
-                                state.CurrentSequenceItem = new DicomDataset(_sequenceItemsPool, new DicomMemories(_memoriesPool));
+                                state.CurrentSequenceItem = new DicomDataset(_smallDicomItemDictionaryPool, new DicomMemories(_memoriesPool));
                                 state.ParseStage = DicomParseStage.ParseGroup;
                                 goto case DicomParseStage.ParseGroup;
                             }
@@ -361,6 +362,7 @@ public sealed class DicomParser
                             {
                                 state.CurrentDicomItem = new DicomItem(currentSequence.Group,
                                     currentSequence.Element, DicomVR.SQ, DicomItemContent.Create(currentSequence.Items));
+
                                 state.Logger.LogTrace("Parsed sequence tag {Tag}", state.CurrentDicomItem);
 
                                 if (state.CurrentSequenceItems.TryPop(out var currentSequenceItem))
@@ -466,7 +468,7 @@ public sealed class DicomParser
                             {
                                 state.CurrentSequenceItems.Push(currentSequenceItem);
                             }
-                            var dicomSequence = new DicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber, []);
+                            var dicomSequence = new DicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber, new DicomSequenceItems(_sequenceItemsPool));
                             state.CurrentSequence = dicomSequence;
                             state.CurrentSequenceItem = null;
                             state.ParseStage = DicomParseStage.ParseGroup;

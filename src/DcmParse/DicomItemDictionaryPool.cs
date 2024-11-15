@@ -2,14 +2,14 @@
 
 namespace DcmParse;
 
-public sealed class DicomDictionaryPool
+public sealed class DicomItemDictionaryPool
 {
     private readonly int _maxPoolSize;
     private readonly int _initialDicomDictionaryCapacity;
 
     private static readonly ConcurrentQueue<Dictionary<uint, DicomItem>> _pool = new ConcurrentQueue<Dictionary<uint, DicomItem>>();
 
-    public DicomDictionaryPool(int maxPoolSize, int initialDicomDictionaryCapacity)
+    public DicomItemDictionaryPool(int maxPoolSize, int initialDicomDictionaryCapacity)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(maxPoolSize);
         ArgumentOutOfRangeException.ThrowIfNegative(initialDicomDictionaryCapacity);
