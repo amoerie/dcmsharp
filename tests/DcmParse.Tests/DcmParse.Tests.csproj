@@ -3,6 +3,7 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <RootNamespace>DcmParser.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\DcmParse\DcmParser.csproj" />
+      <ProjectReference Include="..\..\src\DcmParse\DcmParse.csproj" />
     </ItemGroup>
 
 </Project>

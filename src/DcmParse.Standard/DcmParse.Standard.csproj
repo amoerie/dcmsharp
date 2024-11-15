@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
+    <RootNamespace>DcmParser.Standard</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

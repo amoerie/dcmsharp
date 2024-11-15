@@ -20,13 +20,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DcmOrganize.Tests", "tests\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DcmParse", "DcmParse", "{CEBCC73D-5558-7EBB-813B-63B107401C86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DcmParser.Benchmarks", "src\DcmParse.Benchmarks\DcmParser.Benchmarks.csproj", "{9B636518-0101-6A7E-4581-F0ACEE9B141E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DcmParse.Benchmarks", "src\DcmParse.Benchmarks\DcmParse.Benchmarks.csproj", "{9B636518-0101-6A7E-4581-F0ACEE9B141E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DcmParser.StandardGenerator", "src\DcmParse.StandardGenerator\DcmParser.StandardGenerator.csproj", "{5D17186C-10A0-1797-0F44-53A79800AEE2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DcmParse.StandardGenerator", "src\DcmParse.StandardGenerator\DcmParse.StandardGenerator.csproj", "{5D17186C-10A0-1797-0F44-53A79800AEE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DcmParser.Standard", "src\DcmParse.Standard\DcmParser.Standard.csproj", "{744A2076-7ABA-E84C-A247-11E6C852322F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DcmParse.Standard", "src\DcmParse.Standard\DcmParse.Standard.csproj", "{744A2076-7ABA-E84C-A247-11E6C852322F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DcmParser", "src\DcmParse\DcmParser.csproj", "{428A35FB-F941-44F9-5C65-9C39E3C90104}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DcmParse", "src\DcmParse\DcmParse.csproj", "{428A35FB-F941-44F9-5C65-9C39E3C90104}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{089100B1-113F-4E66-888A-E83F3999EAFD}"
 	ProjectSection(SolutionItems) = preProject
@@ -38,7 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DcmParser.Tests", "tests\DcmParse.Tests\DcmParser.Tests.csproj", "{BE26DD53-135B-48F5-A763-9CDEBF520B68}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DcmParse.Tests", "tests\DcmParse.Tests\DcmParse.Tests.csproj", "{BE26DD53-135B-48F5-A763-9CDEBF520B68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
