@@ -43,6 +43,7 @@ internal struct DicomParseState
     public DicomSequence? CurrentSequence = null;
     public DicomDataset? CurrentSequenceItem = null;
     public readonly Stack<DicomSequence> CurrentSequences = new Stack<DicomSequence>();
+    public readonly Stack<DicomDataset> CurrentSequenceItems = new Stack<DicomDataset>();
 
     /* The current pixel data fragment sequence that we're writing to */
     public ushort CurrentFragmentsGroupNumber = default;

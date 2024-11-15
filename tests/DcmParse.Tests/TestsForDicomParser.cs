@@ -114,6 +114,5 @@ public sealed class TestsForDicomParser : IDisposable
         codeMeaning.Should().Be("Uncompressed predecessor");
     }
 
-    // TODO: Add support for nested sequences
     // TODO: Add support for encoding based on DicomTag Specific Character Set
 }

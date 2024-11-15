@@ -238,7 +238,7 @@ public sealed class DicomParser
                     }
 
                     state.CurrentGroupNumber = (ushort)state.ShortHolder;
-                    state.Logger.LogTrace("Parsed group 0x{GroupNumber:x4}", state.CurrentGroupNumber);
+                    // state.Logger.LogTrace("Parsed group 0x{GroupNumber:x4}", state.CurrentGroupNumber);
                     state.ParseStage = DicomParseStage.ParseElement;
                     goto case DicomParseStage.ParseElement;
                 case DicomParseStage.ParseElement:
@@ -249,7 +249,7 @@ public sealed class DicomParser
                     }
 
                     state.CurrentElementNumber = (ushort)state.ShortHolder;
-                    state.Logger.LogTrace("Parsed element 0x{ElementNumber:x4}", state.CurrentElementNumber);
+                    // state.Logger.LogTrace("Parsed element 0x{ElementNumber:x4}", state.CurrentElementNumber);
 
                     if (state.CurrentGroupNumber > FileMetaInformationGroup)
                     {
@@ -303,7 +303,7 @@ public sealed class DicomParser
                     }
 
                     state.CurrentVr = parsedVr.Value;
-                    state.Logger.LogTrace("Parsed VR {VR}", state.CurrentVr);
+                    // state.Logger.LogTrace("Parsed VR {VR}", state.CurrentVr);
                     goto case DicomParseStage.ParseLength;
                 case DicomParseStage.ParseLength:
 
@@ -362,8 +362,18 @@ public sealed class DicomParser
                                 state.CurrentDicomItem = new DicomItem(currentSequence.Group,
                                     currentSequence.Element, DicomVR.SQ, DicomItemContent.Create(currentSequence.Items));
                                 state.Logger.LogTrace("Parsed sequence tag {Tag}", state.CurrentDicomItem);
-                                state.DicomDataset.Add(currentSequence.Group, currentSequence.Element,
-                                    state.CurrentDicomItem.Value);
+
+                                if (state.CurrentSequenceItems.TryPop(out var currentSequenceItem))
+                                {
+                                    currentSequenceItem.Add(currentSequence.Group, currentSequence.Element, state.CurrentDicomItem.Value);
+                                    state.CurrentSequenceItem = currentSequenceItem;
+                                }
+                                else
+                                {
+                                    state.DicomDataset.Add(currentSequence.Group, currentSequence.Element, state.CurrentDicomItem.Value);
+                                    state.CurrentSequenceItem = null;
+                                }
+
                                 if (state.CurrentSequences.TryPop(out currentSequence))
                                 {
                                     state.CurrentSequence = currentSequence;
@@ -372,7 +382,6 @@ public sealed class DicomParser
                                 {
                                     state.CurrentSequence = null;
                                 }
-                                state.CurrentSequenceItem = null;
 
                                 state.ParseStage = DicomParseStage.ParseGroup;
                                 goto case DicomParseStage.ParseGroup;
@@ -391,7 +400,7 @@ public sealed class DicomParser
                                 }
 
                                 state.LongValueLength = (int)rawLongValueLength;
-                                state.Logger.LogTrace("Parsed Value Length {LongValueLength}", state.LongValueLength);
+                                // state.Logger.LogTrace("Parsed Value Length {LongValueLength}", state.LongValueLength);
                                 state.ShortValueLength = null;
 
                                 state.ParseStage = DicomParseStage.ParseValue;
@@ -448,12 +457,18 @@ public sealed class DicomParser
 
                         if (state.CurrentVr == DicomVR.SQ)
                         {
-                            var dicomSequence = new DicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber, []);
+                            // New sequence started, store current level in a stack
                             if (state.CurrentSequence is { } currentSequence)
                             {
                                 state.CurrentSequences.Push(currentSequence);
                             }
+                            if (state.CurrentSequenceItem is { } currentSequenceItem)
+                            {
+                                state.CurrentSequenceItems.Push(currentSequenceItem);
+                            }
+                            var dicomSequence = new DicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber, []);
                             state.CurrentSequence = dicomSequence;
+                            state.CurrentSequenceItem = null;
                             state.ParseStage = DicomParseStage.ParseGroup;
                             goto case DicomParseStage.ParseGroup;
                         }
@@ -476,7 +491,7 @@ public sealed class DicomParser
 
                         state.LongValueLength = (int)rawLongValueLength;
 
-                        state.Logger.LogTrace("Parsed Value Length {LongValueLength}", state.LongValueLength);
+                        // state.Logger.LogTrace("Parsed Value Length {LongValueLength}", state.LongValueLength);
                         state.ShortValueLength = null;
                     }
                     else
@@ -489,7 +504,7 @@ public sealed class DicomParser
                         }
 
                         state.ShortValueLength = (ushort)state.ShortHolder;
-                        state.Logger.LogTrace("Parsed Value Length {ShortValueLength}", state.ShortValueLength);
+                        // state.Logger.LogTrace("Parsed Value Length {ShortValueLength}", state.ShortValueLength);
                         state.LongValueLength = null;
                     }
 
