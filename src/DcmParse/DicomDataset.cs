@@ -23,6 +23,9 @@ public readonly record struct DicomDataset : IDisposable
     public bool TryGetRaw(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value) =>
         TryGetRaw(tag.Group, tag.Element, out value);
 
+    public bool TryGetSequence(DicomTag tag, [NotNullWhen(true)] out IReadOnlyList<DicomDataset>? value) =>
+        TryGetSequence(tag.Group, tag.Element, out value);
+
     public bool TryGetRaw(ushort group, ushort element, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value)
     {
         if(!_items.TryGetValue((uint)group << 16 | element, out var item))
@@ -34,6 +37,24 @@ public readonly record struct DicomDataset : IDisposable
         if (item.Content.Data is { } rawData)
         {
             value = rawData;
+            return true;
+        }
+
+        value = null;
+        return false;
+    }
+
+    public bool TryGetSequence(ushort group, ushort element, [NotNullWhen(true)] out IReadOnlyList<DicomDataset>? value)
+    {
+        if(!_items.TryGetValue((uint)group << 16 | element, out var item))
+        {
+            value = null;
+            return false;
+        }
+
+        if (item.Content.Items is { } sequence)
+        {
+            value = sequence;
             return true;
         }
 

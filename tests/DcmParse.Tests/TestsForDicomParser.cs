@@ -20,9 +20,9 @@ public sealed class TestsForDicomParser : IDisposable
                 logging.SetMinimumLevel(LogLevel.Trace);
                 logging.AddXUnit(output);
             })
-            .AddSingleton<DcmParser.DicomParser>()
+            .AddSingleton<DicomParser>()
             .BuildServiceProvider();
-        _dicomParser = _services.GetRequiredService<DcmParser.DicomParser>();
+        _dicomParser = _services.GetRequiredService<DicomParser>();
     }
 
     public void Dispose()
@@ -88,6 +88,30 @@ public sealed class TestsForDicomParser : IDisposable
         // Assert
         string actualValue = Encoding.ASCII.GetString(rawValue!.Value.Span);
         actualValue.Should().Be(expectedValue);
+    }
+
+    [Fact]
+    public async Task ShouldRetrieveDicomTagFromNestedSequence()
+    {
+        // Arrange
+        var file = new FileInfo("./Dicom/TestPatternPalette.dcm");
+        using var dicomDataset = await _dicomParser.ParseAsync(file);
+
+        // Act + Assert
+        dicomDataset.TryGetSequence(DicomTags.SourceImageSequence, out IReadOnlyList<DicomDataset>? sourceImageSequence)
+            .Should().BeTrue();
+        sourceImageSequence.Should().NotBeNull();
+        var firstSourceImage = sourceImageSequence!.First();
+        firstSourceImage.Should().NotBeNull();
+        firstSourceImage.TryGetSequence(DicomTags.PurposeOfReferenceCodeSequence,
+                out IReadOnlyList<DicomDataset>? purposeOfReferenceCodeSequence)
+            .Should().BeTrue();
+        purposeOfReferenceCodeSequence.Should().NotBeNull();
+        var firstPurposeOfReferenceCodeSequence = purposeOfReferenceCodeSequence!.First();
+        firstPurposeOfReferenceCodeSequence.TryGetRaw(DicomTags.CodeMeaning, out ReadOnlyMemory<byte>? codeMeaningValue).Should().BeTrue();
+        codeMeaningValue.Should().NotBeNull();
+        string codeMeaning = Encoding.ASCII.GetString(codeMeaningValue!.Value.Span);
+        codeMeaning.Should().Be("Uncompressed predecessor");
     }
 
     // TODO: Add support for nested sequences

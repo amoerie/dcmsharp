@@ -1,56 +1,60 @@
-﻿namespace DcmParser;
+﻿using Microsoft.Extensions.Logging;
+
+namespace DcmParser;
 
 internal struct DicomParseState
 {
+    // The logger to use
+    public ILogger Logger = default!;
+
     // Reusable buffer for parsing unsigned shorts
-    public short shortHolder;
-    public int intHolder;
+    public short ShortHolder;
+    public int IntHolder;
 
     // The current parse state
-    public DicomParseStage parseStage = DicomParseStage.ParseGroup;
+    public DicomParseStage ParseStage = DicomParseStage.ParseGroup;
 
     // Whether the current dataset is explicit VR
     // The file meta information group (0002) is always explicit VR, so it is safe to begin with this value set to true
-    public bool isExplicitVR = true;
-    public bool setToImplicitVrAfterFileMetaInfo = false;
+    public bool ISExplicitVR = true;
+    public bool SetToImplicitVrAfterFileMetaInfo = false;
 
     // The current tag
-    public ushort currentGroupNumber = default;
-    public ushort currentElementNumber = default;
+    public ushort CurrentGroupNumber = default;
+    public ushort CurrentElementNumber = default;
 
     // The current VR
-    public DicomVR currentVr = default!;
+    public DicomVR CurrentVr = default!;
 
     /* The current value length, can be 16 or 32 bits, depending on the VR */
-    public int? longValueLength = default;
-    public ushort? shortValueLength = default;
+    public int? LongValueLength = default;
+    public ushort? ShortValueLength = default;
 
     /* The current memory owner that we're biting pieces off of, tracked with an offset */
-    public DicomMemory? memory = null;
-    public int memoryOffset = 0;
+    public DicomMemory? Memory = null;
+    public int MemoryOffset = 0;
 
     /* The current memory that we're writing to, tracked with an offset */
-    public Memory<byte>? currentValueMemory = null;
-    public ushort currentShortValueMemoryOffset = 0;
-    public int currentLongValueMemoryOffset = 0;
+    public Memory<byte>? CurrentValueMemory = null;
+    public ushort CurrentShortValueMemoryOffset = 0;
+    public int CurrentLongValueMemoryOffset = 0;
 
     /* The current sequence that we're writing to */
-    public ushort currentSequenceGroupNumber = default;
-    public ushort currentSequenceElementNumber = default;
-    public List<DicomDataset>? currentSequenceItems = null;
-    public DicomDataset? currentSequenceItem = null;
+    public Stack<DicomSequence> CurrentSequences = new Stack<DicomSequence>();
+    public DicomSequence? CurrentSequence = null;
+    public DicomDataset? CurrentSequenceItem = null;
 
     /* The current pixel data fragment sequence that we're writing to */
-    public ushort currentFragmentsGroupNumber = default;
-    public ushort currentFragmentsElementNumber = default;
-    public DicomVR currentFragmentsVR = default;
-    public List<Memory<byte>>? currentFragments = null;
+    public ushort CurrentFragmentsGroupNumber = default;
+    public ushort CurrentFragmentsElementNumber = default;
+    public DicomVR CurrentFragmentsVR = default;
+    public List<Memory<byte>>? CurrentFragments = null;
 
     /* The current DICOM item */
-    public DicomItem? currentDicomItem = null;
+    public DicomItem? CurrentDicomItem = null;
 
     /* The DICOM data set */
-    public DicomDataset dicomDataset = default!;
+    public DicomDataset DicomDataset = default!;
 
     public DicomParseState()
     {

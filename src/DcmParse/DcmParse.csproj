@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <RootNamespace>DcmParser</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meziantou.Analyzer">
