@@ -16,7 +16,7 @@ internal struct DicomParseState
 
     // Whether the current dataset is explicit VR
     // The file meta information group (0002) is always explicit VR, so it is safe to begin with this value set to true
-    public bool ISExplicitVR = true;
+    public bool IsExplicitVR = true;
     public bool SetToImplicitVrAfterFileMetaInfo = false;
 
     // The current tag
@@ -40,9 +40,9 @@ internal struct DicomParseState
     public int CurrentLongValueMemoryOffset = 0;
 
     /* The current sequence that we're writing to */
-    public Stack<DicomSequence> CurrentSequences = new Stack<DicomSequence>();
     public DicomSequence? CurrentSequence = null;
     public DicomDataset? CurrentSequenceItem = null;
+    public readonly Stack<DicomSequence> CurrentSequences = new Stack<DicomSequence>();
 
     /* The current pixel data fragment sequence that we're writing to */
     public ushort CurrentFragmentsGroupNumber = default;

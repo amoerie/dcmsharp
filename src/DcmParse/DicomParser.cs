@@ -42,8 +42,20 @@ public sealed class DicomParser
     /// </summary>
     private const uint UndefinedLength = 0xffffffff;
 
+    /// <summary>
+    /// The File Meta Information Group number
+    /// </summary>
     private const ushort FileMetaInformationGroup = 0x0002;
+
+    /// <summary>
+    /// The Transfer Syntax element number
+    /// </summary>
     private const ushort TransferSyntaxElement = 0x0010;
+
+    /// <summary>
+    /// The Group Length element number
+    /// </summary>
+    private const ushort GroupLengthElement = 0x0000;
 
     private static readonly byte[] _implicitVRLittleEndianBytes = "1.2.840.10008.1.2"u8.ToArray() switch
     {
@@ -139,13 +151,19 @@ public sealed class DicomParser
             while (true)
             {
                 result = await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+
+                if (result.IsCompleted)
+                {
+                    break;
+                }
+
                 var resultBuffer = result.Buffer;
                 int parsed = Parse(ref state, ref resultBuffer, vrBytes, cancellationToken);
                 if (parsed == 0)
                 {
                     if (result.IsCompleted)
                     {
-                        //throw new DicomException("DICOM file could not be parsed completely");
+                        throw new DicomException($"DICOM file could not be parsed completely, parsing stopped at position {position}");
                     }
                 }
                 else
@@ -159,15 +177,14 @@ public sealed class DicomParser
                     break;
                 }
             }
+
+            return state.DicomDataset;
         }
         finally
         {
+            await reader.CompleteAsync().ConfigureAwait(false);
             ArrayPool<byte>.Shared.Return(vrBytes);
         }
-
-        await reader.CompleteAsync().ConfigureAwait(false);
-
-        return state.DicomDataset;
 
     }
 
@@ -202,7 +219,7 @@ public sealed class DicomParser
 
     static int Parse(ref DicomParseState state, ref ReadOnlySequence<byte> buffer, byte[] vrBytes, CancellationToken cancellationToken)
     {
-        var vrSpan = vrBytes.AsSpan(0, 2);
+        var vrSpan = vrBytes.AsSpan()[..2];
         int consumed = 0;
         var bufferSpan = buffer.IsSingleSegment ? buffer.FirstSpan : default;
         var bufferReader = bufferSpan.IsEmpty ? new SequenceReader<byte>(buffer) : default;
@@ -238,9 +255,9 @@ public sealed class DicomParser
                     {
                         // When the file meta info group is finished, and the transfer syntax is implicit VR,
                         // we need to switch to implicit VR from here on out
-                        if (state is { ISExplicitVR: true, SetToImplicitVrAfterFileMetaInfo: true })
+                        if (state is { IsExplicitVR: true, SetToImplicitVrAfterFileMetaInfo: true })
                         {
-                            state.ISExplicitVR = false;
+                            state.IsExplicitVR = false;
                         }
 
                         // Items, Item Delimitation Items and Sequence Delimitation Items do not provide a VR at all
@@ -252,14 +269,14 @@ public sealed class DicomParser
                         }
 
                         // Implicit VR files do not provide a VR, the VR must be inferred from the group and element numbers
-                        if (!state.ISExplicitVR)
+                        if (!state.IsExplicitVR)
                         {
                             state.CurrentVr = DicomTagsIndex.TryLookup(state.CurrentGroupNumber, state.CurrentElementNumber,
                                 out var dicomTag)
                                 ? dicomTag.VR
                                 : DicomVR.UN;
 
-                            if (state is { CurrentVr: DicomVR.UN, CurrentElementNumber: 0x0000 })
+                            if (state is { CurrentVr: DicomVR.UN, CurrentElementNumber: GroupLengthElement })
                             {
                                 // Group Length = UL
                                 state.CurrentVr = DicomVR.UL;
@@ -310,14 +327,12 @@ public sealed class DicomParser
                             {
                                 if (state.CurrentSequenceItem is not null)
                                 {
-                                    throw new DicomException(
-                                        "Encountered a DICOM sequence item without a preceding DICOM delimitation item");
+                                    throw new DicomException($"Encountered a DICOM sequence item ({state.CurrentGroupNumber:x4},{state.CurrentElementNumber:x4}) without a preceding DICOM delimitation item");
                                 }
 
                                 if (rawLongValueLength != UndefinedLength)
                                 {
-                                    throw new NotSupportedException(
-                                        "Sequence Items with explicit length are not supported yet");
+                                    throw new DicomException($"Encountered a DICOM sequence item ({state.CurrentGroupNumber:x4},{state.CurrentElementNumber:x4}) with explicit length ({rawLongValueLength}) but that is not supported yet");
                                 }
 
                                 // Open a new sequence item
@@ -408,9 +423,9 @@ public sealed class DicomParser
                     // Implicit VR always uses 32 bit length
                     // Explicit VR sometimes uses 32 bit length, sometimes 16 bit length, depending on the VR
                     // However, reading the value length for Explicit VR requires skipping 2 bytes, while implicit VR does not
-                    if ((state.ISExplicitVR && state.CurrentVr.Is32BitLength()) || !state.ISExplicitVR)
+                    if ((state.IsExplicitVR && state.CurrentVr.Is32BitLength()) || !state.IsExplicitVR)
                     {
-                        if (state.ISExplicitVR)
+                        if (state.IsExplicitVR)
                         {
                             if (!TryReadExplicitVrLongValueLength(ref consumed, ref bufferSpan, ref bufferReader,
                                     out state.IntHolder))
@@ -434,8 +449,11 @@ public sealed class DicomParser
                         if (state.CurrentVr == DicomVR.SQ)
                         {
                             var dicomSequence = new DicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber, []);
+                            if (state.CurrentSequence is { } currentSequence)
+                            {
+                                state.CurrentSequences.Push(currentSequence);
+                            }
                             state.CurrentSequence = dicomSequence;
-                            state.CurrentSequences.Push(dicomSequence);
                             state.ParseStage = DicomParseStage.ParseGroup;
                             goto case DicomParseStage.ParseGroup;
                         }
@@ -478,11 +496,12 @@ public sealed class DicomParser
                     state.ParseStage = DicomParseStage.ParseValue;
                     goto case DicomParseStage.ParseValue;
                 case DicomParseStage.ParseValue:
-                    ushort remaining = GetRemaining(ref bufferSpan, ref bufferReader);
 
                     // 16 bit length flow
                     if (state.ShortValueLength is not null)
                     {
+                        ushort remaining = (ushort) GetRemaining(ref bufferSpan, ref bufferReader);
+
                         // no memory allocated yet for this value
                         if (state.CurrentValueMemory is null)
                         {
@@ -528,6 +547,8 @@ public sealed class DicomParser
                     // 32 bit length flow
                     else if (state.LongValueLength is not null)
                     {
+                        int remaining = (int) GetRemaining(ref bufferSpan, ref bufferReader);
+
                         // no memory allocated yet for this value
                         if (state.CurrentValueMemory is null)
                         {
@@ -555,8 +576,7 @@ public sealed class DicomParser
                             // We are parsing the value in bits and pieces
                             int bytesToRead = Math.Min(state.LongValueLength.Value - state.CurrentLongValueMemoryOffset,
                                 remaining);
-                            TryRead(ref consumed, ref bufferSpan, ref bufferReader,
-                                state.CurrentValueMemory.Value.Span.Slice(state.CurrentLongValueMemoryOffset, bytesToRead));
+                            TryRead(ref consumed, ref bufferSpan, ref bufferReader, state.CurrentValueMemory.Value.Span.Slice(state.CurrentLongValueMemoryOffset, bytesToRead));
                             state.CurrentLongValueMemoryOffset += bytesToRead;
 
                             if (state.CurrentLongValueMemoryOffset < state.LongValueLength.Value)
@@ -592,7 +612,10 @@ public sealed class DicomParser
                         var dataset = state.CurrentSequenceItem ?? state.DicomDataset;
 
                         state.Logger.LogTrace("Parsed tag {Tag}", state.CurrentDicomItem);
-                        dataset.Add(state.CurrentGroupNumber, state.CurrentElementNumber, state.CurrentDicomItem.Value);
+                        if (state.CurrentElementNumber != GroupLengthElement)
+                        {
+                            dataset.Add(state.CurrentGroupNumber, state.CurrentElementNumber, state.CurrentDicomItem.Value);
+                        }
                         state.ParseStage = DicomParseStage.ParseGroup;
 
                         if (state.CurrentGroupNumber == FileMetaInformationGroup
@@ -614,9 +637,9 @@ public sealed class DicomParser
 
     static bool IsEmpty(ref ReadOnlySpan<byte> bufferSpan, ref SequenceReader<byte> bufferReader) => !bufferSpan.IsEmpty ? bufferSpan.Length == 0 : bufferReader.End;
 
-    static ushort GetRemaining(ref ReadOnlySpan<byte> bufferSpan, ref SequenceReader<byte> bufferReader)
+    static long GetRemaining(ref ReadOnlySpan<byte> bufferSpan, ref SequenceReader<byte> bufferReader)
     {
-        return !bufferSpan.IsEmpty ? (ushort)bufferSpan.Length : (ushort)bufferReader.Remaining;
+        return !bufferSpan.IsEmpty ? bufferSpan.Length : bufferReader.Remaining;
     }
 
     static bool TryReadExplicitVrLongValueLength(ref int offset, ref ReadOnlySpan<byte> bufferSpan,
