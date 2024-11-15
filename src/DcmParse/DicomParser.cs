@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 
-namespace DcmParser;
+namespace DcmParse;
 
 public sealed class DicomParser
 {

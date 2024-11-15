@@ -1,6 +1,6 @@
 ﻿using System.Buffers;
 
-namespace DcmParser;
+namespace DcmParse;
 
 public sealed class DicomMemoriesPool
 {

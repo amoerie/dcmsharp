@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace DcmParser;
+namespace DcmParse;
 
 /// <summary>
 /// Represents a DICOM value representation (VR).

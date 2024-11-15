@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace DcmParser;
+namespace DcmParse;
 
 internal struct DicomParseState
 {

@@ -3,7 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace DcmParser;
+namespace DcmParse;
 
 public class DicomTagsIndex
 {

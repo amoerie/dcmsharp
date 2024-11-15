@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace DcmParser.Tests;
+namespace DcmParse.Tests;
 
 public sealed class TestsForDicomParser : IDisposable
 {

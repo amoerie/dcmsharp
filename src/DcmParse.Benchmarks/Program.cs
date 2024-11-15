@@ -3,7 +3,7 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Diagnostics.dotTrace;
 using BenchmarkDotNet.Running;
-using DcmParser;
+using DcmParse.Benchmarks;
 using FellowOakDicom;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -25,34 +25,37 @@ BenchmarkRunner.Run<Benchmarks>();
 //     await b.DicomParser();
 // }
 
-[MemoryDiagnoser]
-[DotTraceDiagnoser]
-[ShortRunJob]
-public class Benchmarks
+namespace DcmParse.Benchmarks
 {
-    private FileInfo _file = default!;
-    private DicomParser _dicomParser = default!;
-
-    [Params("ExplicitVR.dcm", "ImplicitVR.dcm", "Large.dcm")]
-    public string? FileName { get; set; }
-
-    [GlobalSetup]
-    public void Setup()
+    [MemoryDiagnoser]
+    [DotTraceDiagnoser]
+    [ShortRunJob]
+    public class Benchmarks
     {
-        _file = new FileInfo($"./Files/{FileName}");
-        new DicomSetupBuilder().Build();
-        _dicomParser = new DicomParser(NullLogger<DicomParser>.Instance);
-    }
+        private FileInfo _file = default!;
+        private DicomParser _dicomParser = default!;
 
-    [Benchmark(Baseline = true)]
-    public async Task<DicomFile> FellowOakDicom()
-    {
-        return await DicomFile.OpenAsync(_file.FullName, FileReadOption.ReadAll);
-    }
+        [Params("ExplicitVR.dcm", "ImplicitVR.dcm", "Large.dcm")]
+        public string? FileName { get; set; }
 
-    [Benchmark]
-    public async Task DicomParser()
-    {
-        using var _ = await _dicomParser.ParseAsync(_file);
+        [GlobalSetup]
+        public void Setup()
+        {
+            _file = new FileInfo($"./Files/{FileName}");
+            new DicomSetupBuilder().Build();
+            _dicomParser = new DicomParser(NullLogger<DicomParser>.Instance);
+        }
+
+        [Benchmark(Baseline = true)]
+        public async Task<DicomFile> FellowOakDicom()
+        {
+            return await DicomFile.OpenAsync(_file.FullName, FileReadOption.ReadAll);
+        }
+
+        [Benchmark]
+        public async Task DicomParser()
+        {
+            using var _ = await _dicomParser.ParseAsync(_file);
+        }
     }
 }

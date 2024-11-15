@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <RootNamespace>DcmParser.Standard</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meziantou.Analyzer">

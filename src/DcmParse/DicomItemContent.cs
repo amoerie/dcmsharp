@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace DcmParser;
+namespace DcmParse;
 
 [SuppressMessage("Design", "MA0016:Prefer using collection abstraction instead of implementation")]
 public readonly record struct DicomItemContent(

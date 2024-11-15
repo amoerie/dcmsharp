@@ -1,7 +1,7 @@
 using DcmAnonymize.Names;
 using FellowOakDicom;
 
-namespace DcmAnonymize;
+namespace DcmAnonymize.Study;
 
 public record AnonymizedStudy(
     DicomUID StudyInstanceUID,

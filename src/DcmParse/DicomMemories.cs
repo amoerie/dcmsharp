@@ -1,4 +1,4 @@
-﻿namespace DcmParser;
+﻿namespace DcmParse;
 
 public sealed class DicomMemories : IDisposable
 {

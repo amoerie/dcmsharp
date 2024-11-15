@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace DcmParser;
+namespace DcmParse;
 
 public readonly record struct DicomDataset : IDisposable
 {

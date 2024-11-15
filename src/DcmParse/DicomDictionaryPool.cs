@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace DcmParser;
+namespace DcmParse;
 
 public sealed class DicomDictionaryPool
 {

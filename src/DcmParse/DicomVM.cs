@@ -1,4 +1,4 @@
-﻿namespace DcmParser;
+﻿namespace DcmParse;
 
 /// <summary>
 /// DICOM value multiplicity

@@ -3,7 +3,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace DcmParser;
+namespace DcmParse;
 
 [StructLayout(LayoutKind.Auto)]
 public readonly record struct DicomItem(

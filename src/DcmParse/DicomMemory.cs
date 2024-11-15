@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace DcmParser;
+namespace DcmParse;
 
 [DebuggerDisplay("{ToString(),raw}")]
 public readonly struct DicomMemory : IMemoryOwner<byte>
