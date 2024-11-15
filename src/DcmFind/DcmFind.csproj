@@ -8,7 +8,7 @@
     <Title>DICOM Find</Title>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="fo-dicom" Version="5.1.2" />
-    <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
+    <PackageReference Include="fo-dicom" />
+    <PackageReference Include="Spectre.Console.Cli" />
   </ItemGroup>
 </Project>

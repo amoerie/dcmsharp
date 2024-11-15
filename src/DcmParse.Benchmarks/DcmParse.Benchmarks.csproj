@@ -1,24 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <RootNamespace>DcmParser.Benchmarks</RootNamespace>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
-      <PackageReference Include="BenchmarkDotNet.Diagnostics.dotTrace" Version="0.13.12" />
-      <PackageReference Include="fo-dicom" Version="5.1.3" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>DcmParser.Benchmarks</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.dotTrace" />
+    <PackageReference Include="fo-dicom" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="..\Files\**\*" CopyToOutputDirectory="PreserveNewest">
       <Link>.\Files\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Content>
   </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\DcmParse\DcmParse.csproj" />
-    </ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\DcmParse\DcmParse.csproj" />
+  </ItemGroup>
 </Project>
