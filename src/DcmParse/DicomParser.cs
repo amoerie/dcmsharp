@@ -141,10 +141,21 @@ public sealed class DicomParser
                 result = await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
                 var resultBuffer = result.Buffer;
                 int parsed = Parse(ref state, ref resultBuffer, vrBytes, cancellationToken);
-                position += parsed;
-                resultBuffer = resultBuffer.Slice(parsed);
+                if (parsed == 0)
+                {
+                    if (result.IsCompleted)
+                    {
+                        //throw new DicomException("DICOM file could not be parsed completely");
+                    }
+                }
+                else
+                {
+                    position += parsed;
+                    resultBuffer = resultBuffer.Slice(parsed);
+                }
                 reader.AdvanceTo(resultBuffer.Start, resultBuffer.End);
-                if (result.IsCompleted)
+
+                if (result.IsCompleted && resultBuffer.Length == 0)
                 {
                     break;
                 }

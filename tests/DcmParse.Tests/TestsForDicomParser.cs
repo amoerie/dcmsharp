@@ -34,7 +34,7 @@ public sealed class TestsForDicomParser : IDisposable
     public async Task ShouldParseExplicitValueRepresentation()
     {
         // Arrange
-        var file = new FileInfo("./Files/ExplicitVR.dcm");
+        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
 
         // Act + Assert
         using var dicomDataset = await _dicomParser.ParseAsync(file);
@@ -47,7 +47,7 @@ public sealed class TestsForDicomParser : IDisposable
     public async Task ShouldParseImplicitValueRepresentation()
     {
         // Arrange
-        var file = new FileInfo("./Files/ImplicitVR.dcm");
+        var file = new FileInfo("./Dicom/ImplicitVR.dcm");
 
         // Act + Assert
         using var dicomDataset = await _dicomParser.ParseAsync(file);
@@ -62,7 +62,7 @@ public sealed class TestsForDicomParser : IDisposable
     public async Task ShouldRetrieveDicomTagFromExplicitVRDataset(ushort group, ushort element, string expectedValue)
     {
         // Arrange
-        var file = new FileInfo("./Files/ExplicitVR.dcm");
+        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -79,7 +79,7 @@ public sealed class TestsForDicomParser : IDisposable
     public async Task ShouldRetrieveDicomTagFromImplicitVRDataset(ushort group, ushort element, string expectedValue)
     {
         // Arrange
-        var file = new FileInfo("./Files/ImplicitVR.dcm");
+        var file = new FileInfo("./Dicom/ImplicitVR.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act

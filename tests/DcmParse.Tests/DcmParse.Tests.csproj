@@ -20,8 +20,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Files\**\*" CopyToOutputDirectory="PreserveNewest">
-      <Link>.\Files\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    <Content Include="..\..\dicom\**\*" CopyToOutputDirectory="PreserveNewest">
+      <Link>.\Dicom\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>
