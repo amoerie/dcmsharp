@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dcmfind</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <Version>2.1.0</Version>
+    <Title>DICOM Find</Title>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="fo-dicom" Version="5.1.2" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
+  </ItemGroup>
+</Project>

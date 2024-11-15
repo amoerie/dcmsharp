@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <!-- C# Version -->
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+
+    <!-- Packaging -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/amoerie/dcmsharp</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/amoerie/dcmsharp</PackageProjectUrl>
+    <RepositoryType>GIT</RepositoryType>
+    <Authors>Alexander Moerman</Authors>
+    <Version>3.0</Version>
+
+    <!-- Docs -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DebugType>Embedded</DebugType>
+
+    <!-- Quality assurance -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>CS1591;MA0004;MA0026;MA0048;MA0051</NoWarn>
+    <!-- Nuget vulnerabilities should always remain warnings, and should not be treated as compilation errors -->
+    <WarningsNotAsErrors>
+      <!-- Low severity vulnerability -->
+      NU1901;
+      <!-- Moderate severity vulnerability -->
+      NU1902;
+      <!-- High severity vulnerability -->
+      NU1903;
+      <!-- Critical severity vulnerability -->
+      NU1904;
+    </WarningsNotAsErrors>
+
+    <!-- Artifacts -->
+    <Configurations>Debug;Release</Configurations>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platform>x64</Platform>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+
+
+  </PropertyGroup>
+</Project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

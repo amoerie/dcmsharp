@@ -1,0 +1,29 @@
+﻿<Solution>
+  <Folder Name="/DcmAnonymize/">
+    <Project Path="src\DcmAnonymize\DcmAnonymize.csproj" Type="Classic C#" />
+    <Project Path="tests\DcmAnonymize.Tests\DcmAnonymize.Tests.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/DcmFind/">
+    <Project Path="src\DcmFind\DcmFind.csproj" Type="Classic C#" />
+    <Project Path="tests\DcmFind.Tests\DcmFind.Tests.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/DcmOrganize/">
+    <Project Path="src\DcmOrganize\DcmOrganize.csproj" Type="Classic C#" />
+    <Project Path="tests\DcmOrganize.Tests\DcmOrganize.Tests.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/DcmParse/">
+    <Project Path="src\DcmParse.Benchmarks\DcmParser.Benchmarks.csproj" Type="Classic C#" />
+    <Project Path="src\DcmParse.StandardGenerator\DcmParser.StandardGenerator.csproj" Type="Classic C#" />
+    <Project Path="src\DcmParse.Standard\DcmParser.Standard.csproj" Type="Classic C#" />
+    <Project Path="src\DcmParse\DcmParser.csproj" Type="Classic C#" />
+    <Project Path="tests\DcmParse.Tests\DcmParser.Tests.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+</Solution>
