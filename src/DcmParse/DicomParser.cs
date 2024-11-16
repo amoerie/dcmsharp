@@ -18,6 +18,7 @@ public sealed class DicomParser
     private static readonly DicomItemDictionaryPool _smallDicomItemDictionaryPool = new DicomItemDictionaryPool(maxPoolSize: 256, 16);
     private static readonly DicomDatasetsPool _datasetsPool = new DicomDatasetsPool(256, 8);
     private static readonly DicomMemoriesPool _memoriesPool = new DicomMemoriesPool(1024, 32);
+    private static readonly DicomFragmentsPool _fragmentsPool = new DicomFragmentsPool(1024, 32);
 
     private readonly ILogger<DicomParser> _logger;
 
@@ -411,7 +412,7 @@ public sealed class DicomParser
                             {
                                 state.CurrentDicomItem = new DicomItem(state.CurrentFragmentsGroupNumber,
                                     state.CurrentFragmentsElementNumber, state.CurrentFragmentsVR,
-                                    DicomItemContent.Create(state.CurrentFragments));
+                                    DicomItemContent.Create(state.CurrentFragments.ToReadOnly()));
                                 state.Logger.LogTrace("Parsed fragmented tag {Tag}", state.CurrentDicomItem);
                                 state.DicomDataset.Add(state.CurrentFragmentsGroupNumber, state.CurrentFragmentsElementNumber,
                                     state.CurrentDicomItem.Value);
@@ -478,7 +479,7 @@ public sealed class DicomParser
                             state.CurrentFragmentsGroupNumber = state.CurrentGroupNumber;
                             state.CurrentFragmentsElementNumber = state.CurrentElementNumber;
                             state.CurrentFragmentsVR = state.CurrentVr;
-                            state.CurrentFragments = new List<Memory<byte>>(4);
+                            state.CurrentFragments = new DicomFragments(_fragmentsPool);
                             state.ParseStage = DicomParseStage.ParseGroup;
                             goto case DicomParseStage.ParseGroup;
                         }

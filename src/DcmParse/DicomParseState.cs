@@ -50,7 +50,7 @@ internal struct DicomParseState
     public ushort CurrentFragmentsGroupNumber = default;
     public ushort CurrentFragmentsElementNumber = default;
     public DicomVR CurrentFragmentsVR = default;
-    public List<Memory<byte>>? CurrentFragments = null;
+    public DicomFragments? CurrentFragments = null;
 
     /* The current DICOM item */
     public DicomItem? CurrentDicomItem = null;

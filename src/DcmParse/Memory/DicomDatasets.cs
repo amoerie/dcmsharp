@@ -17,7 +17,7 @@ internal sealed class DicomDatasets
     {
         if (Interlocked.CompareExchange(ref _readonly, 1, 0) == 1)
         {
-            throw new InvalidOperationException("DicomDataset has already been made read-only");
+            throw new InvalidOperationException("Dataset has already been made read-only");
         }
 
         return new ReadOnlyDicomDatasets(_datasetsPool, _datasets, _index);
@@ -27,7 +27,7 @@ internal sealed class DicomDatasets
     {
         if (Interlocked.CompareExchange(ref _readonly, 0, 0) == 1)
         {
-            throw new InvalidOperationException("DicomDataset has been made read-only and can no longer be modified");
+            throw new InvalidOperationException("Dataset has been made read-only and can no longer be modified");
         }
 
         lock (_datasets)

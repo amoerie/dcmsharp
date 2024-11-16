@@ -1,17 +1,19 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using DcmParse.Memory;
 
 namespace DcmParse;
 
-[SuppressMessage("Design", "MA0016:Prefer using collection abstraction instead of implementation")]
+[SuppressMessage(category: "Design", checkId: "MA0016:Prefer using collection abstraction instead of implementation")]
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct DicomItemContent(
     ReadOnlyMemory<byte>? Data,
-    IReadOnlyList<Memory<byte>>? Fragments,
+    ReadOnlyDicomFragments? Fragments,
     ReadOnlyDicomDatasets? SequenceItems)
 {
-    public static DicomItemContent Create(ReadOnlyMemory<byte> data) => new DicomItemContent(data, null, null);
-    public static DicomItemContent Create(IReadOnlyList<Memory<byte>> fragments) => new DicomItemContent(null, fragments, null);
-    public static DicomItemContent Create(ReadOnlyDicomDatasets sequenceItems) => new DicomItemContent(null, null, sequenceItems);
+    public static DicomItemContent Create(ReadOnlyMemory<byte> data) => new DicomItemContent(Data: data, Fragments: null, SequenceItems: null);
+    public static DicomItemContent Create(ReadOnlyDicomFragments fragments) => new DicomItemContent(Data: null, Fragments: fragments, SequenceItems: null);
+    public static DicomItemContent Create(ReadOnlyDicomDatasets sequenceItems) => new DicomItemContent(Data: null, Fragments: null, SequenceItems: sequenceItems);
 }
 
 
