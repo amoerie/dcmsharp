@@ -233,7 +233,7 @@ public sealed class DicomParser
                 case DicomParseStage.ParseGroup:
                     if (!TryReadShort(ref consumed, ref bufferSpan, ref bufferReader, out state.ShortHolder))
                     {
-                        state.Logger.LogTrace("Not enough bytes to parse group, returning");
+                        // state.Logger.LogTrace("Not enough bytes to parse group, returning");
                         return consumed;
                     }
 
@@ -244,7 +244,7 @@ public sealed class DicomParser
                 case DicomParseStage.ParseElement:
                     if (!TryReadShort(ref consumed, ref bufferSpan, ref bufferReader, out state.ShortHolder))
                     {
-                        state.Logger.LogTrace("Not enough bytes to parse element, returning");
+                        // state.Logger.LogTrace("Not enough bytes to parse element, returning");
                         return consumed;
                     }
 
@@ -292,7 +292,7 @@ public sealed class DicomParser
                 case DicomParseStage.ParseVR:
                     if (!TryRead(ref consumed, ref bufferSpan, ref bufferReader, vrSpan))
                     {
-                        state.Logger.LogTrace("Not enough bytes to parse VR, returning");
+                        // state.Logger.LogTrace("Not enough bytes to parse VR, returning");
                         return consumed;
                     }
 
@@ -313,7 +313,7 @@ public sealed class DicomParser
                     {
                         if (!TryReadInt(ref consumed, ref bufferSpan, ref bufferReader, out state.IntHolder))
                         {
-                            state.Logger.LogTrace("Not enough bytes to parse element, returning");
+                            // state.Logger.LogTrace("Not enough bytes to parse element, returning");
                             return consumed;
                         }
 
@@ -362,7 +362,7 @@ public sealed class DicomParser
                                 state.CurrentDicomItem = new DicomItem(currentSequence.Group,
                                     currentSequence.Element, DicomVR.SQ, DicomItemContent.Create(currentSequence.Items.ToReadOnly()));
 
-                                state.Logger.LogTrace("Parsed sequence tag {Tag}", state.CurrentDicomItem);
+                                // state.Logger.LogTrace("Parsed sequence tag {Tag}", state.CurrentDicomItem);
 
                                 if (state.CurrentSequenceItems.TryPop(out var currentSequenceItem))
                                 {
@@ -413,7 +413,7 @@ public sealed class DicomParser
                                 state.CurrentDicomItem = new DicomItem(state.CurrentFragmentsGroupNumber,
                                     state.CurrentFragmentsElementNumber, state.CurrentFragmentsVR,
                                     DicomItemContent.Create(state.CurrentFragments.ToReadOnly()));
-                                state.Logger.LogTrace("Parsed fragmented tag {Tag}", state.CurrentDicomItem);
+                                // state.Logger.LogTrace("Parsed fragmented tag {Tag}", state.CurrentDicomItem);
                                 state.DicomDataset.Add(state.CurrentFragmentsGroupNumber, state.CurrentFragmentsElementNumber,
                                     state.CurrentDicomItem.Value);
                                 state.CurrentFragmentsGroupNumber = default;
@@ -440,7 +440,7 @@ public sealed class DicomParser
                             if (!TryReadExplicitVrLongValueLength(ref consumed, ref bufferSpan, ref bufferReader,
                                     out state.IntHolder))
                             {
-                                state.Logger.LogTrace("Not enough bytes to parse explicit VR value length, returning");
+                                // state.Logger.LogTrace("Not enough bytes to parse explicit VR value length, returning");
                                 return consumed;
                             }
                         }
@@ -449,7 +449,7 @@ public sealed class DicomParser
                             if (!TryReadImplicitVrLongValueLength(ref consumed, ref bufferSpan, ref bufferReader,
                                     out state.IntHolder))
                             {
-                                state.Logger.LogTrace("Not enough bytes to parse implicit VR value length, returning");
+                                // state.Logger.LogTrace("Not enough bytes to parse implicit VR value length, returning");
                                 return consumed;
                             }
                         }
@@ -500,7 +500,7 @@ public sealed class DicomParser
                         if (!TryReadShortValueLength(ref consumed, ref bufferSpan, ref bufferReader,
                                 out state.ShortHolder))
                         {
-                            state.Logger.LogTrace("Not enough bytes to parse value length, returning");
+                            // state.Logger.LogTrace("Not enough bytes to parse value length, returning");
                             return consumed;
                         }
 
@@ -627,7 +627,7 @@ public sealed class DicomParser
                         // If we're currently parsing a SQ item, add the item to the sequence
                         var dataset = state.CurrentSequenceItem ?? state.DicomDataset;
 
-                        state.Logger.LogTrace("Parsed tag {Tag}", state.CurrentDicomItem);
+                        // state.Logger.LogTrace("Parsed tag {Tag}", state.CurrentDicomItem);
                         if (state.CurrentElementNumber != GroupLengthElement)
                         {
                             dataset.Add(state.CurrentGroupNumber, state.CurrentElementNumber, state.CurrentDicomItem.Value);
