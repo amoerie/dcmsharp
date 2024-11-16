@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
+using DcmParse.Memory;
 
 namespace DcmParse;
 
 [StructLayout(LayoutKind.Auto)]
-public readonly record struct DicomSequence(ushort Group, ushort Element, DicomSequenceItems Items);
+internal readonly record struct DicomSequence(ushort Group, ushort Element, DicomDatasets Items);

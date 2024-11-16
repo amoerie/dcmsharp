@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO.Pipelines;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using DcmParse.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace DcmParse;
@@ -15,7 +16,7 @@ public sealed class DicomParser
     private static readonly ArrayPool<byte> _longArrayPool = ArrayPool<byte>.Create(25 * 1024 * 1024, 32);
     private static readonly DicomItemDictionaryPool _largeDicomItemDictionaryPool = new DicomItemDictionaryPool(maxPoolSize: 64, 256);
     private static readonly DicomItemDictionaryPool _smallDicomItemDictionaryPool = new DicomItemDictionaryPool(maxPoolSize: 256, 16);
-    private static readonly DicomSequenceItemsPool _sequenceItemsPool = new DicomSequenceItemsPool(maxPoolSize: 256, 8);
+    private static readonly DicomDatasetsPool _datasetsPool = new DicomDatasetsPool(256, 8);
     private static readonly DicomMemoriesPool _memoriesPool = new DicomMemoriesPool(1024, 32);
 
     private readonly ILogger<DicomParser> _logger;
@@ -358,7 +359,7 @@ public sealed class DicomParser
                             if (state.CurrentElementNumber is SequenceDelimitationItem)
                             {
                                 state.CurrentDicomItem = new DicomItem(currentSequence.Group,
-                                    currentSequence.Element, DicomVR.SQ, DicomItemContent.Create(currentSequence.Items));
+                                    currentSequence.Element, DicomVR.SQ, DicomItemContent.Create(currentSequence.Items.ToReadOnly()));
 
                                 state.Logger.LogTrace("Parsed sequence tag {Tag}", state.CurrentDicomItem);
 
@@ -465,7 +466,7 @@ public sealed class DicomParser
                             {
                                 state.CurrentSequenceItems.Push(currentSequenceItem);
                             }
-                            var dicomSequence = new DicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber, new DicomSequenceItems(_sequenceItemsPool));
+                            var dicomSequence = new DicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber, new DicomDatasets(_datasetsPool));
                             state.CurrentSequence = dicomSequence;
                             state.CurrentSequenceItem = null;
                             state.ParseStage = DicomParseStage.ParseGroup;

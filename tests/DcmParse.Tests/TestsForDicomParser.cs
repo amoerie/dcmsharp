@@ -98,16 +98,16 @@ public sealed class TestsForDicomParser : IDisposable
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act + Assert
-        dicomDataset.TryGetSequence(DicomTags.SourceImageSequence, out IReadOnlyList<DicomDataset>? sourceImageSequence)
+        dicomDataset.TryGetSequence(DicomTags.SourceImageSequence, out ReadOnlyMemory<DicomDataset>? sourceImageSequence)
             .Should().BeTrue();
         sourceImageSequence.Should().NotBeNull();
-        var firstSourceImage = sourceImageSequence!.First();
+        var firstSourceImage = sourceImageSequence!.Value.Span[0];
         firstSourceImage.Should().NotBeNull();
         firstSourceImage.TryGetSequence(DicomTags.PurposeOfReferenceCodeSequence,
-                out IReadOnlyList<DicomDataset>? purposeOfReferenceCodeSequence)
+                out ReadOnlyMemory<DicomDataset>? purposeOfReferenceCodeSequence)
             .Should().BeTrue();
         purposeOfReferenceCodeSequence.Should().NotBeNull();
-        var firstPurposeOfReferenceCodeSequence = purposeOfReferenceCodeSequence!.First();
+        var firstPurposeOfReferenceCodeSequence = purposeOfReferenceCodeSequence!.Value.Span[0];
         firstPurposeOfReferenceCodeSequence.TryGetRaw(DicomTags.CodeMeaning, out ReadOnlyMemory<byte>? codeMeaningValue).Should().BeTrue();
         codeMeaningValue.Should().NotBeNull();
         string codeMeaning = Encoding.ASCII.GetString(codeMeaningValue!.Value.Span);

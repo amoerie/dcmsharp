@@ -2,10 +2,10 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace DcmParse;
+namespace DcmParse.Memory;
 
 [DebuggerDisplay("{ToString(),raw}")]
-public readonly struct DicomMemory : IMemoryOwner<byte>
+internal readonly struct DicomMemory : IMemoryOwner<byte>
 {
     /// <summary>
     /// The usable length within <see cref="_array"/>

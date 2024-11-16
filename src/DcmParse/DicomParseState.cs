@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DcmParse.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace DcmParse;
 

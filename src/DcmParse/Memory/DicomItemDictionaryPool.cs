@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
 
-namespace DcmParse;
+namespace DcmParse.Memory;
 
-public sealed class DicomItemDictionaryPool
+internal sealed class DicomItemDictionaryPool
 {
     private readonly int _maxPoolSize;
     private readonly int _initialDicomDictionaryCapacity;

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using DcmParse.Memory;
 
 namespace DcmParse;
 
@@ -23,7 +24,7 @@ public readonly record struct DicomDataset : IDisposable
     public bool TryGetRaw(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value) =>
         TryGetRaw(tag.Group, tag.Element, out value);
 
-    public bool TryGetSequence(DicomTag tag, [NotNullWhen(true)] out IReadOnlyList<DicomDataset>? value) =>
+    public bool TryGetSequence(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<DicomDataset>? value) =>
         TryGetSequence(tag.Group, tag.Element, out value);
 
     public bool TryGetRaw(ushort group, ushort element, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value)
@@ -44,7 +45,7 @@ public readonly record struct DicomDataset : IDisposable
         return false;
     }
 
-    public bool TryGetSequence(ushort group, ushort element, [NotNullWhen(true)] out IReadOnlyList<DicomDataset>? value)
+    public bool TryGetSequence(ushort group, ushort element, [NotNullWhen(true)] out ReadOnlyMemory<DicomDataset>? value)
     {
         if(!_items.TryGetValue((uint)group << 16 | element, out var item))
         {
@@ -52,9 +53,9 @@ public readonly record struct DicomDataset : IDisposable
             return false;
         }
 
-        if (item.Content.Items is { } sequence)
+        if (item.Content.SequenceItems is { } sequenceItems)
         {
-            value = sequence.Items;
+            value = sequenceItems.Datasets;
             return true;
         }
 
@@ -66,17 +67,11 @@ public readonly record struct DicomDataset : IDisposable
     {
         foreach (var item in _items.Values)
         {
-            if (item.Content.Items is not { } sequenceItems)
+            if (item.Content.SequenceItems is { } sequenceItems)
             {
-                continue;
+                sequenceItems.Dispose();
             }
 
-            foreach (var sequenceItem in sequenceItems.Items)
-            {
-                sequenceItem.Dispose();
-            }
-
-            sequenceItems.Dispose();
         }
 
         _pool.Return(_items);

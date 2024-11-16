@@ -1,8 +1,8 @@
 ﻿using System.Buffers;
 
-namespace DcmParse;
+namespace DcmParse.Memory;
 
-public sealed class DicomMemoriesPool
+internal sealed class DicomMemoriesPool
 {
     private readonly ArrayPool<DicomMemory> _pool;
 

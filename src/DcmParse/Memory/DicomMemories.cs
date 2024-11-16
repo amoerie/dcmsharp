@@ -1,6 +1,6 @@
-﻿namespace DcmParse;
+﻿namespace DcmParse.Memory;
 
-public sealed class DicomMemories : IDisposable
+internal sealed class DicomMemories : IDisposable
 {
     private readonly DicomMemoriesPool _memoriesPool;
     private DicomMemory[] _memories;
@@ -14,17 +14,20 @@ public sealed class DicomMemories : IDisposable
 
     public void Add(DicomMemory memory)
     {
-        if (_index >= _memories.Length)
+        lock (_memories)
         {
-            var memories = _memoriesPool.Rent(_memories.Length * 2);
-            Array.Copy(_memories, memories, _memories.Length);
-            Array.Clear(_memories);
-            _memoriesPool.Return(_memories);
-            _memories = memories;
-        }
+            if (_index >= _memories.Length)
+            {
+                var memories = _memoriesPool.Rent(_memories.Length * 2);
+                Array.Copy(_memories, memories, _memories.Length);
+                Array.Clear(_memories);
+                _memoriesPool.Return(_memories);
+                _memories = memories;
+            }
 
-        _memories[_index] = memory;
-        _index++;
+            _memories[_index] = memory;
+            _index++;
+        }
     }
 
     public void Dispose()
