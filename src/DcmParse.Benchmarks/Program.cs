@@ -7,23 +7,23 @@ using DcmParse.Benchmarks;
 using FellowOakDicom;
 using Microsoft.Extensions.Logging.Abstractions;
 
-//BenchmarkRunner.Run<Benchmarks>();
+BenchmarkRunner.Run<Benchmarks>();
 
-var b = new Benchmarks
-{
-    FileName = "ImplicitVR.dcm"
-};
-
-b.Setup();
-
-for (int i = 0; i < 20_000; i++)
-{
-    /*if (i % 100 == 0)
-    {
-        Console.WriteLine(i);
-    }*/
-    await b.DicomParser();
-}
+// var b = new Benchmarks
+// {
+//     FileName = "ImplicitVR.dcm"
+// };
+//
+// b.Setup();
+//
+// for (int i = 0; i < 20_000; i++)
+// {
+//     /*if (i % 100 == 0)
+//     {
+//         Console.WriteLine(i);
+//     }*/
+//     await b.DicomParser();
+// }
 
 namespace DcmParse.Benchmarks
 {

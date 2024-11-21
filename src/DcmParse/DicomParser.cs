@@ -19,6 +19,7 @@ public sealed class DicomParser
     private static readonly DicomDatasetsPool _datasetsPool = new DicomDatasetsPool(256, 8);
     private static readonly DicomMemoriesPool _memoriesPool = new DicomMemoriesPool(1024, 32);
     private static readonly DicomFragmentsPool _fragmentsPool = new DicomFragmentsPool(1024, 32);
+    private static readonly FileStreamOptions _fileStreamOptions  = new FileStreamOptions { Access = FileAccess.Read, Options = FileOptions.SequentialScan, Share = FileShare.Read, Mode = FileMode.Open };
 
     private readonly ILogger<DicomParser> _logger;
 
@@ -77,7 +78,6 @@ public sealed class DicomParser
     [SuppressMessage("Usage", "MA0004:Use Task.ConfigureAwait")]
     public async Task<DicomDataset> ParseAsync(FileInfo file, CancellationToken cancellationToken = default)
     {
-        await using var fileStream = file.OpenRead();
         var pipe = new Pipe();
         var fillPipeTask = FillPipeAsync(file, pipe.Writer, cancellationToken);
         var readPipeTask = ReadPipeAsync(pipe.Reader, cancellationToken);
@@ -91,15 +91,19 @@ public sealed class DicomParser
         try
         {
             // Open the file stream for reading
-            await using var fileStream = file.OpenRead();
+            await using var fileStream = file.Open(_fileStreamOptions);
+            long fileLength = fileStream.Length;
+            int bufferSize = (int) Math.Min(BufferSize, fileLength);
 
             while (true)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 // Request a memory block from the PipeWriter
-                Memory<byte> memory = pipeWriter.GetMemory(BufferSize);
+                Memory<byte> memory = pipeWriter.GetMemory(bufferSize);
 
                 // Read data from the file stream into the memory block
-                int bytesRead = await fileStream.ReadAsync(memory, cancellationToken);
+                int bytesRead = fileStream.Read(memory.Span);
 
                 if (bytesRead == 0)
                 {
