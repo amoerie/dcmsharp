@@ -1,4 +1,3 @@
-using System.Text;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,7 +19,7 @@ public sealed class TestsForDicomParser : IDisposable
                 logging.SetMinimumLevel(LogLevel.Trace);
                 logging.AddXUnit(output);
             })
-            .AddSingleton<DicomParser>()
+            .AddDcmParse()
             .BuildServiceProvider();
         _dicomParser = _services.GetRequiredService<DicomParser>();
     }
@@ -66,10 +65,9 @@ public sealed class TestsForDicomParser : IDisposable
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetRaw(group, element, out ReadOnlyMemory<byte>? rawValue).Should().BeTrue();
+        dicomDataset.TryGetString(group, element, out string? actualValue).Should().BeTrue();
 
         // Assert
-        string actualValue = Encoding.ASCII.GetString(rawValue!.Value.Span);
         actualValue.Should().Be(expectedValue);
     }
 
@@ -83,15 +81,14 @@ public sealed class TestsForDicomParser : IDisposable
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetRaw(group, element, out ReadOnlyMemory<byte>? rawValue).Should().BeTrue();
+        dicomDataset.TryGetString(group, element, out string? actualValue).Should().BeTrue();
 
         // Assert
-        string actualValue = Encoding.ASCII.GetString(rawValue!.Value.Span);
         actualValue.Should().Be(expectedValue);
     }
 
     [Fact]
-    public async Task ShouldRetrieveDicomTagFromNestedSequence()
+    public async Task ShouldParseNestedSequences()
     {
         // Arrange
         var file = new FileInfo("./Dicom/TestPatternPalette.dcm");
@@ -108,11 +105,7 @@ public sealed class TestsForDicomParser : IDisposable
             .Should().BeTrue();
         purposeOfReferenceCodeSequence.Should().NotBeNull();
         var firstPurposeOfReferenceCodeSequence = purposeOfReferenceCodeSequence!.Value.Span[0];
-        firstPurposeOfReferenceCodeSequence.TryGetRaw(DicomTags.CodeMeaning, out ReadOnlyMemory<byte>? codeMeaningValue).Should().BeTrue();
-        codeMeaningValue.Should().NotBeNull();
-        string codeMeaning = Encoding.ASCII.GetString(codeMeaningValue!.Value.Span);
+        firstPurposeOfReferenceCodeSequence.TryGetString(DicomTags.CodeMeaning, out string? codeMeaning).Should().BeTrue();
         codeMeaning.Should().Be("Uncompressed predecessor");
     }
-
-    // TODO: Add support for encoding based on DicomTag Specific Character Set
 }

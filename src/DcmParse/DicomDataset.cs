@@ -27,6 +27,9 @@ public readonly record struct DicomDataset : IDisposable
     public bool TryGetSequence(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<DicomDataset>? value) =>
         TryGetSequence(tag.Group, tag.Element, out value);
 
+    public bool TryGetFragments(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<ReadOnlyMemory<byte>>? value) =>
+        TryGetFragments(tag.Group, tag.Element, out value);
+
     public bool TryGetRaw(ushort group, ushort element, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value)
     {
         if(!_items.TryGetValue((uint)group << 16 | element, out var item))
@@ -56,6 +59,24 @@ public readonly record struct DicomDataset : IDisposable
         if (item.Content.SequenceItems is { } sequenceItems)
         {
             value = sequenceItems.Datasets;
+            return true;
+        }
+
+        value = null;
+        return false;
+    }
+
+    public bool TryGetFragments(ushort group, ushort element, [NotNullWhen(true)] out ReadOnlyMemory<ReadOnlyMemory<byte>>? value)
+    {
+        if(!_items.TryGetValue((uint)group << 16 | element, out var item))
+        {
+            value = null;
+            return false;
+        }
+
+        if (item.Content.Fragments is { } fragments)
+        {
+            value = fragments.Fragments;
             return true;
         }
 
