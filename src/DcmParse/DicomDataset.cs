@@ -21,8 +21,11 @@ public readonly record struct DicomDataset : IDisposable
     public void Add(DicomTag tag, DicomItem item) => _items.Add((uint)tag.Group << 16 | tag.Element, item);
     public void Add(ushort group, ushort element, DicomItem item) => _items.Add((uint)group << 16 | element, item);
 
-    public bool TryGetRaw(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value) =>
-        TryGetRaw(tag.Group, tag.Element, out value);
+    public bool TryGetValue(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value) =>
+        TryGetValue(tag.Group, tag.Element, out value, out _);
+
+    public bool TryGetValue(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value, [NotNullWhen(true)] out DicomVR? vr) =>
+        TryGetValue(tag.Group, tag.Element, out value, out vr);
 
     public bool TryGetSequence(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<DicomDataset>? value) =>
         TryGetSequence(tag.Group, tag.Element, out value);
@@ -30,21 +33,24 @@ public readonly record struct DicomDataset : IDisposable
     public bool TryGetFragments(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<ReadOnlyMemory<byte>>? value) =>
         TryGetFragments(tag.Group, tag.Element, out value);
 
-    public bool TryGetRaw(ushort group, ushort element, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value)
+    public bool TryGetValue(ushort group, ushort element, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value, [NotNullWhen(true)] out DicomVR? vr)
     {
         if(!_items.TryGetValue((uint)group << 16 | element, out var item))
         {
-            value = null;
+            value = default;
+            vr = default;
             return false;
         }
 
-        if (item.Content.Data is { } rawData)
+        if (item.Content.Value is { } dicomValue)
         {
-            value = rawData;
+            value = dicomValue;
+            vr = item.VR;
             return true;
         }
 
-        value = null;
+        value = default;
+        vr = default;
         return false;
     }
 
@@ -62,7 +68,7 @@ public readonly record struct DicomDataset : IDisposable
             return true;
         }
 
-        value = null;
+        value = default;
         return false;
     }
 
@@ -70,7 +76,7 @@ public readonly record struct DicomDataset : IDisposable
     {
         if(!_items.TryGetValue((uint)group << 16 | element, out var item))
         {
-            value = null;
+            value = default;
             return false;
         }
 
@@ -80,7 +86,7 @@ public readonly record struct DicomDataset : IDisposable
             return true;
         }
 
-        value = null;
+        value = default;
         return false;
     }
 

@@ -5,12 +5,12 @@ using Xunit.Abstractions;
 
 namespace DcmParse.Tests;
 
-public sealed class TestsForDicomValueTypes : IDisposable
+public sealed class TestsForDicomRawValues : IDisposable
 {
     private readonly ServiceProvider _services;
     private readonly DicomParser _dicomParser;
 
-    public TestsForDicomValueTypes(ITestOutputHelper output)
+    public TestsForDicomRawValues(ITestOutputHelper output)
     {
         _services = new ServiceCollection()
             .AddLogging(logging =>

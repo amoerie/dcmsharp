@@ -1,49 +1,24 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+﻿using DcmParse.ValueRepresentations;
 
 namespace DcmParse;
 
 public static class DicomDatasetExtensionsTryGetDate
 {
-    private static readonly string[] _formats =
-    [
-        "yyyyMMdd",
-        "yyyy.MM.dd",
-        "yyyy/MM/dd",
-        "yyyy",
-        "yyyyMM",
-        "yyyy.MM",
-    ];
+    public static bool TryGetDate(this DicomDataset dataset, DicomTag tag, out DateOnly value)
+        => TryGetDate(dataset, tag.Group, tag.Element, out value);
 
-    private static readonly int _minLength = _formats.Min(format => format.Length);
-    private static readonly int _maxLength = _formats.Max(format => format.Length);
-
-    public static bool TryGetDate(this DicomDataset dataset, DicomTag tag, [NotNullWhen(true)] out DateOnly? value)
+    public static bool TryGetDate(this DicomDataset dataset, ushort group, ushort element, out DateOnly value)
     {
-        if (tag.VR != DicomVR.DA)
+        if (!dataset.TryGetValue(group, element, out ReadOnlyMemory<byte>? memory, out DicomVR? vr))
         {
             value = default;
             return false;
         }
 
-        if (!dataset.TryGetRaw(tag, out ReadOnlyMemory<byte>? raw) || raw.Value.Length < _minLength)
+        switch (vr)
         {
-            value = default;
-            return false;
-        }
-
-        var span = raw.Value.Span;
-        int length = Math.Min(_maxLength, span.Length);
-        Span<char> charSpan = stackalloc char[length];
-        for (int i = 0; i < length; i++)
-        {
-            charSpan[i] = (char)span[i];
-        }
-
-        if (DateOnly.TryParseExact(charSpan, _formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedDate))
-        {
-            value = parsedDate;
-            return true;
+            case DicomVR.DA:
+                return memory.Value.Span.TryGetDA(out value);
         }
 
         value = default;

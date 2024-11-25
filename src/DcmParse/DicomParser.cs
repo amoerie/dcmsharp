@@ -640,7 +640,7 @@ public sealed class DicomParser
 
                         if (state.CurrentGroupNumber == FileMetaInformationGroup
                             && state.CurrentElementNumber == TransferSyntaxElement
-                            && state.CurrentDicomItem.Value.Content.Data!.Value.Span.SequenceEqual(_implicitVRLittleEndianBytes))
+                            && state.CurrentDicomItem.Value.Content.Value!.Value.Span.SequenceEqual(_implicitVRLittleEndianBytes))
                         {
                             state.SetToImplicitVrAfterFileMetaInfo = true;
                         }
