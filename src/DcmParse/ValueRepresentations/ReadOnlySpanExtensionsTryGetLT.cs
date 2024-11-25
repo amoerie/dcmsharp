@@ -1,11 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace DcmParse.ValueRepresentations;
 
-internal static class ReadOnlySpanExtensionsTryGetAE
+public static class ReadOnlySpanExtensionsTryGetLT
 {
-    public static bool TryGetAE(this ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
+    public static bool TryGetLT(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
     {
         if (span.IsEmpty)
         {
@@ -13,6 +13,7 @@ internal static class ReadOnlySpanExtensionsTryGetAE
             return false;
         }
 
+        // TODO apply encoding found in (0008,0005)
         value = Encoding.ASCII.GetString(DicomPadding.TrimEndSpaces(span));
         return true;
     }

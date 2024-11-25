@@ -50,6 +50,12 @@ internal static class ReadOnlySpanExtensionsTryGetTM
 
     public static bool TryGetTM(this ReadOnlySpan<byte> span, out TimeOnly value)
     {
+        if (span.IsEmpty)
+        {
+            value = default;
+            return false;
+        }
+
         ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimEndSpaces(span);
         Span<char> charSpan = stackalloc char[Math.Min(MaxLength, trimmedSpan.Length)];
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);

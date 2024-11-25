@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using DcmParse.ValueRepresentations;
 
 namespace DcmParse;

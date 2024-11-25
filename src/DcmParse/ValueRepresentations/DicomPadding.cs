@@ -13,6 +13,12 @@ internal static class DicomPadding
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static ReadOnlySpan<char> TrimEndSpaces(ReadOnlySpan<char> source)
+    {
+        return source.TrimEnd(' ');
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static ReadOnlySpan<byte> TrimStartSpaces(ReadOnlySpan<byte> source)
     {
         return source.TrimStart(Space);
