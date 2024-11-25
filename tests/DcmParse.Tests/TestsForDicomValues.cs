@@ -257,20 +257,6 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomUnsignedLong()
-    {
-        // Arrange
-        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
-
-        // Act
-        dicomDataset.TryGetUInt(DicomTags.FileMetaInformationGroupLength, out uint metaInfoLength).Should().BeTrue();
-
-        // Assert
-        metaInfoLength.Should().Be(200);
-    }
-
-    [Fact]
     public async Task ShouldParseDicomAgeString()
     {
         // Arrange

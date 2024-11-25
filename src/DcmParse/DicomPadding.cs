@@ -4,6 +4,7 @@ namespace DcmParse;
 
 internal static class DicomPadding
 {
+    private const byte Zero = 0x00;
     private const byte Space = 0x20;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -13,15 +14,15 @@ internal static class DicomPadding
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static ReadOnlySpan<char> TrimEndSpaces(ReadOnlySpan<char> source)
+    internal static ReadOnlySpan<byte> TrimEndZero(ReadOnlySpan<byte> source)
     {
-        return source.TrimEnd(' ');
+        return source.TrimEnd(Zero);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static ReadOnlySpan<byte> TrimStartSpaces(ReadOnlySpan<byte> source)
+    internal static ReadOnlySpan<char> TrimEndSpaces(ReadOnlySpan<char> source)
     {
-        return source.TrimStart(Space);
+        return source.TrimEnd(' ');
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

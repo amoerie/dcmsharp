@@ -13,7 +13,7 @@ internal sealed class UIParser
             return false;
         }
 
-        value = Encoding.ASCII.GetString(span);
+        value = Encoding.ASCII.GetString(DicomPadding.TrimEndZero(span));
         return true;
     }
 }
