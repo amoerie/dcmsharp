@@ -7,6 +7,7 @@ internal struct DicomParseState
 {
     // The logger to use
     public ILogger Logger = default!;
+    public DicomValueParser ValueParser = default!;
 
     // Reusable buffer for parsing unsigned shorts
     public short ShortHolder;

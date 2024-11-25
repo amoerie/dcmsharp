@@ -10,7 +10,12 @@ using Microsoft.Extensions.Logging;
 
 namespace DcmParse;
 
-public sealed class DicomParser
+public interface IDicomParser
+{
+    Task<DicomDataset> ParseAsync(FileInfo file, CancellationToken cancellationToken = default);
+}
+
+internal sealed class DicomParser : IDicomParser
 {
     private static readonly ArrayPool<byte> _shortArrayPool = ArrayPool<byte>.Shared;
     private static readonly ArrayPool<byte> _longArrayPool = ArrayPool<byte>.Create(25 * 1024 * 1024, 32);
@@ -22,6 +27,7 @@ public sealed class DicomParser
     private static readonly FileStreamOptions _fileStreamOptions  = new FileStreamOptions { Access = FileAccess.Read, Options = FileOptions.SequentialScan, Share = FileShare.Read, Mode = FileMode.Open };
 
     private readonly ILogger<DicomParser> _logger;
+    private readonly DicomValueParser _valueParser;
 
     /// <summary>
     /// This is the block size when data needs to buffered
@@ -70,9 +76,10 @@ public sealed class DicomParser
     private const ushort ItemDelimitationItem = 0xE00D;
     private const ushort SequenceDelimitationItem = 0xE0DD;
 
-    public DicomParser(ILogger<DicomParser> logger)
+    public DicomParser(ILogger<DicomParser> logger, DicomValueParser valueParser)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _valueParser = valueParser ?? throw new ArgumentNullException(nameof(valueParser));
     }
 
     [SuppressMessage("Usage", "MA0004:Use Task.ConfigureAwait")]
@@ -131,7 +138,7 @@ public sealed class DicomParser
 
     private async Task<DicomDataset> ReadPipeAsync(PipeReader reader, CancellationToken cancellationToken = default)
     {
-        var dicomDataset = new DicomDataset(_largeDicomItemDictionaryPool, new DicomMemories(_memoriesPool));
+        var dicomDataset = new DicomDataset(_largeDicomItemDictionaryPool, new DicomMemories(_memoriesPool), _valueParser);
         long position;
 
         // Ensure DICOM3
@@ -147,7 +154,7 @@ public sealed class DicomParser
         reader.AdvanceTo(result.Buffer.GetPosition(132));
         position = 132;
 
-        var state = new DicomParseState { DicomDataset = dicomDataset, Logger = _logger };
+        var state = new DicomParseState { DicomDataset = dicomDataset, Logger = _logger, ValueParser = _valueParser };
 
         byte[] vrBytes = ArrayPool<byte>.Shared.Rent(2);
         try
@@ -340,7 +347,7 @@ public sealed class DicomParser
                                 }
 
                                 // Open a new sequence item
-                                state.CurrentSequenceItem = new DicomDataset(_smallDicomItemDictionaryPool, new DicomMemories(_memoriesPool));
+                                state.CurrentSequenceItem = new DicomDataset(_smallDicomItemDictionaryPool, new DicomMemories(_memoriesPool), state.ValueParser);
                                 state.ParseStage = DicomParseStage.ParseGroup;
                                 goto case DicomParseStage.ParseGroup;
                             }

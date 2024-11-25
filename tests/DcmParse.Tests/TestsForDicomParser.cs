@@ -8,7 +8,7 @@ namespace DcmParse.Tests;
 public sealed class TestsForDicomParser : IDisposable
 {
     private readonly ServiceProvider _services;
-    private readonly DicomParser _dicomParser;
+    private readonly IDicomParser _dicomParser;
 
     public TestsForDicomParser(ITestOutputHelper output)
     {
@@ -21,7 +21,7 @@ public sealed class TestsForDicomParser : IDisposable
             })
             .AddDcmParse()
             .BuildServiceProvider();
-        _dicomParser = _services.GetRequiredService<DicomParser>();
+        _dicomParser = _services.GetRequiredService<IDicomParser>();
     }
 
     public void Dispose()

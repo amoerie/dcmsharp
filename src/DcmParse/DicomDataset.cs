@@ -3,23 +3,28 @@ using DcmParse.Memory;
 
 namespace DcmParse;
 
-public readonly record struct DicomDataset : IDisposable
+public readonly partial record struct DicomDataset : IDisposable
 {
     private readonly DicomItemDictionaryPool _pool;
     private readonly DicomMemories _memories;
+    private readonly DicomValueParser _valueParser;
     private readonly Dictionary<uint, DicomItem> _items;
 
-    internal DicomDataset(DicomItemDictionaryPool dicomItemDictionaryPool, DicomMemories memories) : this()
+    internal DicomDataset(
+        DicomItemDictionaryPool dicomItemDictionaryPool,
+        DicomMemories memories,
+        DicomValueParser valueParser) : this()
     {
         _pool = dicomItemDictionaryPool ?? throw new ArgumentNullException(nameof(dicomItemDictionaryPool));
         _memories = memories;
+        _valueParser = valueParser;
         _items = _pool.Rent();
     }
 
     internal void ReleaseOnDispose(DicomMemory memory) => _memories.Add(memory);
 
-    public void Add(DicomTag tag, DicomItem item) => _items.Add((uint)tag.Group << 16 | tag.Element, item);
-    public void Add(ushort group, ushort element, DicomItem item) => _items.Add((uint)group << 16 | element, item);
+    internal void Add(DicomTag tag, DicomItem item) => _items.Add((uint)tag.Group << 16 | tag.Element, item);
+    internal void Add(ushort group, ushort element, DicomItem item) => _items.Add((uint)group << 16 | element, item);
 
     public bool TryGetValue(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value) =>
         TryGetValue(tag.Group, tag.Element, out value, out _);

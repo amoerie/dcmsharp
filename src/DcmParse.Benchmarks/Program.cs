@@ -5,7 +5,7 @@ using BenchmarkDotNet.Diagnostics.dotTrace;
 using BenchmarkDotNet.Running;
 using DcmParse.Benchmarks;
 using FellowOakDicom;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 BenchmarkRunner.Run<Benchmarks>();
 
@@ -33,7 +33,8 @@ namespace DcmParse.Benchmarks
     public class Benchmarks
     {
         private FileInfo _file = default!;
-        private DicomParser _dicomParser = default!;
+        private IDicomParser _dicomParser = default!;
+        private ServiceProvider _serviceProvider = default!;
 
         [Params("ExplicitVR.dcm", "ImplicitVR.dcm", "Large.dcm")]
         public string? FileName { get; set; }
@@ -41,9 +42,19 @@ namespace DcmParse.Benchmarks
         [GlobalSetup]
         public void Setup()
         {
+            var services = new ServiceCollection();
+            services.AddFellowOakDicom();
+            services.AddDcmParse();
+            _serviceProvider = services.BuildServiceProvider();
+            DicomSetupBuilder.UseServiceProvider(_serviceProvider);
             _file = new FileInfo($"./Dicom/{FileName}");
-            new DicomSetupBuilder().Build();
-            _dicomParser = new DicomParser(NullLogger<DicomParser>.Instance);
+            _dicomParser = _serviceProvider.GetRequiredService<IDicomParser>();
+        }
+
+        [GlobalCleanup]
+        public void Cleanup()
+        {
+
         }
 
         [Benchmark(Baseline = true)]
