@@ -5,7 +5,7 @@ namespace DcmParse.Values;
 
 internal sealed class PNParser
 {
-    public bool TryParse(ReadOnlySpan<byte> span, out DicomPersonName value)
+    public bool TryParse(ReadOnlySpan<byte> span, Encoding encoding, out DicomPersonName value)
     {
         if (span.IsEmpty)
         {
@@ -27,8 +27,7 @@ internal sealed class PNParser
                 phoneticFamilyName = null,
                 phoneticGivenName = null;
 
-            // TODO apply encoding found in (0008,0005)
-            int charLength = Encoding.ASCII.GetChars(span, chars);
+            int charLength = encoding.GetChars(span, chars);
             ReadOnlySpan<char> charSpan = chars.AsSpan(0, charLength);
 
             // Split into component groups (alphabetic, ideographic, phonetic) using '=' delimiter

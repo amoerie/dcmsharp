@@ -5,7 +5,7 @@ namespace DcmParse.Values;
 
 internal sealed class STParser
 {
-    public bool TryParse(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
+    public bool TryParse(ReadOnlySpan<byte> span, Encoding encoding, [NotNullWhen(true)] out string? value)
     {
         if (span.IsEmpty)
         {
@@ -13,8 +13,7 @@ internal sealed class STParser
             return false;
         }
 
-        // TODO apply encoding found in (0008,0005)
-        value = Encoding.ASCII.GetString(DicomPadding.TrimEndSpaces(span));
+        value = encoding.GetString(DicomPadding.TrimEndSpaces(span));
         return true;
     }
 }
