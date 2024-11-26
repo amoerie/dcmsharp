@@ -1,6 +1,4 @@
 ﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace DcmParse.Tests;
@@ -17,7 +15,7 @@ public sealed class TestsForDicomEncoding
     }
 
     [Fact]
-    public async Task ShouldParseUI()
+    public async Task ShouldParseEncodedPatientName()
     {
         // Arrange
         var file = new FileInfo("./Dicom/Encoded.dcm");

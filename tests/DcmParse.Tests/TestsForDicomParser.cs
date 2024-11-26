@@ -1,6 +1,4 @@
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace DcmParse.Tests;
@@ -95,4 +93,19 @@ public sealed class TestsForDicomParser
         firstPurposeOfReferenceCodeSequence.TryGetString(DicomTags.CodeMeaning, out string? codeMeaning).Should().BeTrue();
         codeMeaning.Should().Be("Uncompressed predecessor");
     }
+
+    [Fact]
+    public async Task ShouldParseExplicitGroupLengths()
+    {
+        // Arrange
+        var file = new FileInfo("./Dicom/Encoded.dcm");
+        using var dicomDataset = await _dicomParser.ParseAsync(file);
+
+        // Act
+        dicomDataset.TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out string? orderNumber).Should().BeTrue();
+
+        // Assert
+        orderNumber.Should().Be("ORDER2024112213363");
+    }
+
 }
