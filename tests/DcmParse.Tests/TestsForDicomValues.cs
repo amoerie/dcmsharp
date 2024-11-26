@@ -5,28 +5,15 @@ using Xunit.Abstractions;
 
 namespace DcmParse.Tests;
 
-public sealed class TestsForDicomValues : IDisposable
+[Collection(nameof(DicomParserCollection))]
+public sealed class TestsForDicomValues
 {
-    private readonly ServiceProvider _services;
     private readonly IDicomParser _dicomParser;
 
-    public TestsForDicomValues(ITestOutputHelper output)
+    public TestsForDicomValues(DicomParserFixture fixture, ITestOutputHelper output)
     {
-        _services = new ServiceCollection()
-            .AddLogging(logging =>
-            {
-                logging.ClearProviders();
-                logging.SetMinimumLevel(LogLevel.Trace);
-                logging.AddXUnit(output);
-            })
-            .AddDcmParse()
-            .BuildServiceProvider();
-        _dicomParser = _services.GetRequiredService<IDicomParser>();
-    }
-
-    public void Dispose()
-    {
-        _services.Dispose();
+        fixture.OutputHelper = output;
+        _dicomParser = fixture.DicomParser;
     }
 
     [Fact]
