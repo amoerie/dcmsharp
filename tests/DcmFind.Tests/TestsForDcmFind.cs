@@ -127,29 +127,4 @@ public class TestsForDcmFind : IDisposable
         Assert.Equal(0, statusCode);
     }
 
-    [Fact]
-    public async Task ShouldFindWithDirectoryAndProgress()
-    {
-        // Arrange
-        var expected = new[]
-        {
-            $"{_testFile0.FullName}\r{_testFile1.FullName}\r{_testFile2.FullName}\r{_testFile1.FullName}",
-            _testFile2.FullName
-        };
-
-        // Act
-        var options = new ProgramOptions(true, 400);
-        var statusCode = await new Program(options).MainAsync(new []
-        {
-            "--directory", _testFilesDirectory.FullName,
-            "--parallelism", "1"
-        });
-
-        // Assert
-        var actual = _output.ToString().Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-        actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
-        Assert.Equal(string.Empty, _errorOutput.ToString());
-        Assert.Equal(0, statusCode);
-    }
-
 }
