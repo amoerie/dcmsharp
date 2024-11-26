@@ -30,7 +30,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomUid()
+    public async Task ShouldParseUI()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -44,7 +44,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomCodeString()
+    public async Task ShouldParseCS()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -58,7 +58,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomDate()
+    public async Task ShouldParseDA()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -72,7 +72,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomTime()
+    public async Task ShouldParseDT()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -86,7 +86,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomDecimalString()
+    public async Task ShouldParseDS()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -100,7 +100,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomIntegerString()
+    public async Task ShouldParseIS()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -114,7 +114,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomPersonName()
+    public async Task ShouldParsePN()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -128,7 +128,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomUnsignedShort()
+    public async Task ShouldParseUS()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -142,7 +142,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomLongString()
+    public async Task ShouldParseLS()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -156,7 +156,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomFloatingPointDouble()
+    public async Task ShouldParseFD()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -170,7 +170,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomApplicationEntity()
+    public async Task ShouldParseAE()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -184,7 +184,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomShortString()
+    public async Task ShouldParseSH()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -198,7 +198,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomSequence()
+    public async Task ShouldParseSQ()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -214,7 +214,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomFloatingPointSingle()
+    public async Task ShouldParseFL()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -228,22 +228,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomSignedLong()
-    {
-        // Arrange
-        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
-
-        // Act
-        // TODO
-        // dicomDataset.TryGetInt32(DicomTags.UnknownTagAndData1, out int unknownData).Should().BeTrue();
-
-        // Assert
-        // unknownData.Should().Be(1617883207);
-    }
-
-    [Fact]
-    public async Task ShouldParseDicomSignedShort()
+    public async Task ShouldParseSS()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -257,7 +242,7 @@ public sealed class TestsForDicomValues : IDisposable
     }
 
     [Fact]
-    public async Task ShouldParseDicomAgeString()
+    public async Task ShouldParseAS()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
