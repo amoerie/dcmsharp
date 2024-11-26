@@ -1,4 +1,5 @@
-﻿using DcmParse.Memory;
+﻿using System.Buffers;
+using DcmParse.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace DcmParse;
@@ -8,6 +9,8 @@ internal struct DicomParseState
     // The logger to use
     public ILogger Logger = default!;
     public DicomValueParser ValueParser = default!;
+
+    public long Position;
 
     // Reusable buffer for parsing unsigned shorts
     public short ShortHolder;
