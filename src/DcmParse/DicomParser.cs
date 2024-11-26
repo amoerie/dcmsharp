@@ -172,7 +172,6 @@ internal sealed class DicomParser : IDicomParser
             Position = position,
         };
 
-        byte[] vrBytes = ArrayPool<byte>.Shared.Rent(2);
         try
         {
             while (true)
@@ -184,9 +183,10 @@ internal sealed class DicomParser : IDicomParser
                     break;
                 }
 
-                ReadOnlySequence<byte> resultBuffer = result.Buffer;
+                ReadOnlySequence<byte> sequence = result.Buffer;
+                DicomByteBuffer buffer = new DicomByteBuffer(result.Buffer);
                 long originalPosition = state.Position;
-                Parse(ref state, ref resultBuffer, vrBytes, cancellationToken);
+                Parse(ref buffer, ref state, cancellationToken);
                 long parsed = state.Position - originalPosition;
                 if (parsed == 0)
                 {
@@ -199,10 +199,10 @@ internal sealed class DicomParser : IDicomParser
                 else
                 {
                     position += parsed;
-                    resultBuffer = resultBuffer.Slice(parsed);
+                    sequence = sequence.Slice(parsed);
                 }
 
-                reader.AdvanceTo(resultBuffer.Start, resultBuffer.End);
+                reader.AdvanceTo(sequence.Start, sequence.End);
                 if (result.IsCompleted)
                 {
                     break;
@@ -214,7 +214,6 @@ internal sealed class DicomParser : IDicomParser
         finally
         {
             await reader.CompleteAsync().ConfigureAwait(false);
-            ArrayPool<byte>.Shared.Return(vrBytes);
         }
     }
 
@@ -247,14 +246,8 @@ internal sealed class DicomParser : IDicomParser
         }
     }
 
-    static void Parse(ref DicomParseState state, ref ReadOnlySequence<byte> sequence, byte[] vrBytes,
-        CancellationToken cancellationToken)
+    static void Parse(ref DicomByteBuffer buffer, ref DicomParseState state, CancellationToken cancellationToken)
     {
-        var vrSpan = vrBytes.AsSpan()[..2];
-        ReadOnlySpan<byte> bufferSpan = sequence.IsSingleSegment ? sequence.FirstSpan : default;
-        SequenceReader<byte> bufferReader = bufferSpan.IsEmpty ? new SequenceReader<byte>(sequence) : default;
-        DicomByteBuffer buffer = new DicomByteBuffer(bufferSpan, bufferReader);
-
         while (!buffer.IsEmpty)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -283,7 +276,7 @@ internal sealed class DicomParser : IDicomParser
 
                     goto case DicomParseStage.ParseVR;
                 case DicomParseStage.ParseVR:
-                    if (!TryParseVr(ref buffer, vrSpan, ref state))
+                    if (!TryParseVr(ref buffer, ref state))
                     {
                         return;
                     }
@@ -315,8 +308,6 @@ internal sealed class DicomParser : IDicomParser
                     throw new DicomException("Unknown parse stage: " + state.ParseStage);
             }
         }
-
-        return;
     }
 
     static bool TryParseGroup(ref DicomByteBuffer buffer, ref DicomParseState state)
@@ -383,22 +374,26 @@ internal sealed class DicomParser : IDicomParser
         return true;
     }
 
-    static bool TryParseVr(ref DicomByteBuffer buffer, Span<byte> vrSpan, ref DicomParseState state)
+    static bool TryParseVr(ref DicomByteBuffer buffer, ref DicomParseState state)
     {
-        if (!buffer.TryRead(ref state.Position, vrSpan))
+        // VR uses 2 bytes, just like a short
+        if (!buffer.TryReadShort(ref state.Position, out short value))
         {
             // state.Logger.LogTrace("Not enough bytes to parse VR, returning");
             return false;
         }
 
-        if (!DicomVRParser.TryParse(vrSpan, out DicomVR? parsedVr))
+        // Extract the raw bytes from the short
+        byte b1 = (byte)(value & 0xFF);
+        byte b2 = (byte)((value >> 8) & 0xFF);
+
+        if (!DicomVRParser.TryParse(b1, b2, out DicomVR? parsedVr))
         {
             throw new DicomException(
-                $"Invalid DICOM file, could not parse {string.Join(", ", vrSpan.ToArray().Select(x => $"{x:x4}"))} to a known DICOM VR");
+                $"Invalid DICOM file, could not parse ({b1:x4},{b2:x4}) to a known DICOM VR");
         }
 
         // state.Logger.LogTrace("Parsed VR {VR}", parsedVr.Value);
-
         state.CurrentVr = parsedVr.Value;
         state.ParseStage = DicomParseStage.ParseLength;
         return true;
@@ -426,8 +421,7 @@ internal sealed class DicomParser : IDicomParser
                 {
                     if (state.CurrentSequenceItem is not null)
                     {
-                        throw new DicomException(
-                            $"Encountered a DICOM sequence item ({state.CurrentGroupNumber:x4},{state.CurrentElementNumber:x4}) without a preceding DICOM delimitation item");
+                        throw new DicomException($"Encountered a DICOM sequence item ({state.CurrentGroupNumber:x4},{state.CurrentElementNumber:x4}) without a preceding DICOM delimitation item");
                     }
 
                     if (rawLongValueLength != UndefinedLength)
@@ -437,8 +431,7 @@ internal sealed class DicomParser : IDicomParser
                     }
 
                     // Open a new sequence item
-                    state.CurrentSequenceItem = new DicomDataset(_smallDicomItemDictionaryPool,
-                        new DicomMemories(_memoriesPool), state.ValueParser);
+                    state.CurrentSequenceItem = new DicomDataset(_smallDicomItemDictionaryPool, new DicomMemories(_memoriesPool), state.ValueParser);
                     state.ParseStage = DicomParseStage.ParseGroup;
                     return true;
                 }

@@ -6,10 +6,16 @@ using System.Runtime.InteropServices;
 namespace DcmParse;
 
 [StructLayout(LayoutKind.Auto)]
-public ref struct DicomByteBuffer(ReadOnlySpan<byte> span, SequenceReader<byte> reader)
+public ref struct DicomByteBuffer
 {
-    private ReadOnlySpan<byte> Span = span;
-    private SequenceReader<byte> Reader = reader;
+    private ReadOnlySpan<byte> Span;
+    private SequenceReader<byte> Reader;
+
+    public DicomByteBuffer(ReadOnlySequence<byte> sequence)
+    {
+        Span = sequence.IsSingleSegment ? sequence.FirstSpan : default;
+        Reader = Span.IsEmpty ? new SequenceReader<byte>(sequence) : default;
+    }
 
     public bool IsEmpty =>
         !Span.IsEmpty ? Span.Length == 0 : Reader.End;
