@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Text;
+using FluentAssertions;
 using Xunit.Abstractions;
 
 namespace DcmParse.Tests;
@@ -22,10 +23,13 @@ public sealed class TestsForDicomEncoding
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
+        dicomDataset.TryGetString(DicomTags.SpecificCharacterSet, out string? specificCharacterSet).Should().BeTrue();
         dicomDataset.TryGetPersonName(DicomTags.PatientName, out DicomPersonName patientName).Should().BeTrue();
         dicomDataset.TryGetString(DicomTags.PatientName, out string? patientNameString).Should().BeTrue();
 
         // Assert
+        DicomEncoding.TryParse(specificCharacterSet!, out var encoding).Should().BeTrue();
+        encoding.Should().Be(Encoding.Latin1);
         patientName.GivenName.Should().Be("Jørgen");
         patientName.FamilyName.Should().Be("Åseline");
         patientNameString.Should().Be("Jørgen Åseline");
