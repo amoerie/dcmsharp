@@ -14,20 +14,21 @@ public sealed class TestsForDicomEncoding
         _dicomParser = fixture.DicomParser;
     }
 
-    // TODO
-    // [Fact]
-    // public async Task ShouldParseEncodedPatientName()
-    // {
-    //     // Arrange
-    //     var file = new FileInfo("./Dicom/Encoded.dcm");
-    //     using var dicomDataset = await _dicomParser.ParseAsync(file);
-    //
-    //     // Act
-    //     dicomDataset.TryGetPersonName(DicomTags.PatientName, out DicomPersonName patientName).Should().BeTrue();
-    //
-    //     // Assert
-    //     patientName.GivenName.Should().Be("Härold");
-    //     patientName.FamilyName.Should().Be("Å Кириллица");
-    // }
+    [Fact]
+    public async Task ShouldParseEncodedPatientName()
+    {
+        // Arrange
+        var file = new FileInfo("./Dicom/Encoded.dcm");
+        using var dicomDataset = await _dicomParser.ParseAsync(file);
+
+        // Act
+        dicomDataset.TryGetPersonName(DicomTags.PatientName, out DicomPersonName patientName).Should().BeTrue();
+        dicomDataset.TryGetString(DicomTags.PatientName, out string? patientNameString).Should().BeTrue();
+
+        // Assert
+        patientName.GivenName.Should().Be("Jørgen");
+        patientName.FamilyName.Should().Be("Åseline");
+        patientNameString.Should().Be("Jørgen Åseline");
+    }
 
 }

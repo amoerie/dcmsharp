@@ -1,10 +1,8 @@
 using System.Buffers;
-using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Pipelines;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System.Text;
 using DcmParse.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -62,11 +60,6 @@ internal sealed class DicomParser : IDicomParser
     /// The File Meta Information Group number
     /// </summary>
     private const ushort FileMetaInformationGroup = 0x0002;
-
-    /// <summary>
-    /// The Transfer Syntax element number
-    /// </summary>
-    private const ushort TransferSyntaxElement = 0x0010;
 
     /// <summary>
     /// The Group Length element number
@@ -731,12 +724,21 @@ internal sealed class DicomParser : IDicomParser
                     state.CurrentDicomItem.Value);
             }
 
-            if (state.CurrentGroupNumber == FileMetaInformationGroup
-                && state.CurrentElementNumber == TransferSyntaxElement
+            if (state.CurrentGroupNumber == DicomTags.TransferSyntaxUID.Group
+                && state.CurrentElementNumber == DicomTags.TransferSyntaxUID.Element
                 && state.CurrentDicomItem.Value.Content.Value!.Value.Span.SequenceEqual(
                     _implicitVRLittleEndianBytes))
             {
                 state.SetToImplicitVrAfterFileMetaInfo = true;
+            }
+
+            if (state.CurrentGroupNumber == DicomTags.SpecificCharacterSet.Group
+                && state.CurrentElementNumber == DicomTags.SpecificCharacterSet.Element
+                && state.CurrentDicomItem.Value.Content.Value is {} specificCharacterSetBytes
+                && state.ValueParser.CS.TryParse(specificCharacterSetBytes.Span, out string? specificCharacterSet)
+                && DicomEncoding.TryParse(specificCharacterSet, out Encoding? encoding))
+            {
+                dataset.Encoding = encoding;
             }
         }
 

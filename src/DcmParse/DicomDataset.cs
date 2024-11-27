@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using DcmParse.Memory;
 
 namespace DcmParse;
@@ -9,6 +10,7 @@ public readonly partial record struct DicomDataset : IDisposable
     private readonly DicomMemories _memories;
     private readonly DicomValueParser _valueParser;
     private readonly Dictionary<uint, DicomItem> _items;
+    private readonly DicomDatasetMetaData _metaData;
 
     internal DicomDataset(
         DicomItemDictionaryPool dicomItemDictionaryPool,
@@ -19,6 +21,13 @@ public readonly partial record struct DicomDataset : IDisposable
         _memories = memories;
         _valueParser = valueParser;
         _items = _pool.Rent();
+        _metaData = new DicomDatasetMetaData();
+    }
+
+    public Encoding Encoding
+    {
+        get => _metaData.Encoding;
+        set => _metaData.Encoding = value;
     }
 
     internal void ReleaseOnDispose(DicomMemory memory) => _memories.Add(memory);

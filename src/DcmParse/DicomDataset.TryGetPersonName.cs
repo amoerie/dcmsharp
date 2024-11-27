@@ -17,7 +17,7 @@ public readonly partial record struct DicomDataset
             return false;
         }
 
-        var encoding = Encoding.ASCII;
+        var encoding = Encoding;
 
         switch (vr)
         {
