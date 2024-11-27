@@ -377,15 +377,11 @@ internal sealed class DicomParser : IDicomParser
     static bool TryParseVr(ref DicomByteBuffer buffer, ref DicomParseState state)
     {
         // VR uses 2 bytes, just like a short
-        if (!buffer.TryReadShort(ref state.Position, out short value))
+        if (!buffer.TryReadVr(ref state.Position, out byte b1, out byte b2))
         {
             // state.Logger.LogTrace("Not enough bytes to parse VR, returning");
             return false;
         }
-
-        // Extract the raw bytes from the short
-        byte b1 = (byte)(value & 0xFF);
-        byte b2 = (byte)((value >> 8) & 0xFF);
 
         if (!DicomVRParser.TryParse(b1, b2, out DicomVR? parsedVr))
         {

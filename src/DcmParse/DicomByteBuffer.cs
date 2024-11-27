@@ -109,6 +109,50 @@ public ref struct DicomByteBuffer
         return false;
     }
 
+    public bool TryReadVr(ref long position, out byte b1, out byte b2)
+    {
+        if (!Span.IsEmpty)
+        {
+            if (Span.Length < 2)
+            {
+                b1 = default;
+                b2 = default;
+                return false;
+            }
+
+            b1 = Span[0];
+            b2 = Span[1];
+            Span = Span[2..];
+            position += 2;
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                (b1, b2) = (b2, b1);
+            }
+
+            return true;
+        }
+
+        if (Reader.Remaining < 2)
+        {
+            b1 = default;
+            b2 = default;
+            return false;
+        }
+
+        Reader.TryRead(out b1);
+        Reader.TryRead(out b2);
+
+        if (!BitConverter.IsLittleEndian)
+        {
+            (b1, b2) = (b2, b1);
+        }
+
+        position += 2;
+
+        return true;
+    }
+
     public bool TryReadExplicitVrLongValueLength(ref long position, out int output)
     {
         if (!Span.IsEmpty)
