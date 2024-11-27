@@ -94,19 +94,18 @@ public sealed class TestsForDicomParser
         codeMeaning.Should().Be("Uncompressed predecessor");
     }
 
-    // TODO
-    // [Fact]
-    // public async Task ShouldParseExplicitGroupLengths()
-    // {
-    //     // Arrange
-    //     var file = new FileInfo("./Dicom/Encoded.dcm");
-    //     using var dicomDataset = await _dicomParser.ParseAsync(file);
-    //
-    //     // Act
-    //     dicomDataset.TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out string? orderNumber).Should().BeTrue();
-    //
-    //     // Assert
-    //     orderNumber.Should().Be("ORDER2024112213363");
-    // }
+    [Fact]
+    public async Task ShouldParseExplicitGroupLengths()
+    {
+        // Arrange
+        var file = new FileInfo("./Dicom/Encoded.dcm");
+        using var dicomDataset = await _dicomParser.ParseAsync(file);
+
+        // Act
+        dicomDataset.TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out string? orderNumber).Should().BeTrue();
+
+        // Assert
+        orderNumber.Should().Be("ORDER2024112213363");
+    }
 
 }

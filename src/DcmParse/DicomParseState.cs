@@ -1,4 +1,4 @@
-﻿using System.Buffers;
+﻿using System.Diagnostics;
 using DcmParse.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -47,9 +47,9 @@ internal struct DicomParseState
 
     /* The current sequence that we're writing to */
     public DicomSequence? CurrentSequence = null;
-    public DicomDataset? CurrentSequenceItem = null;
+    public DicomSequenceItem? CurrentSequenceItem = null;
     public readonly Stack<DicomSequence> CurrentSequences = new Stack<DicomSequence>();
-    public readonly Stack<DicomDataset> CurrentSequenceItems = new Stack<DicomDataset>();
+    public readonly Stack<DicomSequenceItem> CurrentSequenceItems = new Stack<DicomSequenceItem>();
 
     /* The current pixel data fragment sequence that we're writing to */
     public ushort CurrentFragmentsGroupNumber = default;

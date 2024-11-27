@@ -302,10 +302,29 @@ internal sealed class DicomParser : IDicomParser
                         return;
                     }
 
-                    // ParseVR always transitions to ParseGroup
-                    goto case DicomParseStage.ParseGroup;
+                    break;
                 default:
                     throw new DicomException("Unknown parse stage: " + state.ParseStage);
+            }
+
+            if (state.CurrentSequence is { } currentSequence)
+            {
+                // Handle sequence item with explicit length instead of item delimitation items
+                if (state.CurrentSequenceItem is { } currentSequenceItem
+                    && currentSequenceItem.EndPosition is { } sequenceItemEndPosition
+                    && state.Position >= sequenceItemEndPosition)
+                {
+                    CloseCurrentSequenceItem(ref state, currentSequence, currentSequenceItem);
+                    state.ParseStage = DicomParseStage.ParseGroup;
+                }
+
+                // Handle sequence with explicit length instead of sequence delimitation items
+                if (currentSequence.EndPosition is { } currentSequenceEndPosition
+                    && state.Position >= currentSequenceEndPosition)
+                {
+                    CloseCurrentSequence(ref state, currentSequence);
+                    state.ParseStage = DicomParseStage.ParseGroup;
+                }
             }
         }
     }
@@ -420,14 +439,15 @@ internal sealed class DicomParser : IDicomParser
                         throw new DicomException($"Encountered a DICOM sequence item ({state.CurrentGroupNumber:x4},{state.CurrentElementNumber:x4}) without a preceding DICOM delimitation item");
                     }
 
-                    if (rawLongValueLength != UndefinedLength)
-                    {
-                        throw new DicomException(
-                            $"Encountered a DICOM sequence item ({state.CurrentGroupNumber:x4},{state.CurrentElementNumber:x4}) with explicit length ({rawLongValueLength}) but that is not supported yet");
-                    }
-
                     // Open a new sequence item
-                    state.CurrentSequenceItem = new DicomDataset(_smallDicomItemDictionaryPool, new DicomMemories(_memoriesPool), state.ValueParser);
+
+                    // Sequence items may use explicit lengths instead of item delimitation items
+                    // In that case we must close the sequence item after the specified number of bytes have been parsed
+                    long? sequenceItemLength = rawLongValueLength == UndefinedLength ? null : rawLongValueLength;
+                    long? sequenceItemEndPosition = state.Position + sequenceItemLength;
+                    DicomDataset sequenceItemDataset = new DicomDataset(_smallDicomItemDictionaryPool, new DicomMemories(_memoriesPool), state.ValueParser);
+                    state.CurrentSequenceItem = new DicomSequenceItem(sequenceItemDataset, sequenceItemEndPosition);
+
                     state.ParseStage = DicomParseStage.ParseGroup;
                     return true;
                 }
@@ -435,14 +455,13 @@ internal sealed class DicomParser : IDicomParser
                 // Handle item delimitation item
                 if (state.CurrentElementNumber is ItemDelimitationItem)
                 {
-                    if (state.CurrentSequenceItem is null)
+                    if (state.CurrentSequenceItem is not {} currentSequenceItem)
                     {
                         throw new DicomException(
                             "Encountered a DICOM item delimitation item without a preceding DICOM item");
                     }
 
-                    currentSequence.Items.Add(state.CurrentSequenceItem.Value);
-                    state.CurrentSequenceItem = null;
+                    CloseCurrentSequenceItem(ref state, currentSequence, currentSequenceItem);
                     state.ParseStage = DicomParseStage.ParseGroup;
                     return true;
                 }
@@ -450,34 +469,7 @@ internal sealed class DicomParser : IDicomParser
                 // Handle sequence delimitation item
                 if (state.CurrentElementNumber is SequenceDelimitationItem)
                 {
-                    state.CurrentDicomItem = new DicomItem(currentSequence.Group,
-                        currentSequence.Element, DicomVR.SQ,
-                        DicomItemContent.Create(currentSequence.Items.ToReadOnly()));
-
-                    // state.Logger.LogTrace("Parsed sequence tag {Tag}", state.CurrentDicomItem);
-
-                    if (state.CurrentSequenceItems.TryPop(out var currentSequenceItem))
-                    {
-                        currentSequenceItem.Add(currentSequence.Group, currentSequence.Element,
-                            state.CurrentDicomItem.Value);
-                        state.CurrentSequenceItem = currentSequenceItem;
-                    }
-                    else
-                    {
-                        state.DicomDataset.Add(currentSequence.Group, currentSequence.Element,
-                            state.CurrentDicomItem.Value);
-                        state.CurrentSequenceItem = null;
-                    }
-
-                    if (state.CurrentSequences.TryPop(out currentSequence))
-                    {
-                        state.CurrentSequence = currentSequence;
-                    }
-                    else
-                    {
-                        state.CurrentSequence = null;
-                    }
-
+                    CloseCurrentSequence(ref state, currentSequence);
                     state.ParseStage = DicomParseStage.ParseGroup;
                     return true;
                 }
@@ -562,8 +554,11 @@ internal sealed class DicomParser : IDicomParser
                     state.CurrentSequenceItems.Push(currentSequenceItem);
                 }
 
-                var dicomSequence = new DicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber,
-                    new DicomDatasets(_datasetsPool));
+                // Sequences may use explicit lengths instead of sequence delimitation items
+                // In that case we must close the sequence after the specified number of bytes have been parsed
+                long? sequenceLength = rawLongValueLength == UndefinedLength ? null : rawLongValueLength;
+                long? sequenceEndPosition = state.Position + sequenceLength;
+                var dicomSequence = new DicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber, new DicomDatasets(_datasetsPool), sequenceEndPosition);
                 state.CurrentSequence = dicomSequence;
                 state.CurrentSequenceItem = null;
                 state.ParseStage = DicomParseStage.ParseGroup;
@@ -725,8 +720,9 @@ internal sealed class DicomParser : IDicomParser
             state.CurrentShortValueMemoryOffset = 0;
             state.CurrentLongValueMemoryOffset = 0;
 
-            // If we're currently parsing a SQ item, add the item to the sequence
-            var dataset = state.CurrentSequenceItem ?? state.DicomDataset;
+            // If we're currently parsing a SQ item, add the newly parsed DICOM item to the sequence item dataset
+            // instead of the top level dataset
+            var dataset = state.CurrentSequenceItem?.DicomDataset ?? state.DicomDataset;
 
             // state.Logger.LogTrace("Parsed tag {Tag}", state.CurrentDicomItem);
             if (state.CurrentElementNumber != GroupLengthElement)
@@ -746,6 +742,41 @@ internal sealed class DicomParser : IDicomParser
 
         state.ParseStage = DicomParseStage.ParseGroup;
         return true;
+    }
+
+    static void CloseCurrentSequenceItem(ref DicomParseState state, DicomSequence currentSequence, DicomSequenceItem currentSequenceItem)
+    {
+        currentSequence.Items.Add(currentSequenceItem.DicomDataset);
+        state.CurrentSequenceItem = null;
+    }
+
+    static void CloseCurrentSequence(ref DicomParseState state, DicomSequence currentSequence)
+    {
+        state.CurrentDicomItem = new DicomItem(currentSequence.Group,
+            currentSequence.Element, DicomVR.SQ,
+            DicomItemContent.Create(currentSequence.Items.ToReadOnly()));
+
+        // state.Logger.LogTrace("Parsed sequence tag {Tag}", state.CurrentDicomItem);
+
+        if (state.CurrentSequenceItems.TryPop(out var currentSequenceItem))
+        {
+            currentSequenceItem.DicomDataset.Add(currentSequence.Group, currentSequence.Element, state.CurrentDicomItem.Value);
+            state.CurrentSequenceItem = currentSequenceItem;
+        }
+        else
+        {
+            state.DicomDataset.Add(currentSequence.Group, currentSequence.Element, state.CurrentDicomItem.Value);
+            state.CurrentSequenceItem = null;
+        }
+
+        if (state.CurrentSequences.TryPop(out currentSequence))
+        {
+            state.CurrentSequence = currentSequence;
+        }
+        else
+        {
+            state.CurrentSequence = null;
+        }
     }
 
     static Memory<byte> AllocateShortMemory(ref DicomMemory? memory, ref int memoryOffset,
