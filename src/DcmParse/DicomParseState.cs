@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DcmParse;
 
+[DebuggerDisplay("[Stage:{ParseStage}] [Tag:({CurrentGroupNumber,h}, {CurrentElementNumber,h})] [Vr:{CurrentVr}]")]
 internal struct DicomParseState
 {
     // The logger to use
