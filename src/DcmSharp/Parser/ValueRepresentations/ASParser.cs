@@ -1,10 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DcmSharp.Parser;
 
-namespace DcmSharp.Values;
+namespace DcmSharp.Parser.ValueRepresentations;
 
-internal sealed class CSParser
+internal sealed class ASParser
 {
     public bool TryParse(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
     {
@@ -14,7 +13,7 @@ internal sealed class CSParser
             return false;
         }
 
-        value = Encoding.ASCII.GetString(DicomPadding.TrimSpaces(span));
+        value = Encoding.ASCII.GetString(span);
         return true;
     }
 }

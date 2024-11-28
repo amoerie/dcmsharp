@@ -1,4 +1,4 @@
-﻿using DcmSharp.Values;
+﻿using DcmSharp.Parser.ValueRepresentations;
 
 namespace DcmSharp.Parser;
 

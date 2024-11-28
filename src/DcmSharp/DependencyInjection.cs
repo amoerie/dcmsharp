@@ -1,5 +1,5 @@
 ﻿using DcmSharp.Parser;
-using DcmSharp.Values;
+using DcmSharp.Parser.ValueRepresentations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

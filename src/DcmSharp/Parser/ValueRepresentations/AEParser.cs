@@ -1,10 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DcmSharp.Parser;
 
-namespace DcmSharp.Values;
+namespace DcmSharp.Parser.ValueRepresentations;
 
-internal sealed class UCParser
+internal sealed class AEParser
 {
     public bool TryParse(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
     {
@@ -14,7 +13,6 @@ internal sealed class UCParser
             return false;
         }
 
-        // TODO apply encoding found in (0008,0005)
         value = Encoding.ASCII.GetString(DicomPadding.TrimEndSpaces(span));
         return true;
     }

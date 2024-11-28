@@ -1,14 +1,13 @@
 using System.Globalization;
 using System.Text;
-using DcmSharp.Parser;
 
-namespace DcmSharp.Values;
+namespace DcmSharp.Parser.ValueRepresentations;
 
-internal sealed class DSParser
+internal sealed class ISParser
 {
-    private const int MaxLength = 16;
+    private const int MaxLength = 12;
 
-    public bool TryParse(ReadOnlySpan<byte> span, out double value)
+    public bool TryParse(ReadOnlySpan<byte> span, out int value)
     {
         if (span.IsEmpty)
         {
@@ -20,6 +19,6 @@ internal sealed class DSParser
         Span<char> charSpan = stackalloc char[Math.Min(MaxLength, trimmedSpan.Length)];
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
-        return double.TryParse(charSpan, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+        return int.TryParse(charSpan, NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
     }
 }

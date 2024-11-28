@@ -1,4 +1,4 @@
-namespace DcmSharp.Values;
+namespace DcmSharp.Parser.ValueRepresentations;
 
 internal sealed class USParser
 {

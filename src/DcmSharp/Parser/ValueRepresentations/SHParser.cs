@@ -1,10 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DcmSharp.Parser;
 
-namespace DcmSharp.Values;
+namespace DcmSharp.Parser.ValueRepresentations;
 
-internal sealed class LOParser
+internal sealed class SHParser
 {
     public bool TryParse(ReadOnlySpan<byte> span, Encoding encoding, [NotNullWhen(true)] out string? value)
     {

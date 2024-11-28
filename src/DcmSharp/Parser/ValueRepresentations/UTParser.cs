@@ -1,8 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DcmSharp.Parser;
 
-namespace DcmSharp.Values;
+namespace DcmSharp.Parser.ValueRepresentations;
 
 internal sealed class UTParser
 {
