@@ -12,7 +12,7 @@ public readonly partial record struct DicomDataset
     {
         if (!TryGetValue(group, element, out ReadOnlyMemory<byte>? memory, out DicomVR? vr))
         {
-            value = null;
+            value = default;
             return false;
         }
 
@@ -29,6 +29,7 @@ public readonly partial record struct DicomDataset
             case DicomVR.CS:
                 return _valueParser.CS.TryParse(memory.Value.Span, out value);
             case DicomVR.DA:
+                // TODO return raw value
                 if (_valueParser.DA.TryParse(memory.Value.Span, out DateOnly daValue))
                 {
                     value = daValue.ToString("O");
@@ -37,14 +38,9 @@ public readonly partial record struct DicomDataset
 
                 break;
             case DicomVR.DS:
-                if (_valueParser.DS.TryParse(memory.Value.Span, out double dsValue))
-                {
-                    value = dsValue.ToString(CultureInfo.InvariantCulture);
-                    return true;
-                }
-
-                break;
+                return _valueParser.DS.TryParseString(memory.Value.Span, out value);
             case DicomVR.DT:
+                // TODO return raw value
                 if (_valueParser.DT.TryParse(memory.Value.Span, out DateTime dtValue))
                 {
                     value = dtValue.ToString("O");
@@ -69,25 +65,13 @@ public readonly partial record struct DicomDataset
 
                 break;
             case DicomVR.IS:
-                if(_valueParser.IS.TryParse(memory.Value.Span, out int isValue))
-                {
-                    value = isValue.ToString(CultureInfo.InvariantCulture);
-                    return true;
-                }
-
-                break;
+                return _valueParser.IS.TryParseString(memory.Value.Span, out value);
             case DicomVR.LO:
                 return _valueParser.LO.TryParse(memory.Value.Span, encoding, out value);
             case DicomVR.LT:
                 return _valueParser.LT.TryParse(memory.Value.Span, encoding, out value);
             case DicomVR.PN:
-                if(_valueParser.PN.TryParse(memory.Value.Span, encoding, out DicomPersonName pnValue))
-                {
-                    value = pnValue.ToString();
-                    return true;
-                }
-
-                break;
+                return _valueParser.PN.TryParseString(memory.Value.Span, encoding, out value);
             case DicomVR.SH:
                 return _valueParser.SH.TryParse(memory.Value.Span, encoding, out value);
             case DicomVR.SL:
@@ -117,6 +101,7 @@ public readonly partial record struct DicomDataset
 
                 break;
             case DicomVR.TM:
+                // TODO return raw value
                 if(_valueParser.TM.TryParse(memory.Value.Span, out var tmValue))
                 {
                     value = tmValue.ToString("O");

@@ -1,10 +1,13 @@
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace DcmSharp.Parser.ValueRepresentations;
 
 internal sealed class PNParser
 {
+    [SkipLocalsInit]
     public bool TryParse(ReadOnlySpan<byte> span, Encoding encoding, out DicomPersonName value)
     {
         if (span.IsEmpty)
@@ -144,6 +147,18 @@ internal sealed class PNParser
         {
             ArrayPool<char>.Shared.Return(chars);
         }
+    }
+
+    public bool TryParseString(ReadOnlySpan<byte> span, Encoding encoding, [NotNullWhen(true)] out string? value)
+    {
+        if (span.IsEmpty)
+        {
+            value = default;
+            return false;
+        }
+
+        value = encoding.GetString(DicomPadding.TrimEndSpaces(span));
+        return true;
     }
 
 }

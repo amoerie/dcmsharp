@@ -65,10 +65,16 @@ public sealed class TestsForDicomValues
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.ImageType, out string? aeTitle).Should().BeTrue();
+        dicomDataset.TryGetString(DicomTags.ImageType, out string? imageTypes).Should().BeTrue();
+        dicomDataset.TryGetStrings(DicomTags.ImageType, out string[]? imageTypesArray).Should().BeTrue();
 
         // Assert
-        aeTitle.Should().Be("DcmAnonymize");
+        imageTypes.Should().Be("ORIGINAL\\PRIMARY\\AXIAL");
+        imageTypesArray.Should().NotBeNull();
+        imageTypesArray.Should().HaveCount(3);
+        imageTypesArray![0].Should().Be("ORIGINAL");
+        imageTypesArray[1].Should().Be("PRIMARY");
+        imageTypesArray[2].Should().Be("AXIAL");
     }
 
     [Fact]
@@ -98,6 +104,27 @@ public sealed class TestsForDicomValues
         // Assert
         sliceThickness.Should().Be(1.25);
     }
+
+    [Fact]
+    public async Task ShouldParseDSMulti()
+    {
+        // Arrange
+        var file = new FileInfo("./Dicom/Encoded.dcm");
+        using var dicomDataset = await _dicomParser.ParseAsync(file);
+
+        // Act
+        dicomDataset.TryGetString(DicomTags.ImagePositionPatient, out string? positions).Should().BeTrue();
+        dicomDataset.TryGetDoubles(DicomTags.ImagePositionPatient, out double[]? positionsArray).Should().BeTrue();
+
+        // Assert
+        positions.Should().Be("-125.000\\-126.800\\0.000");
+        positionsArray.Should().NotBeNull();
+        positionsArray.Should().HaveCount(3);
+        positionsArray![0].Should().Be(-125.0);
+        positionsArray[1].Should().Be(-126.8);
+        positionsArray[2].Should().Be(0.0);
+    }
+
 
     [Fact]
     public async Task ShouldParseDT()
@@ -180,7 +207,7 @@ public sealed class TestsForDicomValues
         dicomDataset.TryGetString(DicomTags.ReferringPhysicianName, out string? physicianName).Should().BeTrue();
 
         // Assert
-        physicianName.Should().Be("Sharia McNalley");
+        physicianName.Should().Be("McNalley^Sharia");
     }
 
     [Fact]

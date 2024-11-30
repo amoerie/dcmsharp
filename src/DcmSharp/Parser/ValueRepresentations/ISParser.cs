@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
@@ -20,5 +21,17 @@ internal sealed class ISParser
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
         return int.TryParse(charSpan, NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
+    }
+
+    public bool TryParseString(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
+    {
+        if (span.IsEmpty)
+        {
+            value = default;
+            return false;
+        }
+
+        value = Encoding.ASCII.GetString(DicomPadding.TrimSpaces(span));
+        return true;
     }
 }
