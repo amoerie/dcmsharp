@@ -96,7 +96,7 @@ public sealed class TestsForDicomParser
     }
 
     [Fact]
-    public async Task ShouldParseExplicitGroupLengths()
+    public async Task ShouldParseExplicitSequenceAndSequenceItemsLengths()
     {
         // Arrange
         var file = new FileInfo("./Dicom/Encoded.dcm");

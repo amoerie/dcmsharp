@@ -16,17 +16,31 @@ public sealed class TestsForDicomValues
     }
 
     [Fact]
-    public async Task ShouldParseUI()
+    public async Task ShouldParseAE()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SOPInstanceUID, out string? sopInstanceUID).Should().BeTrue();
+        dicomDataset.TryGetString(DicomTags.SourceApplicationEntityTitle, out string? aeTitle).Should().BeTrue();
 
         // Assert
-        sopInstanceUID.Should().Be("2.25.332838821141227624838581964210008219211");
+        aeTitle.Should().Be("DcmAnonymize");
+    }
+
+    [Fact]
+    public async Task ShouldParseAS()
+    {
+        // Arrange
+        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
+        using var dicomDataset = await _dicomParser.ParseAsync(file);
+
+        // Act
+        dicomDataset.TryGetString(DicomTags.PatientAge, out string? patientAge).Should().BeTrue();
+
+        // Assert
+        patientAge.Should().Be("030Y");
     }
 
     [Fact]
@@ -58,20 +72,6 @@ public sealed class TestsForDicomValues
     }
 
     [Fact]
-    public async Task ShouldParseDT()
-    {
-        // Arrange
-        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
-
-        // Act
-        dicomDataset.TryGetTime(DicomTags.StudyTime, out TimeOnly studyTime).Should().BeTrue();
-
-        // Assert
-        studyTime.Should().Be(new TimeOnly(16, 32, 14));
-    }
-
-    [Fact]
     public async Task ShouldParseDS()
     {
         // Arrange
@@ -86,59 +86,17 @@ public sealed class TestsForDicomValues
     }
 
     [Fact]
-    public async Task ShouldParseIS()
+    public async Task ShouldParseDT()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetInt(DicomTags.InstanceNumber, out int instanceNumber).Should().BeTrue();
+        dicomDataset.TryGetTime(DicomTags.StudyTime, out TimeOnly studyTime).Should().BeTrue();
 
         // Assert
-        instanceNumber.Should().Be(166);
-    }
-
-    [Fact]
-    public async Task ShouldParsePN()
-    {
-        // Arrange
-        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
-
-        // Act
-        dicomDataset.TryGetString(DicomTags.ReferringPhysicianName, out string? physicianName).Should().BeTrue();
-
-        // Assert
-        physicianName.Should().Be("Sharia McNalley");
-    }
-
-    [Fact]
-    public async Task ShouldParseUS()
-    {
-        // Arrange
-        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
-
-        // Act
-        dicomDataset.TryGetUShort(DicomTags.Rows, out ushort rows).Should().BeTrue();
-
-        // Assert
-        rows.Should().Be(512);
-    }
-
-    [Fact]
-    public async Task ShouldParseLS()
-    {
-        // Arrange
-        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
-
-        // Act
-        dicomDataset.TryGetString(DicomTags.Manufacturer, out string? manufacturer).Should().BeTrue();
-
-        // Assert
-        manufacturer.Should().Be("GE MEDICAL SYSTEMS");
+        studyTime.Should().Be(new TimeOnly(16, 32, 14));
     }
 
     [Fact]
@@ -156,17 +114,59 @@ public sealed class TestsForDicomValues
     }
 
     [Fact]
-    public async Task ShouldParseAE()
+    public async Task ShouldParseFL()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SourceApplicationEntityTitle, out string? aeTitle).Should().BeTrue();
+        dicomDataset.TryGetFloat(DicomTags.TableSpeed, out float tableSpeed).Should().BeTrue();
 
         // Assert
-        aeTitle.Should().Be("DcmAnonymize");
+        tableSpeed.Should().Be(13.28125f);
+    }
+
+    [Fact]
+    public async Task ShouldParseIS()
+    {
+        // Arrange
+        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
+        using var dicomDataset = await _dicomParser.ParseAsync(file);
+
+        // Act
+        dicomDataset.TryGetInt(DicomTags.InstanceNumber, out int instanceNumber).Should().BeTrue();
+
+        // Assert
+        instanceNumber.Should().Be(166);
+    }
+
+    [Fact]
+    public async Task ShouldParseLS()
+    {
+        // Arrange
+        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
+        using var dicomDataset = await _dicomParser.ParseAsync(file);
+
+        // Act
+        dicomDataset.TryGetString(DicomTags.Manufacturer, out string? manufacturer).Should().BeTrue();
+
+        // Assert
+        manufacturer.Should().Be("GE MEDICAL SYSTEMS");
+    }
+
+    [Fact]
+    public async Task ShouldParsePN()
+    {
+        // Arrange
+        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
+        using var dicomDataset = await _dicomParser.ParseAsync(file);
+
+        // Act
+        dicomDataset.TryGetString(DicomTags.ReferringPhysicianName, out string? physicianName).Should().BeTrue();
+
+        // Assert
+        physicianName.Should().Be("Sharia McNalley");
     }
 
     [Fact]
@@ -200,20 +200,6 @@ public sealed class TestsForDicomValues
     }
 
     [Fact]
-    public async Task ShouldParseFL()
-    {
-        // Arrange
-        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
-
-        // Act
-        dicomDataset.TryGetFloat(DicomTags.TableSpeed, out float tableSpeed).Should().BeTrue();
-
-        // Assert
-        tableSpeed.Should().Be(13.28125f);
-    }
-
-    [Fact]
     public async Task ShouldParseSS()
     {
         // Arrange
@@ -228,16 +214,30 @@ public sealed class TestsForDicomValues
     }
 
     [Fact]
-    public async Task ShouldParseAS()
+    public async Task ShouldParseUI()
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.PatientAge, out string? patientAge).Should().BeTrue();
+        dicomDataset.TryGetString(DicomTags.SOPInstanceUID, out string? sopInstanceUID).Should().BeTrue();
 
         // Assert
-        patientAge.Should().Be("030Y");
+        sopInstanceUID.Should().Be("2.25.332838821141227624838581964210008219211");
+    }
+
+    [Fact]
+    public async Task ShouldParseUS()
+    {
+        // Arrange
+        var file = new FileInfo("./Dicom/ExplicitVR.dcm");
+        using var dicomDataset = await _dicomParser.ParseAsync(file);
+
+        // Act
+        dicomDataset.TryGetUShort(DicomTags.Rows, out ushort rows).Should().BeTrue();
+
+        // Assert
+        rows.Should().Be(512);
     }
 }
