@@ -81,16 +81,16 @@ public sealed class TestsForDicomParser
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act + Assert
-        dicomDataset.TryGetSequence(DicomTags.SourceImageSequence, out ReadOnlyMemory<DicomDataset>? sourceImageSequence)
+        dicomDataset.TryGetSequence(DicomTags.SourceImageSequence, out DicomDataset[]? sourceImageSequence)
             .Should().BeTrue();
         sourceImageSequence.Should().NotBeNull();
-        var firstSourceImage = sourceImageSequence!.Value.Span[0];
+        var firstSourceImage = sourceImageSequence![0];
         firstSourceImage.Should().NotBeNull();
         firstSourceImage.TryGetSequence(DicomTags.PurposeOfReferenceCodeSequence,
-                out ReadOnlyMemory<DicomDataset>? purposeOfReferenceCodeSequence)
+                out DicomDataset[]? purposeOfReferenceCodeSequence)
             .Should().BeTrue();
         purposeOfReferenceCodeSequence.Should().NotBeNull();
-        var firstPurposeOfReferenceCodeSequence = purposeOfReferenceCodeSequence!.Value.Span[0];
+        var firstPurposeOfReferenceCodeSequence = purposeOfReferenceCodeSequence![0];
         firstPurposeOfReferenceCodeSequence.TryGetString(DicomTags.CodeMeaning, out string? codeMeaning).Should().BeTrue();
         codeMeaning.Should().Be("Uncompressed predecessor");
     }

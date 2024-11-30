@@ -58,6 +58,20 @@ public sealed class TestsForDicomValues
     }
 
     [Fact]
+    public async Task ShouldParseCSMulti()
+    {
+        // Arrange
+        var file = new FileInfo("./Dicom/Encoded.dcm");
+        using var dicomDataset = await _dicomParser.ParseAsync(file);
+
+        // Act
+        dicomDataset.TryGetString(DicomTags.ImageType, out string? aeTitle).Should().BeTrue();
+
+        // Assert
+        aeTitle.Should().Be("DcmAnonymize");
+    }
+
+    [Fact]
     public async Task ShouldParseDA()
     {
         // Arrange
@@ -192,7 +206,7 @@ public sealed class TestsForDicomValues
 
         // Act
         dicomDataset.TryGetSequence(DicomTags.ReferencedImageSequence, out var sequence).Should().BeTrue();
-        var referencedItem = sequence!.Value.Span[0];
+        var referencedItem = sequence![0];
         referencedItem.TryGetString(DicomTags.ReferencedSOPClassUID, out string? sopClassUID).Should().BeTrue();
 
         // Assert

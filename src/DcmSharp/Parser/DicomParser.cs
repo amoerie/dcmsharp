@@ -795,7 +795,7 @@ internal sealed class DicomParser : IDicomParser
         // Not enough space remains, allocate new memory
         memory = new DicomMemory(_shortArrayPool, MinimumMemoryBlockSize);
         state.MemoryOffset = memoryLength;
-        state.DicomDataset.ReleaseOnDispose(memory.Value);
+        state.DicomDataset.AddMemory(memory.Value);
         return memory.Value.Memory.Slice(0, memoryLength);
     }
 
@@ -811,7 +811,7 @@ internal sealed class DicomParser : IDicomParser
 
         var pool = memoryLength < 1_048_576 ? _shortArrayPool : _longArrayPool;
         var memory = new DicomMemory(pool, memoryLength);
-        state.DicomDataset.ReleaseOnDispose(memory);
+        state.DicomDataset.AddMemory(memory);
         return memory.Memory;
     }
 }
