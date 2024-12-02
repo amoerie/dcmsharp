@@ -1,6 +1,7 @@
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -8,7 +9,8 @@ namespace DcmSharp.Parser.ValueRepresentations;
 
 internal sealed class DSParser
 {
-    public bool TryParse(ReadOnlySpan<byte> span, out double value)
+    [SkipLocalsInit]
+    public bool TryParse<TNumber>(ReadOnlySpan<byte> span, out TNumber value) where TNumber: struct, INumber<TNumber>
     {
         if (span.IsEmpty)
         {
@@ -21,7 +23,7 @@ internal sealed class DSParser
         Span<char> charSpan = stackalloc char[Math.Min(maxLength, trimmedSpan.Length)];
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
-        return double.TryParse(charSpan, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+        return TNumber.TryParse(charSpan, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
     }
 
     public bool TryParseString(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
@@ -37,11 +39,11 @@ internal sealed class DSParser
     }
 
     [SkipLocalsInit]
-    public bool TryParseAll(ReadOnlySpan<byte> span, [NotNullWhen(true)] out double[]? values)
+    public bool TryParseAll<TNumber>(ReadOnlySpan<byte> span, out TNumber[] values) where TNumber: struct, INumber<TNumber>
     {
         if (span.IsEmpty)
         {
-            values = default;
+            values = [];
             return false;
         }
 
@@ -51,23 +53,24 @@ internal sealed class DSParser
         Span<char> charSpan = trimmedSpan.Length < 255
             ? stackalloc char[trimmedSpan.Length]
             : ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
 
-        int numberOfValues = charSpan.Count('\\');
+        int numberOfValues = charSpan.Count('\\') + 1;
         Range[]? sharedRanges = null;
         Span<Range> ranges = numberOfValues < 16
             ? stackalloc Range[numberOfValues]
             : ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
-        values = new double[numberOfValues];
+        values = new TNumber[numberOfValues];
 
         bool allOk = true;
         for (int i = 0; i < ranges.Length; i++)
         {
             Range range = ranges[i];
-            if (double.TryParse(charSpan[range], NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
+            if (TNumber.TryParse(charSpan[range], NumberStyles.Float, CultureInfo.InvariantCulture, out TNumber value))
             {
                 values[i] = value;
             }

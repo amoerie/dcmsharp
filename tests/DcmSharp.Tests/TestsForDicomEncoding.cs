@@ -33,7 +33,7 @@ public sealed class TestsForDicomEncoding
         encoding.Should().Be(Encoding.Latin1);
         patientName.GivenName.Should().Be("Jørgen");
         patientName.FamilyName.Should().Be("Åseline");
-        patientNameString.Should().Be("Jørgen Åseline");
+        patientNameString.Should().Be("Åseline^Jørgen");
     }
 
 }
