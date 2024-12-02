@@ -9,7 +9,7 @@
     <PackageVersion Include="BenchmarkDotNet.Diagnostics.dotTrace" Version="0.14.0" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
-    <PackageVersion Include="FluentAssertions" Version="6.12.2" />
+    <PackageVersion Include="FluentAssertions" Version="7.0.0" />
     <PackageVersion Include="fo-dicom" Version="5.1.4" />
     <PackageVersion Include="fo-dicom.Codecs" Version="5.15.2" />
     <PackageVersion Include="fo-dicom.Imaging.ImageSharp" Version="5.1.4" />
