@@ -55,6 +55,18 @@ internal sealed class SLParser
         return true;
     }
 
+    public bool TryParse(ReadOnlySpan<byte> span, out decimal value)
+    {
+        if (!TryParse(span, out int number))
+        {
+            value = default;
+            return false;
+        }
+
+        value = number;
+        return true;
+    }
+
     public bool TryParse(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
     {
         if (!TryParse(span, out int number))
@@ -133,6 +145,25 @@ internal sealed class SLParser
         }
 
         values = new double[Length];
+        int numberOfValues = span.Length / Length;
+        for (int i = 0; i < numberOfValues; i++)
+        {
+            int offset = i * Length;
+            values[i] = BitConverter.ToInt32(span.Slice(offset, Length));
+        }
+
+        return true;
+    }
+
+    public bool TryParseAll(ReadOnlySpan<byte> span, out decimal[] values)
+    {
+        if (span.Length % Length != 0)
+        {
+            values = [];
+            return false;
+        }
+
+        values = new decimal[Length];
         int numberOfValues = span.Length / Length;
         for (int i = 0; i < numberOfValues; i++)
         {

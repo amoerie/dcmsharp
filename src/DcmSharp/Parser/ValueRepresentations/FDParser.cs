@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Numerics;
 
 namespace DcmSharp.Parser.ValueRepresentations;
 
@@ -17,6 +16,20 @@ internal sealed class FDParser
         }
 
         value = BitConverter.ToDouble(span);
+        return true;
+    }
+
+    public bool TryParse(ReadOnlySpan<byte> span, out decimal value)
+    {
+        if (!TryParse(span, out double number))
+        {
+            value = default;
+            return false;
+        }
+
+        // We allow an explicit cast here because there is no "loss of precision" going from double to decimal
+        // C# does not provide an implicit cast here because the conversion isn't exactly 1 to 1
+        value = (decimal) number;
         return true;
     }
 
@@ -46,6 +59,25 @@ internal sealed class FDParser
         {
             int offset = i * Length;
             values[i] = BitConverter.ToDouble(span.Slice(offset, Length));
+        }
+
+        return true;
+    }
+
+    public bool TryParseAll(ReadOnlySpan<byte> span, out decimal[] values)
+    {
+        if (span.Length % Length != 0)
+        {
+            values = [];
+            return false;
+        }
+
+        values = new decimal[Length];
+        int numberOfValues = span.Length / Length;
+        for (int i = 0; i < numberOfValues; i++)
+        {
+            int offset = i * Length;
+            values[i] = (decimal) BitConverter.ToDouble(span.Slice(offset, Length));
         }
 
         return true;

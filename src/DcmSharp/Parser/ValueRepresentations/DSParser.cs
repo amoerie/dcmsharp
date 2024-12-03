@@ -1,7 +1,6 @@
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -9,8 +8,9 @@ namespace DcmSharp.Parser.ValueRepresentations;
 
 internal sealed class DSParser
 {
-    [SkipLocalsInit]
-    public bool TryParse<TNumber>(ReadOnlySpan<byte> span, out TNumber value) where TNumber: struct, INumber<TNumber>
+    private const int MaxLength = 12;
+
+    public bool TryParse(ReadOnlySpan<byte> span, out decimal value)
     {
         if (span.IsEmpty)
         {
@@ -18,15 +18,38 @@ internal sealed class DSParser
             return false;
         }
 
-        const int maxLength = 16;
         ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimSpaces(span);
-        Span<char> charSpan = stackalloc char[Math.Min(maxLength, trimmedSpan.Length)];
+        Span<char> charSpan = stackalloc char[Math.Min(MaxLength, trimmedSpan.Length)];
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
-        return TNumber.TryParse(charSpan, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+        return decimal.TryParse(charSpan, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
     }
 
-    public bool TryParseString(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
+    public bool TryParse(ReadOnlySpan<byte> span, out double value)
+    {
+        if (!TryParse(span, out decimal number))
+        {
+            value = default;
+            return false;
+        }
+
+        value = (double) number;
+        return true;
+    }
+
+    public bool TryParse(ReadOnlySpan<byte> span, out float value)
+    {
+        if (!TryParse(span, out decimal number))
+        {
+            value = default;
+            return false;
+        }
+
+        value = (float) number;
+        return true;
+    }
+
+    public bool TryParse(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
     {
         if (span.IsEmpty)
         {
@@ -38,8 +61,28 @@ internal sealed class DSParser
         return true;
     }
 
+    public bool TryParseAll(ReadOnlySpan<byte> span, out decimal[] values)
+    {
+        return TryParseAll(span, static x => x, out values);
+    }
+
+    public bool TryParseAll(ReadOnlySpan<byte> span, out double[] values)
+    {
+        return TryParseAll(span, static x => (double) x, out values);
+    }
+
+    public bool TryParseAll(ReadOnlySpan<byte> span, out float[] values)
+    {
+        return TryParseAll(span, static x => (float) x, out values);
+    }
+
+    public bool TryParseAll(ReadOnlySpan<byte> span, out string[] values)
+    {
+        return TryParseAll(span, static x => x.ToString(CultureInfo.InvariantCulture), out values);
+    }
+
     [SkipLocalsInit]
-    public bool TryParseAll<TNumber>(ReadOnlySpan<byte> span, out TNumber[] values) where TNumber: struct, INumber<TNumber>
+    private static bool TryParseAll<T>(ReadOnlySpan<byte> span, Func<decimal, T> converter, out T[] values)
     {
         if (span.IsEmpty)
         {
@@ -64,15 +107,15 @@ internal sealed class DSParser
             : ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
-        values = new TNumber[numberOfValues];
+        values = new T[numberOfValues];
 
         bool allOk = true;
         for (int i = 0; i < ranges.Length; i++)
         {
             Range range = ranges[i];
-            if (TNumber.TryParse(charSpan[range], NumberStyles.Float, CultureInfo.InvariantCulture, out TNumber value))
+            if (decimal.TryParse(charSpan[range], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out decimal value))
             {
-                values[i] = value;
+                values[i] = converter(value);
             }
             else
             {
@@ -92,4 +135,5 @@ internal sealed class DSParser
 
         return allOk;
     }
+
 }

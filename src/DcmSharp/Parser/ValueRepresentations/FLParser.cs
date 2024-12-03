@@ -31,6 +31,20 @@ internal sealed class FLParser
         return true;
     }
 
+    public bool TryParse(ReadOnlySpan<byte> span, out decimal value)
+    {
+        if (!TryParse(span, out float number))
+        {
+            value = default;
+            return false;
+        }
+
+        // We allow an explicit cast here because there is no "loss of precision" going from float to decimal
+        // C# does not provide an implicit cast here because the conversion isn't exactly 1 to 1
+        value = (decimal) number;
+        return true;
+    }
+
     public bool TryParse(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
     {
         if (!TryParse(span, out float number))
@@ -76,6 +90,25 @@ internal sealed class FLParser
         {
             int offset = i * Length;
             values[i] = BitConverter.ToSingle(span.Slice(offset, Length));
+        }
+
+        return true;
+    }
+
+    public bool TryParseAll(ReadOnlySpan<byte> span, out decimal[] values)
+    {
+        if (span.Length % Length != 0)
+        {
+            values = [];
+            return false;
+        }
+
+        values = new decimal[Length];
+        int numberOfValues = span.Length / Length;
+        for (int i = 0; i < numberOfValues; i++)
+        {
+            int offset = i * Length;
+            values[i] = (decimal) BitConverter.ToSingle(span.Slice(offset, Length));
         }
 
         return true;

@@ -61,6 +61,18 @@ internal sealed class ISParser
         return true;
     }
 
+    public bool TryParse(ReadOnlySpan<byte> span, out decimal value)
+    {
+        if (!TryParse(span, out int number))
+        {
+            value = default;
+            return false;
+        }
+
+        value = number;
+        return true;
+    }
+
     public bool TryParse(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
     {
         if (span.IsEmpty)
@@ -75,26 +87,36 @@ internal sealed class ISParser
 
     public bool TryParseAll(ReadOnlySpan<byte> span, out int[] values)
     {
-        return TryParseAll(span, x => x, out values);
+        return TryParseAll(span, static x => x, out values);
     }
 
     public bool TryParseAll(ReadOnlySpan<byte> span, out long[] values)
     {
-        return TryParseAll(span, x => x, out values);
+        return TryParseAll(span, static x => x, out values);
     }
 
     public bool TryParseAll(ReadOnlySpan<byte> span, out float[] values)
     {
-        return TryParseAll(span, x => x, out values);
+        return TryParseAll(span, static x => x, out values);
     }
 
     public bool TryParseAll(ReadOnlySpan<byte> span, out double[] values)
     {
-        return TryParseAll(span, x => x, out values);
+        return TryParseAll(span, static x => x, out values);
+    }
+
+    public bool TryParseAll(ReadOnlySpan<byte> span, out decimal[] values)
+    {
+        return TryParseAll(span, static x => x, out values);
+    }
+
+    public bool TryParseAll(ReadOnlySpan<byte> span, out string[] values)
+    {
+        return TryParseAll(span, static x => x.ToString(CultureInfo.InvariantCulture), out values);
     }
 
     [SkipLocalsInit]
-    private bool TryParseAll<T>(ReadOnlySpan<byte> span, Func<int, T> converter, out T[] values)
+    private static bool TryParseAll<T>(ReadOnlySpan<byte> span, Func<int, T> converter, out T[] values)
     {
         if (span.IsEmpty)
         {

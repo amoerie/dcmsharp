@@ -91,6 +91,18 @@ internal sealed class USParser
         return true;
     }
 
+    public bool TryParse(ReadOnlySpan<byte> span, out decimal value)
+    {
+        if (!TryParse(span, out ushort number))
+        {
+            value = default;
+            return false;
+        }
+
+        value = number;
+        return true;
+    }
+
     public bool TryParse(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
     {
         if (!TryParse(span, out ushort number))
@@ -226,6 +238,25 @@ internal sealed class USParser
         }
 
         values = new double[Length];
+        int numberOfValues = span.Length / Length;
+        for (int i = 0; i < numberOfValues; i++)
+        {
+            int offset = i * Length;
+            values[i] = BitConverter.ToUInt16(span.Slice(offset, Length));
+        }
+
+        return true;
+    }
+
+    public bool TryParseAll(ReadOnlySpan<byte> span, out decimal[] values)
+    {
+        if (span.Length % Length != 0)
+        {
+            values = [];
+            return false;
+        }
+
+        values = new decimal[Length];
         int numberOfValues = span.Length / Length;
         for (int i = 0; i < numberOfValues; i++)
         {
