@@ -8,11 +8,6 @@ namespace DcmSharp.Memory;
 internal readonly struct DicomMemory : IMemoryOwner<byte>
 {
     /// <summary>
-    /// The usable length within <see cref="_array"/>
-    /// </summary>
-    private readonly int _length;
-
-    /// <summary>
     /// The <see cref="ArrayPool{T}"/> instance used to rent <see cref="_array"/>.
     /// </summary>
     private readonly ArrayPool<byte> _pool;
@@ -29,7 +24,7 @@ internal readonly struct DicomMemory : IMemoryOwner<byte>
     /// <param name="pool">The <see cref="ArrayPool{T}"/> instance to use.</param>
     internal DicomMemory(ArrayPool<byte> pool, int length)
     {
-        _length = length;
+        Length = length;
         _pool = pool;
         _array = pool.Rent(length);
     }
@@ -40,7 +35,7 @@ internal readonly struct DicomMemory : IMemoryOwner<byte>
     public int Length
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _length;
+        get;
     }
 
     public Memory<byte> Memory
@@ -48,7 +43,7 @@ internal readonly struct DicomMemory : IMemoryOwner<byte>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            return _array.AsMemory(0, _length);
+            return _array.AsMemory(0, Length);
         }
     }
 
@@ -62,6 +57,6 @@ internal readonly struct DicomMemory : IMemoryOwner<byte>
     public override string ToString()
     {
         // Same representation used in Span<T>
-        return $"DicomMemory<byte>[{_length}]";
+        return $"DicomMemory<byte>[{Length}]";
     }
 }

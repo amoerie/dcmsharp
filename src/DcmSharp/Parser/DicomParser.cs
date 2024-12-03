@@ -796,7 +796,7 @@ internal sealed class DicomParser : IDicomParser
         memory = new DicomMemory(_shortArrayPool, MinimumMemoryBlockSize);
         state.MemoryOffset = memoryLength;
         state.DicomDataset.AddMemory(memory.Value);
-        return memory.Value.Memory.Slice(0, memoryLength);
+        return memory.Value.Memory[..memoryLength];
     }
 
     static Memory<byte> AllocateLongMemory(ref DicomParseState state, int memoryLength)

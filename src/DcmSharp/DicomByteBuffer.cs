@@ -44,13 +44,14 @@ public ref struct DicomByteBuffer
             return true;
         }
 
-        if (Reader.TryReadLittleEndian(out output))
+        if (!Reader.TryReadLittleEndian(out output))
         {
-            position += sizeof(short);
-            return true;
+            return false;
         }
 
-        return false;
+        position += sizeof(short);
+        return true;
+
     }
 
     public bool TryReadInt(ref long position, out int output)
@@ -75,38 +76,41 @@ public ref struct DicomByteBuffer
             return true;
         }
 
-        if (Reader.TryReadLittleEndian(out output))
+        if (!Reader.TryReadLittleEndian(out output))
         {
-            position += sizeof(int);
-            return true;
+            return false;
         }
 
-        return false;
+        position += sizeof(int);
+        return true;
+
     }
 
     public bool TryRead(ref long position, Span<byte> output)
     {
         if (!Span.IsEmpty)
         {
-            if (output.Length <= Span.Length)
+            if (output.Length > Span.Length)
             {
-                Span.Slice(0, output.Length).CopyTo(output);
-                Span = Span.Slice(output.Length);
-                position += output.Length;
-                return true;
+                return false;
             }
 
+            Span[..output.Length].CopyTo(output);
+            Span = Span[output.Length..];
+            position += output.Length;
+            return true;
+
+        }
+
+        if (!Reader.TryCopyTo(output))
+        {
             return false;
         }
 
-        if (Reader.TryCopyTo(output))
-        {
-            position += output.Length;
-            Reader.Advance(output.Length);
-            return true;
-        }
+        position += output.Length;
+        Reader.Advance(output.Length);
+        return true;
 
-        return false;
     }
 
     public bool TryReadVr(ref long position, out byte b1, out byte b2)
@@ -183,13 +187,14 @@ public ref struct DicomByteBuffer
 
         Reader.Advance(2);
 
-        if (Reader.TryReadLittleEndian(out output))
+        if (!Reader.TryReadLittleEndian(out output))
         {
-            position += 6;
-            return true;
+            return false;
         }
 
-        return false;
+        position += 6;
+        return true;
+
     }
 
     public bool TryReadImplicitVrLongValueLength(ref long position, out int output)
@@ -220,12 +225,13 @@ public ref struct DicomByteBuffer
             return false;
         }
 
-        if (Reader.TryReadLittleEndian(out output))
+        if (!Reader.TryReadLittleEndian(out output))
         {
-            position += 4;
-            return true;
+            return false;
         }
 
-        return false;
+        position += 4;
+        return true;
+
     }
 }

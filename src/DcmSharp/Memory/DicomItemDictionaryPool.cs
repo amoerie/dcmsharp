@@ -21,10 +21,12 @@ internal sealed class DicomItemDictionaryPool
 
     internal void Return(SortedDictionary<uint, DicomItem> dictionary)
     {
-        if (_pool.Count < _maxPoolSize)
+        if (_pool.Count >= _maxPoolSize)
         {
-            dictionary.Clear();
-            _pool.Enqueue(dictionary);
+            return;
         }
+
+        dictionary.Clear();
+        _pool.Enqueue(dictionary);
     }
 }
