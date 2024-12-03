@@ -18,7 +18,7 @@ internal sealed class ATParser
         return true;
     }
 
-    public bool TryParseString(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
+    public bool TryParse(ReadOnlySpan<byte> span, [NotNullWhen(true)] out string? value)
     {
         if (span.Length != 4)
         {

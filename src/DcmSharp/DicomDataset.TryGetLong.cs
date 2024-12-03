@@ -16,56 +16,17 @@ public readonly partial record struct DicomDataset
         switch (vr)
         {
             case DicomVR.IS:
-                if (_valueParser.IS.TryParse(memory.Value.Span, out int isValue))
-                {
-                    value = isValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.IS.TryParse(memory.Value.Span, out value);
             case DicomVR.SL:
-                if (_valueParser.SL.TryParse(memory.Value.Span, out int slValue))
-                {
-                    value = slValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.SL.TryParse(memory.Value.Span, out value);
             case DicomVR.SS:
-                if (_valueParser.SS.TryParse(memory.Value.Span, out short ssValue))
-                {
-                    value = ssValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.SS.TryParse(memory.Value.Span, out value);
             case DicomVR.SV:
                 return _valueParser.SV.TryParse(memory.Value.Span, out value);
             case DicomVR.UL:
-                if (_valueParser.UL.TryParse(memory.Value.Span, out uint uintValue))
-                {
-                    value = uintValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.UL.TryParse(memory.Value.Span, out value);
             case DicomVR.US:
-                if (_valueParser.US.TryParse(memory.Value.Span, out ushort usValue))
-                {
-                    value = usValue;
-                    return true;
-                }
-
-                break;
-            case DicomVR.UV:
-                if (_valueParser.UV.TryParse(memory.Value.Span, out ulong uvValue)
-                    && uvValue <= long.MaxValue)
-                {
-                    value = (long) uvValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.US.TryParse(memory.Value.Span, out value);
         }
 
         value = default;

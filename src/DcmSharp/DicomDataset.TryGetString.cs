@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 
 namespace DcmSharp;
 
@@ -25,47 +24,21 @@ public readonly partial record struct DicomDataset
             case DicomVR.AS:
                 return _valueParser.AS.TryParse(memory.Value.Span, out value);
             case DicomVR.AT:
-                return _valueParser.AT.TryParseString(memory.Value.Span, out value);
+                return _valueParser.AT.TryParse(memory.Value.Span, out value);
             case DicomVR.CS:
                 return _valueParser.CS.TryParse(memory.Value.Span, out value);
             case DicomVR.DA:
-                // TODO return raw value
-                if (_valueParser.DA.TryParse(memory.Value.Span, out DateOnly daValue))
-                {
-                    value = daValue.ToString("O");
-                    return true;
-                }
-
-                break;
+                return _valueParser.DA.TryParse(memory.Value.Span, out value);
             case DicomVR.DS:
                 return _valueParser.DS.TryParseString(memory.Value.Span, out value);
             case DicomVR.DT:
-                // TODO return raw value
-                if (_valueParser.DT.TryParse(memory.Value.Span, out DateTime dtValue))
-                {
-                    value = dtValue.ToString("O");
-                    return true;
-                }
-
-                break;
+                return _valueParser.DT.TryParse(memory.Value.Span, out value);
             case DicomVR.FL:
-                if(_valueParser.FL.TryParse(memory.Value.Span, out float flValue))
-                {
-                    value = flValue.ToString(CultureInfo.InvariantCulture);
-                    return true;
-                }
-
-                break;
+                return _valueParser.FL.TryParse(memory.Value.Span, out value);
             case DicomVR.FD:
-                if(_valueParser.FD.TryParse(memory.Value.Span, out double fdValue))
-                {
-                    value = fdValue.ToString(CultureInfo.InvariantCulture);
-                    return true;
-                }
-
-                break;
+                return _valueParser.FD.TryParse(memory.Value.Span, out value);
             case DicomVR.IS:
-                return _valueParser.IS.TryParseString(memory.Value.Span, out value);
+                return _valueParser.IS.TryParse(memory.Value.Span, out value);
             case DicomVR.LO:
                 return _valueParser.LO.TryParse(memory.Value.Span, encoding, out value);
             case DicomVR.LT:
@@ -75,70 +48,27 @@ public readonly partial record struct DicomDataset
             case DicomVR.SH:
                 return _valueParser.SH.TryParse(memory.Value.Span, encoding, out value);
             case DicomVR.SL:
-                if(_valueParser.SL.TryParse(memory.Value.Span, out int slValue))
-                {
-                    value = slValue.ToString(CultureInfo.InvariantCulture);
-                    return true;
-                }
-
-                break;
+                return _valueParser.SL.TryParse(memory.Value.Span, out value);
             case DicomVR.SS:
-                if(_valueParser.SS.TryParse(memory.Value.Span, out short ssValue))
-                {
-                    value = ssValue.ToString(CultureInfo.InvariantCulture);
-                    return true;
-                }
-
-                break;
+                return _valueParser.SS.TryParse(memory.Value.Span, out value);
             case DicomVR.ST:
                 return _valueParser.ST.TryParse(memory.Value.Span, encoding, out value);
             case DicomVR.SV:
-                if(_valueParser.SV.TryParse(memory.Value.Span, out long svValue))
-                {
-                    value = svValue.ToString(CultureInfo.InvariantCulture);
-                    return true;
-                }
-
-                break;
+                return _valueParser.SV.TryParse(memory.Value.Span, out value);
             case DicomVR.TM:
-                // TODO return raw value
-                if(_valueParser.TM.TryParse(memory.Value.Span, out var tmValue))
-                {
-                    value = tmValue.ToString("O");
-                    return true;
-                }
-
-                break;
+                return _valueParser.TM.TryParse(memory.Value.Span, out value);
             case DicomVR.UC:
                 return _valueParser.UC.TryParse(memory.Value.Span, out value);
             case DicomVR.UI:
                 return _valueParser.UI.TryParse(memory.Value.Span, out value);
             case DicomVR.UL:
-                if(_valueParser.UL.TryParse(memory.Value.Span, out uint ulValue))
-                {
-                    value = ulValue.ToString(CultureInfo.InvariantCulture);
-                    return true;
-                }
-
-                break;
+                return _valueParser.UL.TryParse(memory.Value.Span, out value);
             case DicomVR.US:
-                if(_valueParser.US.TryParse(memory.Value.Span, out ushort usValue))
-                {
-                    value = usValue.ToString();
-                    return true;
-                }
-
-                break;
+                return _valueParser.US.TryParse(memory.Value.Span, out value);
             case DicomVR.UT:
                 return _valueParser.UT.TryParse(memory.Value.Span, encoding, out value);
             case DicomVR.UV:
-                if(_valueParser.UV.TryParse(memory.Value.Span, out ulong uvValue))
-                {
-                    value = uvValue.ToString(CultureInfo.InvariantCulture);
-                    return true;
-                }
-
-                break;
+                return _valueParser.UV.TryParse(memory.Value.Span, out value);
         }
 
         value = default;

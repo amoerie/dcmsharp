@@ -2,10 +2,10 @@
 
 public readonly partial record struct DicomDataset
 {
-    public bool TryGetDoubles(DicomTag tag, out double[] values) =>
-        TryGetDoubles(tag.Group, tag.Element, out values);
+    public bool TryGetFloats(DicomTag tag, out float[] values) =>
+        TryGetFloats(tag.Group, tag.Element, out values);
 
-    public bool TryGetDoubles(ushort group, ushort element, out double[] values)
+    public bool TryGetFloats(ushort group, ushort element, out float[] values)
     {
         if (!TryGetValue(group, element, out ReadOnlyMemory<byte>? memory, out DicomVR? vr))
         {
@@ -17,8 +17,6 @@ public readonly partial record struct DicomDataset
         {
             case DicomVR.DS:
                 return _valueParser.DS.TryParseAll(memory.Value.Span, out values);
-            case DicomVR.FD:
-                return _valueParser.FD.TryParseAll(memory.Value.Span, out values);
             case DicomVR.FL:
                 return _valueParser.FL.TryParseAll(memory.Value.Span, out values);
             case DicomVR.IS:

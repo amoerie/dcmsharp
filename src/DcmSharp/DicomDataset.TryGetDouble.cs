@@ -20,69 +20,21 @@ public readonly partial record struct DicomDataset
             case DicomVR.FD:
                 return _valueParser.FD.TryParse(memory.Value.Span, out value);
             case DicomVR.FL:
-                if (_valueParser.FL.TryParse(memory.Value.Span, out float flValue))
-                {
-                    value = flValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.FL.TryParse(memory.Value.Span, out value);
             case DicomVR.IS:
-                if (_valueParser.IS.TryParse(memory.Value.Span, out int isValue))
-                {
-                    value = isValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.IS.TryParse(memory.Value.Span, out value);
             case DicomVR.SL:
-                if (_valueParser.SL.TryParse(memory.Value.Span, out int slValue))
-                {
-                    value = slValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.SL.TryParse(memory.Value.Span, out value);
             case DicomVR.SS:
-                if (_valueParser.SS.TryParse(memory.Value.Span, out short ssValue))
-                {
-                    value = ssValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.SS.TryParse(memory.Value.Span, out value);
             case DicomVR.SV:
-                if (_valueParser.SV.TryParse(memory.Value.Span, out long svValue))
-                {
-                    value = svValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.SV.TryParse(memory.Value.Span, out value);
             case DicomVR.UL:
-                if (_valueParser.UL.TryParse(memory.Value.Span, out uint uintValue))
-                {
-                    value = uintValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.UL.TryParse(memory.Value.Span, out value);
             case DicomVR.US:
-                if (_valueParser.US.TryParse(memory.Value.Span, out ushort usValue))
-                {
-                    value = usValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.US.TryParse(memory.Value.Span, out value);
             case DicomVR.UV:
-                if (_valueParser.UV.TryParse(memory.Value.Span, out ulong uvValue))
-                {
-                    value = uvValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.UV.TryParse(memory.Value.Span, out value);
         }
 
         value = default;
