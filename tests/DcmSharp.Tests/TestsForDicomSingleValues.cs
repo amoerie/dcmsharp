@@ -79,10 +79,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetDouble(DicomTags.SelectorDSValue, out double value).Should().BeTrue();
+        dicomDataset.TryGetDecimal(DicomTags.SelectorDSValue, out decimal value).Should().BeTrue();
 
         // Assert
-        value.Should().Be(0.25);
+        value.Should().Be(0.25m);
     }
 
     [Fact]
