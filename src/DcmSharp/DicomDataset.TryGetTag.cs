@@ -18,14 +18,7 @@ public readonly partial record struct DicomDataset
         switch (vr)
         {
             case DicomVR.AT:
-                if(_valueParser.AT.TryParse(memory.Value.Span, out ushort tagGroup, out ushort tagElement)
-                   && DicomTagsIndex.TryLookup(tagGroup, tagElement, out DicomTag? tag))
-                {
-                    value = tag;
-                    return true;
-                }
-
-                break;
+                return _valueParser.AT.TryParse(memory.Value.Span, out value);
         }
 
         value = default;

@@ -44,7 +44,7 @@ public readonly partial record struct DicomDataset
             case DicomVR.LT:
                 return _valueParser.LT.TryParse(memory.Value.Span, encoding, out value);
             case DicomVR.PN:
-                return _valueParser.PN.TryParseString(memory.Value.Span, encoding, out value);
+                return _valueParser.PN.TryParse(memory.Value.Span, encoding, out value);
             case DicomVR.SH:
                 return _valueParser.SH.TryParse(memory.Value.Span, encoding, out value);
             case DicomVR.SL:
@@ -58,7 +58,7 @@ public readonly partial record struct DicomDataset
             case DicomVR.TM:
                 return _valueParser.TM.TryParse(memory.Value.Span, out value);
             case DicomVR.UC:
-                return _valueParser.UC.TryParse(memory.Value.Span, out value);
+                return _valueParser.UC.TryParse(memory.Value.Span, encoding, out value);
             case DicomVR.UI:
                 return _valueParser.UI.TryParse(memory.Value.Span, out value);
             case DicomVR.UL:

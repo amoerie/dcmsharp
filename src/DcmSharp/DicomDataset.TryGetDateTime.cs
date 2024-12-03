@@ -2,10 +2,10 @@
 
 public readonly partial record struct DicomDataset
 {
-    public bool TryGetDate(DicomTag tag, out DateTime value)
-        => TryGetDate(tag.Group, tag.Element, out value);
+    public bool TryGetDateTime(DicomTag tag, out DateTime value)
+        => TryGetDateTime(tag.Group, tag.Element, out value);
 
-    public bool TryGetDate(ushort group, ushort element, out DateTime value)
+    public bool TryGetDateTime(ushort group, ushort element, out DateTime value)
     {
         if (!TryGetValue(group, element, out ReadOnlyMemory<byte>? memory, out DicomVR? vr))
         {

@@ -93,7 +93,7 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetDate(DicomTags.SelectorDTValue, out DateTime value).Should().BeTrue();
+        dicomDataset.TryGetDateTime(DicomTags.SelectorDTValue, out DateTime value).Should().BeTrue();
 
         // Assert
         value.Should().Be(DateTime.Parse("2024-12-03T12:00:00"));

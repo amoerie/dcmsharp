@@ -18,13 +18,7 @@ public readonly partial record struct DicomDataset
         switch (vr)
         {
             case DicomVR.PN:
-                if(_valueParser.PN.TryParse(memory.Value.Span, encoding, out DicomPersonName pnValue))
-                {
-                    value = pnValue;
-                    return true;
-                }
-
-                break;
+                return _valueParser.PN.TryParse(memory.Value.Span, encoding, out value);
         }
 
         value = default;

@@ -1,5 +1,7 @@
+using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace DcmSharp.Parser.ValueRepresentations;
@@ -72,4 +74,106 @@ internal sealed class DTParser
         value = Encoding.ASCII.GetString(DicomPadding.TrimEndSpaces(span));
         return true;
     }
+
+    [SkipLocalsInit]
+    public bool TryParseAll(ReadOnlySpan<byte> span, out DateTime[] values)
+    {
+        if (span.IsEmpty)
+        {
+            values = [];
+            return false;
+        }
+
+        ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimEndSpaces(span);
+
+        char[]? sharedChars = null;
+        Span<char> charSpan = trimmedSpan.Length < 255
+            ? stackalloc char[trimmedSpan.Length]
+            : ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+
+        int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
+        charSpan = charSpan[..written];
+
+        int numberOfValues = charSpan.Count('\\') + 1;
+        Range[]? sharedRanges = null;
+        Span<Range> ranges = numberOfValues < 16
+            ? stackalloc Range[numberOfValues]
+            : ArrayPool<Range>.Shared.Rent(numberOfValues);
+        MemoryExtensions.Split(charSpan, ranges, '\\');
+
+        values = new DateTime[numberOfValues];
+
+        bool allOk = true;
+        for (int i = 0; i < ranges.Length; i++)
+        {
+            Range range = ranges[i];
+
+            if (!DateTime.TryParseExact(charSpan[range], _formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+            {
+                allOk = false;
+                break;
+            }
+
+            values[i] = parsedDate;
+        }
+
+        if (sharedChars is not null)
+        {
+            ArrayPool<char>.Shared.Return(sharedChars);
+        }
+        if (sharedRanges is not null)
+        {
+            ArrayPool<Range>.Shared.Return(sharedRanges);
+        }
+
+        return allOk;
+    }
+
+
+    [SkipLocalsInit]
+    public bool TryParseAll(ReadOnlySpan<byte> span, out string[] values)
+    {
+        if (span.IsEmpty)
+        {
+            values = [];
+            return false;
+        }
+
+        ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimEndSpaces(span);
+
+        char[]? sharedChars = null;
+        Span<char> charSpan = trimmedSpan.Length < 255
+            ? stackalloc char[trimmedSpan.Length]
+            : ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+
+        int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
+        charSpan = charSpan[..written];
+
+        int numberOfValues = charSpan.Count('\\') + 1;
+        Range[]? sharedRanges = null;
+        Span<Range> ranges = numberOfValues < 16
+            ? stackalloc Range[numberOfValues]
+            : ArrayPool<Range>.Shared.Rent(numberOfValues);
+        MemoryExtensions.Split(charSpan, ranges, '\\');
+
+        values = new string[numberOfValues];
+
+        for (int i = 0; i < ranges.Length; i++)
+        {
+            Range range = ranges[i];
+            values[i] = new string(charSpan[range]);
+        }
+
+        if (sharedChars is not null)
+        {
+            ArrayPool<char>.Shared.Return(sharedChars);
+        }
+        if (sharedRanges is not null)
+        {
+            ArrayPool<Range>.Shared.Return(sharedRanges);
+        }
+
+        return true;
+    }
+
 }

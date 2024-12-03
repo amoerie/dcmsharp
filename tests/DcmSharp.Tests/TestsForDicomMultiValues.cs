@@ -93,7 +93,7 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetDates(DicomTags.SelectorDTValue, out DateTime[]? values).Should().BeTrue();
+        dicomDataset.TryGetDateTimes(DicomTags.SelectorDTValue, out DateTime[]? values).Should().BeTrue();
 
         // Assert
         values.Should().BeEquivalentTo([DateTime.Parse("2024-12-03T12:00:00"), DateTime.Parse("2024-13-03T12:00:00")]);
