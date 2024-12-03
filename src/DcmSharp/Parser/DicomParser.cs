@@ -168,7 +168,7 @@ internal sealed class DicomParser : IDicomParser
             {
                 result = await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
 
-                if (result.IsCompleted)
+                if (result.Buffer.Length == 0)
                 {
                     break;
                 }
@@ -607,7 +607,7 @@ internal sealed class DicomParser : IDicomParser
             if (state.CurrentValueMemory is null)
             {
                 // We can parse the value in one go
-                if (remaining > state.ShortValueLength.Value)
+                if (remaining >= state.ShortValueLength.Value)
                 {
                     state.CurrentValueMemory = AllocateShortMemory(ref state, state.ShortValueLength.Value);
                     state.CurrentShortValueMemoryOffset = 0;
@@ -654,7 +654,7 @@ internal sealed class DicomParser : IDicomParser
             if (state.CurrentValueMemory is null)
             {
                 // We can parse the value in one go
-                if (remaining > state.LongValueLength.Value)
+                if (remaining >= state.LongValueLength.Value)
                 {
                     state.CurrentValueMemory = AllocateLongMemory(ref state, state.LongValueLength.Value);
                     Span<byte> currentValueSpan = state.CurrentValueMemory.Value.Span;

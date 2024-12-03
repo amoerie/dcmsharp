@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace DcmSharp;
+﻿namespace DcmSharp;
 
 public readonly partial record struct DicomDataset
 {

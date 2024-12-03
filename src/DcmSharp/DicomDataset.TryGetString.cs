@@ -25,7 +25,7 @@ public readonly partial record struct DicomDataset
             case DicomVR.AS:
                 return _valueParser.AS.TryParse(memory.Value.Span, out value);
             case DicomVR.AT:
-                break;
+                return _valueParser.AT.TryParseString(memory.Value.Span, out value);
             case DicomVR.CS:
                 return _valueParser.CS.TryParse(memory.Value.Span, out value);
             case DicomVR.DA:
