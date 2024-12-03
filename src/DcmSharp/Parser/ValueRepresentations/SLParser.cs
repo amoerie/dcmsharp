@@ -87,9 +87,8 @@ internal sealed class SLParser
             return false;
         }
 
-        values = new int[Length];
-        int numberOfValues = span.Length / Length;
-        for (int i = 0; i < numberOfValues; i++)
+        values = new int[span.Length / Length];
+        for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
             values[i] = BitConverter.ToInt32(span.Slice(offset, Length));
@@ -106,9 +105,8 @@ internal sealed class SLParser
             return false;
         }
 
-        values = new long[Length];
-        int numberOfValues = span.Length / Length;
-        for (int i = 0; i < numberOfValues; i++)
+        values = new long[span.Length / Length];
+        for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
             values[i] = BitConverter.ToInt32(span.Slice(offset, Length));
@@ -125,9 +123,8 @@ internal sealed class SLParser
             return false;
         }
 
-        values = new float[Length];
-        int numberOfValues = span.Length / Length;
-        for (int i = 0; i < numberOfValues; i++)
+        values = new float[span.Length / Length];
+        for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
             values[i] = BitConverter.ToInt32(span.Slice(offset, Length));
@@ -144,9 +141,8 @@ internal sealed class SLParser
             return false;
         }
 
-        values = new double[Length];
-        int numberOfValues = span.Length / Length;
-        for (int i = 0; i < numberOfValues; i++)
+        values = new double[span.Length / Length];
+        for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
             values[i] = BitConverter.ToInt32(span.Slice(offset, Length));
@@ -163,9 +159,8 @@ internal sealed class SLParser
             return false;
         }
 
-        values = new decimal[Length];
-        int numberOfValues = span.Length / Length;
-        for (int i = 0; i < numberOfValues; i++)
+        values = new decimal[span.Length / Length];
+        for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
             values[i] = BitConverter.ToInt32(span.Slice(offset, Length));
@@ -182,9 +177,8 @@ internal sealed class SLParser
             return false;
         }
 
-        values = new string[Length];
-        int numberOfValues = span.Length / Length;
-        for (int i = 0; i < numberOfValues; i++)
+        values = new string[span.Length / Length];
+        for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
             values[i] = BitConverter.ToInt32(span.Slice(offset, Length)).ToString(CultureInfo.InvariantCulture);

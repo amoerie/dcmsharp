@@ -19,7 +19,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseAE()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -33,7 +33,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseAS()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -47,7 +47,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseAT()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -61,7 +61,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseDA()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -75,7 +75,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseDS()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -89,21 +89,21 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseDT()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
         dicomDataset.TryGetDateTimes(DicomTags.SelectorDTValue, out DateTime[]? values).Should().BeTrue();
 
         // Assert
-        values.Should().BeEquivalentTo([DateTime.Parse("2024-12-03T12:00:00"), DateTime.Parse("2024-13-03T12:00:00")]);
+        values.Should().BeEquivalentTo([DateTime.Parse("2024-12-03T12:00:00"), DateTime.Parse("2024-11-03T12:00:00")]);
     }
 
     [Fact]
     public async Task ShouldParseFD()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -117,7 +117,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseFL()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -131,7 +131,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseIS()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -145,7 +145,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseLO()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -159,21 +159,21 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseLT()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
         dicomDataset.TryGetStrings(DicomTags.SelectorLTValue, out string[]? values).Should().BeTrue();
 
         // Assert
-        values.Should().BeEquivalentTo(["Some long notes", "More long notes"]);
+        values.Should().BeEquivalentTo(["Some long notes"]);
     }
 
     [Fact]
     public async Task ShouldParsePN()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -189,7 +189,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseSH()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -203,7 +203,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseSL()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -217,7 +217,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseSS()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -231,21 +231,21 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseST()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
         dicomDataset.TryGetStrings(DicomTags.SelectorSTValue, out string[]? values).Should().BeTrue();
 
         // Assert
-        values.Should().BeEquivalentTo([ "History1", "History2"]);
+        values.Should().BeEquivalentTo([ "History1"]);
     }
 
     [Fact]
     public async Task ShouldParseSV()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -259,7 +259,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseTM()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -273,7 +273,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseUC()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -287,7 +287,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseUI()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -301,7 +301,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseUL()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -316,7 +316,7 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseUS()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
@@ -330,21 +330,21 @@ public sealed class TestsForDicomMultiValues
     public async Task ShouldParseUT()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
         dicomDataset.TryGetStrings(DicomTags.SelectorUTValue, out string[]? values).Should().BeTrue();
 
         // Assert
-        values.Should().BeEquivalentTo([ "Modified", "Updated" ]);
+        values.Should().BeEquivalentTo([ "Modified" ]);
     }
 
     [Fact]
     public async Task ShouldParseUV()
     {
         // Arrange
-        var file = new FileInfo("./Dicom/SingleValues.dcm");
+        var file = new FileInfo("./Dicom/MultiValues.dcm");
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
