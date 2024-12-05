@@ -57,6 +57,6 @@ internal readonly struct DicomMemory : IMemoryOwner<byte>
     public override string ToString()
     {
         // Same representation used in Span<T>
-        return $"DicomMemory<byte>[{Length}]";
+        return $"{nameof(DicomMemory)}[{Length}]";
     }
 }

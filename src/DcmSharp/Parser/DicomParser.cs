@@ -724,7 +724,7 @@ internal sealed class DicomParser : IDicomParser
 
             if (state.CurrentGroupNumber == DicomTags.TransferSyntaxUID.Group
                 && state.CurrentElementNumber == DicomTags.TransferSyntaxUID.Element
-                && state.CurrentDicomItem.Value.Content.Bytes!.Value.Span.SequenceEqual(
+                && state.CurrentDicomItem.Value.Content.Memory!.Value.Span.SequenceEqual(
                     _implicitVRLittleEndianBytes))
             {
                 state.SetToImplicitVrAfterFileMetaInfo = true;
@@ -732,7 +732,7 @@ internal sealed class DicomParser : IDicomParser
 
             if (state.CurrentGroupNumber == DicomTags.SpecificCharacterSet.Group
                 && state.CurrentElementNumber == DicomTags.SpecificCharacterSet.Element
-                && state.CurrentDicomItem.Value.Content.Bytes is { } specificCharacterSetBytes
+                && state.CurrentDicomItem.Value.Content.Memory is { } specificCharacterSetBytes
                 && state.ValueParser.CS.TryParse(specificCharacterSetBytes.Span, out string? specificCharacterSet)
                 && DicomEncoding.TryParse(specificCharacterSet, out Encoding? encoding))
             {

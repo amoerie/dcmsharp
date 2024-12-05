@@ -7,7 +7,7 @@ public readonly partial record struct ReadOnlyDicomDataset
 
     public bool TryGetDoubles(ushort group, ushort element, out double[] values)
     {
-        if (!TryGetValue(group, element, out ReadOnlyMemory<byte>? memory, out DicomVR? vr))
+        if (!TryGetMemory(group, element, out ReadOnlyMemory<byte>? memory, out DicomVR? vr))
         {
             values = [];
             return false;

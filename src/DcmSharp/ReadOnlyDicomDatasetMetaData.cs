@@ -2,7 +2,7 @@
 
 namespace DcmSharp;
 
-public sealed record DicomDatasetMetaData
+public sealed record ReadOnlyDicomDatasetMetaData
 {
-    public Encoding Encoding { get; set; } = Encoding.ASCII;
+    public Encoding Encoding { get; internal set; } = Encoding.ASCII;
 }

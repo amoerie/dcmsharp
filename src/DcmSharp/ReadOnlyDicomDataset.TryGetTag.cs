@@ -9,7 +9,7 @@ public readonly partial record struct ReadOnlyDicomDataset
 
     public bool TryGetTag(ushort group, ushort element, [NotNullWhen(true)] out DicomTag? value)
     {
-        if (!TryGetValue(group, element, out ReadOnlyMemory<byte>? memory, out DicomVR? vr))
+        if (!TryGetMemory(group, element, out ReadOnlyMemory<byte>? memory, out DicomVR? vr))
         {
             value = default;
             return false;

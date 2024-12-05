@@ -7,7 +7,7 @@ public readonly partial record struct ReadOnlyDicomDataset
 
     public bool TryGetLong(ushort group, ushort element, out long value)
     {
-        if (!TryGetValue(group, element, out ReadOnlyMemory<byte>? memory, out DicomVR? vr))
+        if (!TryGetMemory(group, element, out ReadOnlyMemory<byte>? memory, out DicomVR? vr))
         {
             value = default;
             return false;

@@ -10,7 +10,7 @@ public readonly partial record struct ReadOnlyDicomDataset : IDisposable
     private readonly DicomMemories _memories;
     private readonly DicomValueParser _valueParser;
     private readonly SortedDictionary<uint, ReadOnlyDicomItem> _items;
-    private readonly DicomDatasetMetaData _metaData;
+    private readonly ReadOnlyDicomDatasetMetaData _metaData;
 
     internal ReadOnlyDicomDataset(
         DicomItemDictionaryPool dicomItemDictionaryPool,
@@ -21,7 +21,7 @@ public readonly partial record struct ReadOnlyDicomDataset : IDisposable
         _memories = memories ?? throw new ArgumentNullException(nameof(memories));
         _valueParser = valueParser ?? throw new ArgumentNullException(nameof(valueParser));
         _items = _pool.Rent();
-        _metaData = new DicomDatasetMetaData();
+        _metaData = new ReadOnlyDicomDatasetMetaData();
     }
 
     public Encoding Encoding
