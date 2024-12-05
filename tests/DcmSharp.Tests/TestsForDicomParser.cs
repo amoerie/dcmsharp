@@ -81,13 +81,13 @@ public sealed class TestsForDicomParser
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act + Assert
-        dicomDataset.TryGetSequence(DicomTags.SourceImageSequence, out DicomDataset[]? sourceImageSequence)
+        dicomDataset.TryGetSequence(DicomTags.SourceImageSequence, out ReadOnlyDicomDataset[]? sourceImageSequence)
             .Should().BeTrue();
         sourceImageSequence.Should().NotBeNull();
         var firstSourceImage = sourceImageSequence![0];
         firstSourceImage.Should().NotBeNull();
         firstSourceImage.TryGetSequence(DicomTags.PurposeOfReferenceCodeSequence,
-                out DicomDataset[]? purposeOfReferenceCodeSequence)
+                out ReadOnlyDicomDataset[]? purposeOfReferenceCodeSequence)
             .Should().BeTrue();
         purposeOfReferenceCodeSequence.Should().NotBeNull();
         var firstPurposeOfReferenceCodeSequence = purposeOfReferenceCodeSequence![0];

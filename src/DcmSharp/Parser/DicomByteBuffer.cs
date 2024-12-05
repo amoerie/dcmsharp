@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace DcmSharp;
+namespace DcmSharp.Parser;
 
 [StructLayout(LayoutKind.Auto)]
 public ref struct DicomByteBuffer

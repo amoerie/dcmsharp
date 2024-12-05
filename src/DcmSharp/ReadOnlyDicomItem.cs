@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 namespace DcmSharp;
 
 [StructLayout(LayoutKind.Auto)]
-public readonly record struct DicomItem(
+public readonly record struct ReadOnlyDicomItem(
     ushort Group,
     ushort Element,
     DicomVR VR,
-    DicomItemContent Content)
+    ReadOnlyDicomItemContent Content)
 {
     public override string ToString()
     {

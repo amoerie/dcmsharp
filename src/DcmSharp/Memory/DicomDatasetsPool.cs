@@ -4,21 +4,21 @@ namespace DcmSharp.Memory;
 
 internal sealed class DicomDatasetsPool
 {
-    private readonly ArrayPool<DicomDataset> _pool;
+    private readonly ArrayPool<ReadOnlyDicomDataset> _pool;
 
     public DicomDatasetsPool(int maxArrayLength, int maxArraysPerBucket)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(maxArrayLength);
         ArgumentOutOfRangeException.ThrowIfNegative(maxArraysPerBucket);
-        _pool = ArrayPool<DicomDataset>.Create(maxArrayLength, maxArraysPerBucket);
+        _pool = ArrayPool<ReadOnlyDicomDataset>.Create(maxArrayLength, maxArraysPerBucket);
     }
 
-    internal DicomDataset[] Rent(int minimumLength)
+    internal ReadOnlyDicomDataset[] Rent(int minimumLength)
     {
         return _pool.Rent(minimumLength);
     }
 
-    internal void Return(DicomDataset[] datasets)
+    internal void Return(ReadOnlyDicomDataset[] datasets)
     {
         _pool.Return(datasets);
     }

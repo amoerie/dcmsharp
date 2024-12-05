@@ -1,6 +1,6 @@
 ﻿namespace DcmSharp;
 
-public readonly partial record struct DicomDataset
+public readonly partial record struct ReadOnlyDicomDataset
 {
     public bool TryGetTimes(DicomTag tag, out TimeOnly[] value)
         => TryGetTimes(tag.Group, tag.Element, out value);

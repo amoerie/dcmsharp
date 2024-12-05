@@ -3,7 +3,7 @@
 internal sealed class DicomDatasets
 {
     private readonly DicomDatasetsPool _datasetsPool;
-    private DicomDataset[] _datasets;
+    private ReadOnlyDicomDataset[] _datasets;
     private int _index;
     private int _readonly;
 
@@ -23,7 +23,7 @@ internal sealed class DicomDatasets
         return new ReadOnlyDicomDatasets(_datasetsPool, _datasets, _index);
     }
 
-    internal void Add(DicomDataset dataset)
+    internal void Add(ReadOnlyDicomDataset dataset)
     {
         if (Interlocked.CompareExchange(ref _readonly, 0, 0) == 1)
         {

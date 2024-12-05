@@ -6,7 +6,7 @@ internal sealed class DicomItemDictionaryPool
 {
     private readonly int _maxPoolSize;
 
-    private static readonly ConcurrentQueue<SortedDictionary<uint, DicomItem>> _pool = new ConcurrentQueue<SortedDictionary<uint, DicomItem>>();
+    private static readonly ConcurrentQueue<SortedDictionary<uint, ReadOnlyDicomItem>> _pool = new ConcurrentQueue<SortedDictionary<uint, ReadOnlyDicomItem>>();
 
     public DicomItemDictionaryPool(int maxPoolSize)
     {
@@ -14,12 +14,12 @@ internal sealed class DicomItemDictionaryPool
         _maxPoolSize = maxPoolSize;
     }
 
-    internal SortedDictionary<uint, DicomItem> Rent()
+    internal SortedDictionary<uint, ReadOnlyDicomItem> Rent()
     {
-        return _pool.TryDequeue(out var dictionary) ? dictionary : new SortedDictionary<uint, DicomItem>(Comparer<uint>.Default);
+        return _pool.TryDequeue(out var dictionary) ? dictionary : new SortedDictionary<uint, ReadOnlyDicomItem>(Comparer<uint>.Default);
     }
 
-    internal void Return(SortedDictionary<uint, DicomItem> dictionary)
+    internal void Return(SortedDictionary<uint, ReadOnlyDicomItem> dictionary)
     {
         if (_pool.Count >= _maxPoolSize)
         {

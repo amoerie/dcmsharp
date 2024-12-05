@@ -11,4 +11,102 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="System.IO.Pipelines" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="ReadOnlyDicomDataset.TryGetDate.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetDates.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetDateTime.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetDateTimes.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetDecimal.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetDecimals.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetDouble.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetDoubles.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetFloat.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetFloats.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetInt.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetInts.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetLong.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetLongs.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetPersonName.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetPersonNames.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetSequence.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetShort.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetShorts.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetString.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetStrings.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetTag.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetTags.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetTime.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetTimes.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetUInt.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetUInts.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetULong.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetULongs.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetUShort.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetUShorts.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ReadOnlyDicomDataset.TryGetValue.cs">
+      <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

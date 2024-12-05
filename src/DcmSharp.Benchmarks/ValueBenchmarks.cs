@@ -17,7 +17,7 @@ public class ValueBenchmarks
     private IDicomParser _dicomParser = default!;
     private ServiceProvider _serviceProvider = default!;
     private DicomFile _dicomFile = default!;
-    private DicomDataset _dicomDataset;
+    private ReadOnlyDicomDataset _readOnlyDicomDataset;
 
     [GlobalSetup]
     public void Setup()
@@ -30,13 +30,13 @@ public class ValueBenchmarks
         _file = new FileInfo($"./Dicom/ExplicitVR.dcm");
         _dicomParser = _serviceProvider.GetRequiredService<IDicomParser>();
         _dicomFile = DicomFile.Open(_file.FullName, FileReadOption.ReadLargeOnDemand);
-        _dicomDataset = _dicomParser.ParseAsync(_file).Result;
+        _readOnlyDicomDataset = _dicomParser.ParseAsync(_file).Result;
     }
 
     [GlobalCleanup]
     public void Cleanup()
     {
-        _dicomDataset.Dispose();
+        _readOnlyDicomDataset.Dispose();
         _serviceProvider.Dispose();
     }
 
@@ -57,10 +57,10 @@ public class ValueBenchmarks
     [Benchmark]
     public int DicomParser()
     {
-        _ = _dicomDataset.TryGetString(DicomTags.SOPInstanceUID, out string? sopInstanceUID);
-        _ = _dicomDataset.TryGetString(DicomTags.PatientID, out string? patientId);
-        _ = _dicomDataset.TryGetString(DicomTags.Modality, out string? modality);
-        _ = _dicomDataset.TryGetInt(DicomTags.ExposureTime, out int exposureTime);
+        _ = _readOnlyDicomDataset.TryGetString(DicomTags.SOPInstanceUID, out string? sopInstanceUID);
+        _ = _readOnlyDicomDataset.TryGetString(DicomTags.PatientID, out string? patientId);
+        _ = _readOnlyDicomDataset.TryGetString(DicomTags.Modality, out string? modality);
+        _ = _readOnlyDicomDataset.TryGetInt(DicomTags.ExposureTime, out int exposureTime);
 
         return (sopInstanceUID?.Length ?? 0)
                + (patientId?.Length ?? 0)

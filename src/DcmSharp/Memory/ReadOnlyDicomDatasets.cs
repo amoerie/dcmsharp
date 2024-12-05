@@ -3,17 +3,17 @@
 public readonly struct ReadOnlyDicomDatasets : IDisposable
 {
     private readonly DicomDatasetsPool _datasetsPool;
-    private readonly DicomDataset[] _datasets;
+    private readonly ReadOnlyDicomDataset[] _datasets;
     private readonly int _length;
 
-    internal ReadOnlyDicomDatasets(DicomDatasetsPool datasetsPool, DicomDataset[] datasets, int length)
+    internal ReadOnlyDicomDatasets(DicomDatasetsPool datasetsPool, ReadOnlyDicomDataset[] datasets, int length)
     {
         _datasetsPool = datasetsPool;
         _datasets = datasets ?? throw new ArgumentNullException(nameof(datasets));
         _length = length;
     }
 
-    public ReadOnlyMemory<DicomDataset> Datasets => _datasets.AsMemory(0, _length);
+    public ReadOnlyMemory<ReadOnlyDicomDataset> Datasets => _datasets.AsMemory(0, _length);
 
     public void Dispose()
     {

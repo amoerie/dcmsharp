@@ -1,6 +1,6 @@
 ﻿namespace DcmSharp;
 
-public readonly partial record struct DicomDataset
+public readonly partial record struct ReadOnlyDicomDataset
 {
     public bool TryGetDate(DicomTag tag, out DateOnly value)
         => TryGetDate(tag.Group, tag.Element, out value);

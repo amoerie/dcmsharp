@@ -58,10 +58,10 @@ internal struct DicomParseState
     public DicomFragments? CurrentFragments = null;
 
     /* The current DICOM item */
-    public DicomItem? CurrentDicomItem = null;
+    public ReadOnlyDicomItem? CurrentDicomItem = null;
 
     /* The DICOM data set */
-    public DicomDataset DicomDataset = default!;
+    public ReadOnlyDicomDataset ReadOnlyDicomDataset = default!;
 
     public DicomParseState()
     {
