@@ -412,9 +412,13 @@ FodyWeavers.xsd
 **/.idea/**/sqlDataSources.xml
 **/.idea/**/dynamic.xml
 **/.idea/**/cody_history.xml
+**/.idea/**/misc.xml
 
 # Rider
 # Rider auto-generates .iml files, and contentModel.xml
 **/.idea/**/*.iml
 **/.idea/**/contentModel.xml
 **/.idea/**/modules.xml
+
+# Copilot
+copilot.*.xml
