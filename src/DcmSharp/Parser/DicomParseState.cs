@@ -19,6 +19,7 @@ internal struct DicomParseState
 
     // The current parse state
     public DicomParseStage ParseStage = DicomParseStage.ParseGroup;
+    public bool IsStopped = false;
 
     // Whether the current dataset is explicit VR
     // The file meta information group (0002) is always explicit VR, so it is safe to begin with this value set to true

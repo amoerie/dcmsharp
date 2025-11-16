@@ -10,7 +10,7 @@ namespace DcmSharp.Parser;
 
 public interface IDicomParser
 {
-    Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, CancellationToken cancellationToken = default);
+    Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, DicomParserOptions? options = null, CancellationToken cancellationToken = default);
 }
 
 internal sealed class DicomParser : IDicomParser
@@ -70,7 +70,7 @@ internal sealed class DicomParser : IDicomParser
     {
         { } even when even.Length % 2 == 0 => even,
         { } uneven => [..uneven, 0],
-        _ => throw new UnreachableException()
+        _ => throw new UnreachableException(),
     };
 
     private const ushort ItemGroup = 0xFFFE;
@@ -85,11 +85,11 @@ internal sealed class DicomParser : IDicomParser
     }
 
     [SuppressMessage("Usage", "MA0004:Use Task.ConfigureAwait")]
-    public async Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, CancellationToken cancellationToken = default)
+    public async Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, DicomParserOptions? options = null, CancellationToken cancellationToken = default)
     {
         var pipe = new Pipe();
         var fillPipeTask = FillPipeAsync(file, pipe.Writer, cancellationToken);
-        var readPipeTask = ReadPipeAsync(pipe.Reader, cancellationToken);
+        var readPipeTask = ReadPipeAsync(pipe.Reader, options, cancellationToken);
         await Task.WhenAll(fillPipeTask, readPipeTask);
         return await readPipeTask;
     }
@@ -138,11 +138,13 @@ internal sealed class DicomParser : IDicomParser
         }
     }
 
-    private async Task<ReadOnlyDicomDataset> ReadPipeAsync(PipeReader reader, CancellationToken cancellationToken = default)
+    private async Task<ReadOnlyDicomDataset> ReadPipeAsync(PipeReader reader, DicomParserOptions? options = null, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(reader);
+        options ??= DicomParserOptions.Default;
+
         var dicomDataset =
             new ReadOnlyDicomDataset(_largeDicomItemDictionaryPool, new DicomMemories(_memoriesPool), _valueParser);
-        long position;
 
         // Ensure DICOM3
         // The first 128 bytes should be empty
@@ -155,7 +157,7 @@ internal sealed class DicomParser : IDicomParser
 
         EnsureValidPreamble(result.Buffer.Slice(128, 4));
         reader.AdvanceTo(result.Buffer.GetPosition(132));
-        position = 132;
+        long position = 132;
 
         var state = new DicomParseState
         {
@@ -176,7 +178,7 @@ internal sealed class DicomParser : IDicomParser
                 ReadOnlySequence<byte> sequence = result.Buffer;
                 DicomByteBuffer buffer = new DicomByteBuffer(result.Buffer);
                 long originalPosition = state.Position;
-                Parse(ref buffer, ref state, cancellationToken);
+                Parse(ref buffer, ref state, options, cancellationToken);
                 long parsed = state.Position - originalPosition;
                 if (parsed == 0)
                 {
@@ -191,9 +193,9 @@ internal sealed class DicomParser : IDicomParser
                     position += parsed;
                     sequence = sequence.Slice(parsed);
                 }
-
                 reader.AdvanceTo(sequence.Start, sequence.End);
-                if (result.IsCompleted)
+
+                if (result.IsCompleted || state.IsStopped)
                 {
                     break;
                 }
@@ -236,8 +238,10 @@ internal sealed class DicomParser : IDicomParser
         }
     }
 
-    static void Parse(ref DicomByteBuffer buffer, ref DicomParseState state, CancellationToken cancellationToken)
+    static void Parse(ref DicomByteBuffer buffer, ref DicomParseState state, DicomParserOptions options, CancellationToken cancellationToken)
     {
+        StopParsingOptions? stopParsing = options.StopParsing;
+
         while (!buffer.IsEmpty)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -297,8 +301,33 @@ internal sealed class DicomParser : IDicomParser
                     throw new DicomException("Unknown parse stage: " + state.ParseStage);
             }
 
-            if (state.CurrentSequence is { } currentSequence)
+            // Check if we need to stop parsing
+            if (stopParsing is not null
+                && stopParsing.Depth == state.CurrentSequences.Count
+                && stopParsing.Group <= state.CurrentGroupNumber
+                && stopParsing.Element <= state.CurrentElementNumber)
             {
+                state.IsStopped = true;
+
+                // Close open sequences
+                while (state.CurrentSequence is not null)
+                {
+                    var currentSequence = state.CurrentSequence.Value;
+                    if (state.CurrentSequenceItem is not null)
+                    {
+                        var currentSequenceItem = state.CurrentSequenceItem.Value;
+                        CloseCurrentSequenceItem(ref state, currentSequence, currentSequenceItem);
+                    }
+
+                    CloseCurrentSequence(ref state, currentSequence);
+                }
+                return;
+            }
+
+            if (state.CurrentSequence is not null)
+            {
+                var currentSequence = state.CurrentSequence.Value;
+
                 // Handle sequence item with explicit length instead of item delimitation items
                 if (state.CurrentSequenceItem is { } currentSequenceItem
                     && currentSequenceItem.EndPosition is { } sequenceItemEndPosition
