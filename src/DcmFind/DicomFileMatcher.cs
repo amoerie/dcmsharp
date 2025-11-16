@@ -1,12 +1,13 @@
 ﻿using System.Threading.Channels;
-using FellowOakDicom;
+using DcmSharp;
+using DcmSharp.Parser;
 
 namespace DcmFind;
 
-public static class DicomFileMatcher
+public class DicomFileMatcher(IDicomParser dicomParser)
 {
-    public static async Task MatchAsync(
-        ChannelReader<string> input, 
+    public async Task MatchAsync(
+        ChannelReader<string> input,
         ChannelWriter<string> output,
         bool writeToConsoleOutput,
         ChannelWriter<ConsoleOutput> consoleOutput,
@@ -23,25 +24,15 @@ public static class DicomFileMatcher
                     {
                         consoleOutput.TryWrite(new ConsoleOutput(file, true));
                     }
-                            
+
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    DicomFile dicomFile;
+                    ReadOnlyDicomDataset dicomDataset;
                     try
                     {
-                        dicomFile = await DicomFile.OpenAsync(file);
-
-                        if (dicomFile == null)
-                        {
-                            continue;
-                        }
-
-                        if (dicomFile.Format != DicomFileFormat.DICOM3)
-                        {
-                            continue;
-                        }
+                        dicomDataset = await dicomParser.ParseAsync(new FileInfo(file), cancellationToken);
                     }
-                    catch (DicomFileException)
+                    catch (DicomException)
                     {
                         continue;
                     }
@@ -50,13 +41,13 @@ public static class DicomFileMatcher
                     for (var i = 0; i < queries.Count; i++)
                     {
                         var query = queries[i];
-                        if (!query.Matches(dicomFile.Dataset) && !query.Matches(dicomFile.FileMetaInfo))
+                        if (!query.Matches(dicomDataset))
                         {
                             matches = false;
                             break;
                         }
                     }
-                    
+
                     if (matches)
                     {
                         await output.WriteAsync(file, cancellationToken);

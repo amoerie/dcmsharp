@@ -1,4 +1,4 @@
-﻿using FellowOakDicom;
+﻿using DcmSharp;
 
 namespace DcmFind
 {

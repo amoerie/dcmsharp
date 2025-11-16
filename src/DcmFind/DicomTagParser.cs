@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using DcmSharp;
 using FellowOakDicom;
 
 namespace DcmFind
@@ -33,7 +34,7 @@ namespace DcmFind
                 dicomTag = DicomTag.Parse(dicomTagAsString);
                 return true;
             }
-            catch (DicomDataException e)
+            catch (DicomException e)
             {
                 Console.Error.WriteLine($"Invalid DICOM tag '{dicomTagAsString}': " + e.Message);
                 Console.Error.WriteLine(e);

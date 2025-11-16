@@ -1,17 +1,17 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
-using FellowOakDicom;
+using DcmSharp;
 
 namespace DcmFind
 {
     public interface IQuery
     {
-        bool Matches(DicomDataset dicomDataset);
+        bool Matches(ReadOnlyDicomDataset dicomDataset);
     }
 
     public class EqualsQuery : IQuery
     {
-        private readonly Func<DicomDataset, bool> _predicate;
+        private readonly Func<ReadOnlyDicomDataset, bool> _predicate;
 
         public EqualsQuery(DicomTag dicomTag, string value)
         {
@@ -19,18 +19,18 @@ namespace DcmFind
             if (value == null) throw new ArgumentNullException(nameof(value));
             var pattern = $"^{Regex.Escape(value).Replace("%", ".*")}$";
             var regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant);
-            _predicate = dicomDataset => regex.IsMatch(dicomDataset.GetValueOrDefault(dicomTag, 0, ""));
+            _predicate = dicomDataset => regex.IsMatch(dicomDataset.TryGetString(dicomTag, out string? dicomTagValue) ? dicomTagValue : "");
         }
 
-        public bool Matches(DicomDataset dicomDataset)
+        public bool Matches(ReadOnlyDicomDataset dicomDataset)
         {
             return _predicate(dicomDataset);
         }
     }
-    
+
     public class NotEqualsQuery : IQuery
     {
-        private readonly Func<DicomDataset, bool> _predicate;
+        private readonly Func<ReadOnlyDicomDataset, bool> _predicate;
 
         public NotEqualsQuery(DicomTag dicomTag, string value)
         {
@@ -38,10 +38,10 @@ namespace DcmFind
             if (value == null) throw new ArgumentNullException(nameof(value));
             var pattern = $"^{Regex.Escape(value).Replace("%", ".*")}$";
             var regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant);
-            _predicate = dicomDataset => !regex.IsMatch(dicomDataset.GetValueOrDefault(dicomTag, 0, ""));
+            _predicate = dicomDataset => !regex.IsMatch(dicomDataset.TryGetString(dicomTag, out string? dicomTagValue) ? dicomTagValue : "");
         }
 
-        public bool Matches(DicomDataset dicomDataset)
+        public bool Matches(ReadOnlyDicomDataset dicomDataset)
         {
             return _predicate(dicomDataset);
         }
@@ -49,7 +49,7 @@ namespace DcmFind
 
     public class LowerThanQuery : IQuery
     {
-        private readonly Func<DicomDataset, bool> _predicate;
+        private readonly Func<ReadOnlyDicomDataset, bool> _predicate;
 
         public LowerThanQuery(DicomTag dicomTag, string value, bool inclusive)
         {
@@ -60,12 +60,12 @@ namespace DcmFind
             {
                 if (inclusive)
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetValue<DateTime>(dicomTag, 0, out var dateTimeDicomTagValue)
+                    _predicate = dicomDataset => dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
                                                  && dateTimeDicomTagValue <= dateTimeValue;
                 }
                 else
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetValue<DateTime>(dicomTag, 0, out var dateTimeDicomTagValue)
+                    _predicate = dicomDataset => dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
                                                  && dateTimeDicomTagValue < dateTimeValue;
                 }
             }
@@ -73,12 +73,12 @@ namespace DcmFind
             {
                 if (inclusive)
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetValue<long>(dicomTag, 0, out var longDicomTagValue)
+                    _predicate = dicomDataset => dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
                                                  && longDicomTagValue <= longValue;
                 }
                 else
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetValue<long>(dicomTag, 0, out var longDicomTagValue)
+                    _predicate = dicomDataset => dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
                                                  && longDicomTagValue < longValue;
                 }
             }
@@ -95,7 +95,7 @@ namespace DcmFind
             }
         }
 
-        public bool Matches(DicomDataset dicomDataset)
+        public bool Matches(ReadOnlyDicomDataset dicomDataset)
         {
             return _predicate(dicomDataset);
         }
@@ -103,7 +103,7 @@ namespace DcmFind
 
     public class GreaterThanQuery : IQuery
     {
-        private readonly Func<DicomDataset, bool> _predicate;
+        private readonly Func<ReadOnlyDicomDataset, bool> _predicate;
 
         public GreaterThanQuery(DicomTag dicomTag, string value, bool inclusive)
         {
@@ -114,12 +114,12 @@ namespace DcmFind
             {
                 if (inclusive)
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetValue<DateTime>(dicomTag, 0, out var dateTimeDicomTagValue)
+                    _predicate = dicomDataset => dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
                                                  && dateTimeDicomTagValue >= dateTimeValue;
                 }
                 else
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetValue<DateTime>(dicomTag, 0, out var dateTimeDicomTagValue)
+                    _predicate = dicomDataset => dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
                                                  && dateTimeDicomTagValue > dateTimeValue;
                 }
             }
@@ -127,12 +127,12 @@ namespace DcmFind
             {
                 if (inclusive)
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetValue<long>(dicomTag, 0, out var longDicomTagValue)
+                    _predicate = dicomDataset => dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
                                                  && longDicomTagValue >= longValue;
                 }
                 else
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetValue<long>(dicomTag, 0, out var longDicomTagValue)
+                    _predicate = dicomDataset => dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
                                                  && longDicomTagValue > longValue;
                 }
             }
@@ -149,12 +149,12 @@ namespace DcmFind
             }
         }
 
-        public bool Matches(DicomDataset dicomDataset)
+        public bool Matches(ReadOnlyDicomDataset dicomDataset)
         {
             return _predicate(dicomDataset);
         }
     }
-    
+
     public class ContainsTagQuery: IQuery
     {
         private readonly DicomTag _dicomTag;
@@ -163,10 +163,10 @@ namespace DcmFind
         {
             _dicomTag = dicomTag;
         }
-        
-        public bool Matches(DicomDataset dicomDataset)
+
+        public bool Matches(ReadOnlyDicomDataset dicomDataset)
         {
-            return dicomDataset.Contains(_dicomTag);
+            return dicomDataset.TryGetMemory(_dicomTag, out _, out _);
         }
     }
 }

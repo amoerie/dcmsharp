@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Channels;
+using DcmSharp;
+using DcmSharp.Parser;
+using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -110,6 +113,12 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Disposal only happens after all tasks are completed")]
     public override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] Settings settings)
     {
+        var services = new ServiceCollection();
+        services.AddDcmParse();
+        await using var serviceProvider = services.BuildServiceProvider();
+        var dicomParser = serviceProvider.GetRequiredService<IDicomParser>();
+        var dicomFileMatcher = new DicomFileMatcher(dicomParser);
+
         var directory = new DirectoryInfo(settings.Directory!).FullName;
         var filePattern = settings.FilePattern!;
         var recursive = settings.Recursive ?? true;
@@ -165,7 +174,7 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
         for (var i = 0; i < parallelism; i++)
         {
             var matchTask = Task.Run(
-                async () => await DicomFileMatcher.MatchAsync(
+                async () => await dicomFileMatcher.MatchAsync(
                     filesChannel.Reader,
                     matchedFilesChannel.Writer,
                     progress,

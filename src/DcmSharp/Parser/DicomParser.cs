@@ -10,7 +10,10 @@ namespace DcmSharp.Parser;
 
 public interface IDicomParser
 {
-    Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, DicomParserOptions? options = null, CancellationToken cancellationToken = default);
+    Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, CancellationToken cancellationToken = default);
+
+    Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, DicomParserOptions options,
+        CancellationToken cancellationToken = default);
 }
 
 internal sealed class DicomParser : IDicomParser
@@ -84,8 +87,14 @@ internal sealed class DicomParser : IDicomParser
         _valueParser = valueParser ?? throw new ArgumentNullException(nameof(valueParser));
     }
 
+    public Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, CancellationToken cancellationToken = default)
+    {
+        return ParseAsync(file, DicomParserOptions.Default, cancellationToken);
+    }
+
     [SuppressMessage("Usage", "MA0004:Use Task.ConfigureAwait")]
-    public async Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, DicomParserOptions? options = null, CancellationToken cancellationToken = default)
+    public async Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, DicomParserOptions options,
+        CancellationToken cancellationToken = default)
     {
         var pipe = new Pipe();
         var fillPipeTask = FillPipeAsync(file, pipe.Writer, cancellationToken);
@@ -138,10 +147,10 @@ internal sealed class DicomParser : IDicomParser
         }
     }
 
-    private async Task<ReadOnlyDicomDataset> ReadPipeAsync(PipeReader reader, DicomParserOptions? options = null, CancellationToken cancellationToken = default)
+    private async Task<ReadOnlyDicomDataset> ReadPipeAsync(PipeReader reader, DicomParserOptions options,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(reader);
-        options ??= DicomParserOptions.Default;
 
         var dicomDataset =
             new ReadOnlyDicomDataset(_largeDicomItemDictionaryPool, new DicomMemories(_memoriesPool), _valueParser);
@@ -193,6 +202,7 @@ internal sealed class DicomParser : IDicomParser
                     position += parsed;
                     sequence = sequence.Slice(parsed);
                 }
+
                 reader.AdvanceTo(sequence.Start, sequence.End);
 
                 if (result.IsCompleted || state.IsStopped)
@@ -217,7 +227,7 @@ internal sealed class DicomParser : IDicomParser
             if (bufferSpan[0] != 'D' || bufferSpan[1] != 'I' || bufferSpan[2] != 'C' || bufferSpan[3] != 'M')
             {
                 throw new DicomException(
-                    $"This file does not look like a DICOM file, expected 'DICM' at position 128-132");
+                    "This file does not look like a DICOM file, expected 'DICM' at position 128-132");
             }
 
             return;
@@ -234,11 +244,12 @@ internal sealed class DicomParser : IDicomParser
             || b != 'M')
         {
             throw new DicomException(
-                $"This file does not look like a DICOM file, expected 'DICM' at position 128-132");
+                "This file does not look like a DICOM file, expected 'DICM' at position 128-132");
         }
     }
 
-    static void Parse(ref DicomByteBuffer buffer, ref DicomParseState state, DicomParserOptions options, CancellationToken cancellationToken)
+    static void Parse(ref DicomByteBuffer buffer, ref DicomParseState state, DicomParserOptions options,
+        CancellationToken cancellationToken)
     {
         StopParsingOptions? stopParsing = options.StopParsing;
 
@@ -321,6 +332,7 @@ internal sealed class DicomParser : IDicomParser
 
                     CloseCurrentSequence(ref state, currentSequence);
                 }
+
                 return;
             }
 
@@ -796,7 +808,8 @@ internal sealed class DicomParser : IDicomParser
         }
         else
         {
-            state.ReadOnlyDicomDataset.Add(currentSequence.Group, currentSequence.Element, state.CurrentDicomItem.Value);
+            state.ReadOnlyDicomDataset.Add(currentSequence.Group, currentSequence.Element,
+                state.CurrentDicomItem.Value);
             state.CurrentSequenceItem = null;
         }
 
