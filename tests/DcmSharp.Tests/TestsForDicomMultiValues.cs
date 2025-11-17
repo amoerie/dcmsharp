@@ -177,11 +177,11 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetPersonNames(DicomTags.SelectorPNValue, out DicomPersonName[] values).Should().BeTrue();
+        dicomDataset.TryGetPersonNames(DicomTags.SelectorPNValue, out PersonName[] values).Should().BeTrue();
 
         // Assert
-        var expected1 = new DicomPersonName("Dr", "Smith", null, null, null, null, null, null, null);
-        var expected2 = new DicomPersonName("Dr", "Jones", null, null, null, null, null, null, null);
+        var expected1 = new PersonName("Dr", "Smith", null, null, null, null, null, null, null);
+        var expected2 = new PersonName("Dr", "Jones", null, null, null, null, null, null, null);
         values.Should().BeEquivalentTo([expected1, expected2]);
     }
 

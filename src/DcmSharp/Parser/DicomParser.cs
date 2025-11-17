@@ -475,7 +475,7 @@ internal sealed class DicomParser : IDicomParser
                     long? sequenceItemEndPosition = state.Position + sequenceItemLength;
                     ReadOnlyDicomDataset sequenceItemDataset = new ReadOnlyDicomDataset(_smallDicomItemDictionaryPool,
                         new DicomMemories(_memoriesPool), state.ValueParser);
-                    state.CurrentSequenceItem = new DicomSequenceItem(sequenceItemDataset, sequenceItemEndPosition);
+                    state.CurrentSequenceItem = new ReadOnlyDicomSequenceItem(sequenceItemDataset, sequenceItemEndPosition);
 
                     state.ParseStage = DicomParseStage.ParseGroup;
                     return true;
@@ -587,7 +587,7 @@ internal sealed class DicomParser : IDicomParser
                 // In that case we must close the sequence after the specified number of bytes have been parsed
                 long? sequenceLength = rawLongValueLength == UndefinedLength ? null : rawLongValueLength;
                 long? sequenceEndPosition = state.Position + sequenceLength;
-                var dicomSequence = new DicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber,
+                var dicomSequence = new ReadOnlyDicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber,
                     new DicomDatasets(_datasetsPool), sequenceEndPosition);
                 state.CurrentSequence = dicomSequence;
                 state.CurrentSequenceItem = null;
@@ -781,14 +781,14 @@ internal sealed class DicomParser : IDicomParser
         return true;
     }
 
-    static void CloseCurrentSequenceItem(ref DicomParseState state, DicomSequence currentSequence,
-        DicomSequenceItem currentSequenceItem)
+    static void CloseCurrentSequenceItem(ref DicomParseState state, ReadOnlyDicomSequence currentSequence,
+        ReadOnlyDicomSequenceItem currentSequenceItem)
     {
         currentSequence.Items.Add(currentSequenceItem.ReadOnlyDicomDataset);
         state.CurrentSequenceItem = null;
     }
 
-    static void CloseCurrentSequence(ref DicomParseState state, DicomSequence currentSequence)
+    static void CloseCurrentSequence(ref DicomParseState state, ReadOnlyDicomSequence currentSequence)
     {
         state.CurrentDicomItem = new ReadOnlyDicomItem(currentSequence.Group,
             currentSequence.Element, DicomVR.SQ,

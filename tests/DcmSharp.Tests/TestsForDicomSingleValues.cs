@@ -177,10 +177,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseAsync(file);
 
         // Act
-        dicomDataset.TryGetPersonName(DicomTags.SelectorPNValue, out DicomPersonName value).Should().BeTrue();
+        dicomDataset.TryGetPersonName(DicomTags.SelectorPNValue, out PersonName value).Should().BeTrue();
 
         // Assert
-        var expected = new DicomPersonName("Dr", "Smith", null, null, null, null, null, null, null);
+        var expected = new PersonName("Dr", "Smith", null, null, null, null, null, null, null);
         value.Should().Be(expected);
     }
 

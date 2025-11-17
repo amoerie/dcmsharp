@@ -8,7 +8,7 @@ namespace DcmSharp.Parser.ValueRepresentations;
 internal sealed class PNParser
 {
     [SkipLocalsInit]
-    public bool TryParse(ReadOnlySpan<byte> span, Encoding encoding, out DicomPersonName value)
+    public bool TryParse(ReadOnlySpan<byte> span, Encoding encoding, out PersonName value)
     {
         if (span.IsEmpty)
         {
@@ -32,7 +32,7 @@ internal sealed class PNParser
     }
 
     [SkipLocalsInit]
-    private static DicomPersonName Parse(ReadOnlySpan<char> span)
+    private static PersonName Parse(ReadOnlySpan<char> span)
     {
         string?
             familyName = null,
@@ -151,7 +151,7 @@ internal sealed class PNParser
             }
         }
 
-        return new DicomPersonName(familyName, givenName, middleName, namePrefix, nameSuffix,
+        return new PersonName(familyName, givenName, middleName, namePrefix, nameSuffix,
             ideographicFamilyName, ideographicGivenName, phoneticFamilyName, phoneticGivenName);
     }
 
@@ -168,7 +168,7 @@ internal sealed class PNParser
     }
 
     [SkipLocalsInit]
-    public bool TryParseAll(ReadOnlySpan<byte> span, Encoding encoding, out DicomPersonName[] values)
+    public bool TryParseAll(ReadOnlySpan<byte> span, Encoding encoding, out PersonName[] values)
     {
         if (span.IsEmpty)
         {
@@ -193,7 +193,7 @@ internal sealed class PNParser
             : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
-        values = new DicomPersonName[numberOfValues];
+        values = new PersonName[numberOfValues];
 
         for (int i = 0; i < ranges.Length; i++)
         {

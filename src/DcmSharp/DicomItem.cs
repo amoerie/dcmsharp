@@ -1,3 +1,34 @@
 ﻿namespace DcmSharp;
 
-public abstract record DicomItem;
+public abstract record DicomItem(DicomTag Tag);
+
+public sealed record DicomAgeString(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomApplicationEntity(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomAttributeTag(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomCodeString(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomDate(DicomTag Tag, DateOnly Value) : DicomItem(Tag);
+public sealed record DicomDecimalString(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomDateTime(DicomTag Tag, DateTime Value) : DicomItem(Tag);
+public sealed record DicomFloatingPointDouble(DicomTag Tag, double Value) : DicomItem(Tag);
+public sealed record DicomFloatingPointSingle(DicomTag Tag, float Value) : DicomItem(Tag);
+public sealed record DicomIntegerString(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomLongString(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomOtherByte(DicomTag Tag, Memory<byte> Value) : DicomItem(Tag);
+public sealed record DicomOtherDouble(DicomTag Tag, Memory<double> Value) : DicomItem(Tag);
+public sealed record DicomOtherFloat(DicomTag Tag, Memory<float> Value) : DicomItem(Tag);
+public sealed record DicomOtherLong(DicomTag Tag, Memory<uint> Value) : DicomItem(Tag);
+public sealed record DicomOtherWord(DicomTag Tag, Memory<ushort> Value) : DicomItem(Tag);
+public sealed record DicomPersonName(DicomTag Tag, PersonName Value) : DicomItem(Tag);
+public sealed record DicomShortString(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomSignedLong(DicomTag Tag, int Value) : DicomItem(Tag);
+public sealed record DicomSignedShort(DicomTag Tag, short Value) : DicomItem(Tag);
+public sealed record DicomShortText(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomTime(DicomTag Tag, TimeOnly Value) : DicomItem(Tag);
+public sealed record DicomUnlimitedCharacters(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomUniqueIdentifier(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomUnsignedLong(DicomTag Tag, uint Value) : DicomItem(Tag);
+public sealed record DicomUnknown(DicomTag Tag, Memory<byte> Value) : DicomItem(Tag);
+public sealed record DicomUniversalResource(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomUnlimitedText(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomUrl(DicomTag Tag, string Value) : DicomItem(Tag);
+public sealed record DicomUnsignedShort(DicomTag Tag, ushort Value) : DicomItem(Tag);

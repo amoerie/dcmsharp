@@ -25,7 +25,7 @@ public sealed class TestsForDicomEncoding
 
         // Act
         dicomDataset.TryGetString(DicomTags.SpecificCharacterSet, out string? specificCharacterSet).Should().BeTrue();
-        dicomDataset.TryGetPersonName(DicomTags.PatientName, out DicomPersonName patientName).Should().BeTrue();
+        dicomDataset.TryGetPersonName(DicomTags.PatientName, out PersonName patientName).Should().BeTrue();
         dicomDataset.TryGetString(DicomTags.PatientName, out string? patientNameString).Should().BeTrue();
 
         // Assert

@@ -47,10 +47,10 @@ internal struct DicomParseState
     public int CurrentLongValueMemoryOffset = 0;
 
     /* The current sequence that we're writing to */
-    public DicomSequence? CurrentSequence = null;
-    public DicomSequenceItem? CurrentSequenceItem = null;
-    public readonly Stack<DicomSequence> CurrentSequences = new Stack<DicomSequence>();
-    public readonly Stack<DicomSequenceItem> CurrentSequenceItems = new Stack<DicomSequenceItem>();
+    public ReadOnlyDicomSequence? CurrentSequence = null;
+    public ReadOnlyDicomSequenceItem? CurrentSequenceItem = null;
+    public readonly Stack<ReadOnlyDicomSequence> CurrentSequences = new Stack<ReadOnlyDicomSequence>();
+    public readonly Stack<ReadOnlyDicomSequenceItem> CurrentSequenceItems = new Stack<ReadOnlyDicomSequenceItem>();
 
     /* The current pixel data fragment sequence that we're writing to */
     public ushort CurrentFragmentsGroupNumber = default;

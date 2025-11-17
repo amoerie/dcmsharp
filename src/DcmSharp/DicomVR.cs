@@ -5,42 +5,109 @@ namespace DcmSharp;
 /// <summary>
 /// Represents a DICOM value representation (VR).
 /// </summary>
-public enum DicomVR: byte
+public enum DicomVR : byte
 {
-    AE, // Application Entity
-    AS, // Age String
-    AT, // Attribute Tag
-    CS, // Code String
-    DA, // Date
-    DS, // Decimal String
-    DT, // DateTime
-    FL, // Floating Point Single
-    FD, // Floating Point Double
-    IS, // Integer String
-    LO, // Long String
-    LT, // Long Text
-    OB, // Other Byte
-    OD, // Other Double
-    OF, // Other Float
-    OL, // Other Long
-    OW, // Other Word
-    OV, // Other Very Long
-    PN, // Person Name
-    SH, // Short String
-    SL, // Signed Long
-    SQ, // Sequence of Items
-    SS, // Signed Short
-    ST, // Short Text
-    SV, // Signed Very Long
-    TM, // Time
-    UC, // Unlimited Characters
-    UI, // Unique Identifier (UID)
-    UL, // Unsigned Long
-    UN, // Unknown
-    UR, // URI/URL
-    US, // Unsigned Short
-    UT, // Unlimited Text,
-    UV  // Unsigned Very Long
+    /// <summary>Application Entity</summary>
+    AE,
+
+    /// <summary>Age String</summary>
+    AS,
+
+    /// <summary>Attribute Tag</summary>
+    AT,
+
+    /// <summary>Code String</summary>
+    CS,
+
+    /// <summary>Date</summary>
+    DA,
+
+    /// <summary>Decimal String</summary>
+    DS,
+
+    /// <summary>DateTime</summary>
+    DT,
+
+    /// <summary>Floating Point Single</summary>
+    FL,
+
+    /// <summary>Floating Point Double</summary>
+    FD,
+
+    /// <summary>Integer String</summary>
+    IS,
+
+    /// <summary>Long String</summary>
+    LO,
+
+    /// <summary>Long Text</summary>
+    LT,
+
+    /// <summary>Other Byte</summary>
+    OB,
+
+    /// <summary>Other Double</summary>
+    OD,
+
+    /// <summary>Other Float</summary>
+    OF,
+
+    /// <summary>Other Long</summary>
+    OL,
+
+    /// <summary>Other Word</summary>
+    OW,
+
+    /// <summary>Other Very Long</summary>
+    OV,
+
+    /// <summary>Person Name</summary>
+    PN,
+
+    /// <summary>Short String</summary>
+    SH,
+
+    /// <summary>Signed Long</summary>
+    SL,
+
+    /// <summary>Sequence of Items</summary>
+    SQ,
+
+    /// <summary>Signed Short</summary>
+    SS,
+
+    /// <summary>Short Text</summary>
+    ST,
+
+    /// <summary>Signed Very Long</summary>
+    SV,
+
+    /// <summary>Time</summary>
+    TM,
+
+    /// <summary>Unlimited Characters</summary>
+    UC,
+
+    /// <summary>Unique Identifier (UID)</summary>
+    UI,
+
+    /// <summary>Unsigned Long</summary>
+    UL,
+
+    /// <summary>Unknown</summary>
+    UN,
+
+    /// <summary>URI/URL</summary>
+    UR,
+
+    /// <summary>Unsigned Short</summary>
+    US,
+
+    /// <summary>Unlimited Text,</summary>
+    UT,
+
+    /// <summary>Unsigned Very Long</summary>
+    UV
 }
 
 public static class ExtensionsForDicomVR

@@ -2,7 +2,7 @@
 
 namespace DcmSharp;
 
-public readonly record struct DicomPersonName(
+public readonly record struct PersonName(
     string? FamilyName,
     string? GivenName,
     string? MiddleName,

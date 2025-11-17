@@ -108,5 +108,11 @@
     <Compile Update="ReadOnlyDicomDataset.TryGetMemory.cs">
       <DependentUpon>ReadOnlyDicomDataset.cs</DependentUpon>
     </Compile>
+    <Compile Update="DicomDataset.Add.cs">
+      <DependentUpon>DicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="DicomDataset.TryGet.cs">
+      <DependentUpon>DicomDataset.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
