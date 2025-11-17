@@ -655,7 +655,7 @@ public static class DicomTags
     public static readonly DicomTag WedgeInContactWidth = new DicomTag(0x0014, 0x511C, DicomVR.DS, DicomVM.VM_1, "Wedge In Contact Width");
     public static readonly DicomTag WedgeChamferHeight = new DicomTag(0x0014, 0x511D, DicomVR.DS, DicomVM.VM_1, "Wedge Chamfer Height");
     public static readonly DicomTag WedgeCurve = new DicomTag(0x0014, 0x511E, DicomVR.CS, DicomVM.VM_1, "Wedge Curve");
-    public static readonly DicomTag RadiusAlongWedge = new DicomTag(0x0014, 0x511F, DicomVR.DS, DicomVM.VM_1, "Radius Along the Wedge");
+    public static readonly DicomTag RadiusAlongTheWedge = new DicomTag(0x0014, 0x511F, DicomVR.DS, DicomVM.VM_1, "Radius Along the Wedge");
     public static readonly DicomTag WhitePoint = new DicomTag(0x0016, 0x0001, DicomVR.DS, DicomVM.VM_1, "White Point");
     public static readonly DicomTag PrimaryChromaticities = new DicomTag(0x0016, 0x0002, DicomVR.DS, DicomVM.VM_3, "Primary Chromaticities");
     public static readonly DicomTag BatteryLevel = new DicomTag(0x0016, 0x0003, DicomVR.UT, DicomVM.VM_1, "Battery Level");
@@ -2130,7 +2130,7 @@ public static class DicomTags
     public static readonly DicomTag RescaleIntercept = new DicomTag(0x0028, 0x1052, DicomVR.DS, DicomVM.VM_1, "Rescale Intercept");
     public static readonly DicomTag RescaleSlope = new DicomTag(0x0028, 0x1053, DicomVR.DS, DicomVM.VM_1, "Rescale Slope");
     public static readonly DicomTag RescaleType = new DicomTag(0x0028, 0x1054, DicomVR.LO, DicomVM.VM_1, "Rescale Type");
-    public static readonly DicomTag WindowCenterWidthExplanation = new DicomTag(0x0028, 0x1055, DicomVR.LO, DicomVM.VM_1_n, "Window Center &amp; Width Explanation");
+    public static readonly DicomTag WindowCenterAndWidthExplanation = new DicomTag(0x0028, 0x1055, DicomVR.LO, DicomVM.VM_1_n, "Window Center and Width Explanation");
     public static readonly DicomTag VOILUTFunction = new DicomTag(0x0028, 0x1056, DicomVR.CS, DicomVM.VM_1, "VOI LUT Function");
     public static readonly DicomTag GrayScale = new DicomTag(0x0028, 0x1080, DicomVR.CS, DicomVM.VM_1, "Gray Scale");
     public static readonly DicomTag RecommendedViewingMode = new DicomTag(0x0028, 0x1090, DicomVR.CS, DicomVM.VM_1, "Recommended Viewing Mode");
@@ -2194,7 +2194,7 @@ public static class DicomTags
     public static readonly DicomTag ImagePresentationComments = new DicomTag(0x0028, 0x4000, DicomVR.LT, DicomVM.VM_1, "Image Presentation Comments");
     public static readonly DicomTag BiPlaneAcquisitionSequence = new DicomTag(0x0028, 0x5000, DicomVR.SQ, DicomVM.VM_1, "Bi-Plane Acquisition Sequence");
     public static readonly DicomTag RepresentativeFrameNumber = new DicomTag(0x0028, 0x6010, DicomVR.US, DicomVM.VM_1, "Representative Frame Number");
-    public static readonly DicomTag FrameNumbersOfInterest = new DicomTag(0x0028, 0x6020, DicomVR.US, DicomVM.VM_1_n, "Frame Numbers of Interest (FOI)");
+    public static readonly DicomTag FrameNumbersOfInterest = new DicomTag(0x0028, 0x6020, DicomVR.US, DicomVM.VM_1_n, "Frame Numbers of Interest");
     public static readonly DicomTag FrameOfInterestDescription = new DicomTag(0x0028, 0x6022, DicomVR.LO, DicomVM.VM_1_n, "Frame of Interest Description");
     public static readonly DicomTag FrameOfInterestType = new DicomTag(0x0028, 0x6023, DicomVR.CS, DicomVM.VM_1_n, "Frame of Interest Type");
     public static readonly DicomTag MaskPointers = new DicomTag(0x0028, 0x6030, DicomVR.US, DicomVM.VM_1_n, "Mask Pointer(s)");
@@ -2403,12 +2403,12 @@ public static class DicomTags
     public static readonly DicomTag WaveformAmplifierType = new DicomTag(0x003A, 0x0317, DicomVR.CS, DicomVM.VM_1, "Waveform Amplifier Type");
     public static readonly DicomTag FilterLowFrequencyCharacteristicsSequence = new DicomTag(0x003A, 0x0318, DicomVR.SQ, DicomVM.VM_1, "Filter Low Frequency Characteristics Sequence");
     public static readonly DicomTag FilterHighFrequencyCharacteristicsSequence = new DicomTag(0x003A, 0x0319, DicomVR.SQ, DicomVM.VM_1, "Filter High Frequency Characteristics Sequence");
-    public static readonly DicomTag SummarizedFilterLookupTable = new DicomTag(0x003A, 0x0320, DicomVR.SQ, DicomVM.VM_1, "Summarized Filter Lookup Table Sequence");
+    public static readonly DicomTag SummarizedFilterLookupTableSequence = new DicomTag(0x003A, 0x0320, DicomVR.SQ, DicomVM.VM_1, "Summarized Filter Lookup Table Sequence");
     public static readonly DicomTag NotchFilterCharacteristicsSequence = new DicomTag(0x003A, 0x0321, DicomVR.SQ, DicomVM.VM_1, "Notch Filter Characteristics Sequence");
     public static readonly DicomTag WaveformFilterType = new DicomTag(0x003A, 0x0322, DicomVR.CS, DicomVM.VM_1, "Waveform Filter Type");
     public static readonly DicomTag AnalogFilterCharacteristicsSequence = new DicomTag(0x003A, 0x0323, DicomVR.SQ, DicomVM.VM_1, "Analog Filter Characteristics Sequence");
     public static readonly DicomTag AnalogFilterRollOff = new DicomTag(0x003A, 0x0324, DicomVR.DS, DicomVM.VM_1, "Analog Filter Roll Off ");
-    public static readonly DicomTag AnalogFilterType = new DicomTag(0x003A, 0x0325, DicomVR.SQ, DicomVM.VM_1, "Analog Filter Type Code Sequence");
+    public static readonly DicomTag AnalogFilterTypeCodeSequence = new DicomTag(0x003A, 0x0325, DicomVR.SQ, DicomVM.VM_1, "Analog Filter Type Code Sequence");
     public static readonly DicomTag DigitalFilterCharacteristicsSequence = new DicomTag(0x003A, 0x0326, DicomVR.SQ, DicomVM.VM_1, "Digital Filter Characteristics Sequence");
     public static readonly DicomTag DigitalFilterOrder = new DicomTag(0x003A, 0x0327, DicomVR.IS, DicomVM.VM_1, "Digital Filter Order");
     public static readonly DicomTag DigitalFilterTypeCodeSequence = new DicomTag(0x003A, 0x0328, DicomVR.SQ, DicomVM.VM_1, "Digital Filter Type Code Sequence");

@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace DcmSharp;
 
@@ -659,7 +660,7 @@ public static class DicomTagsIndex
         DicomTags.WedgeInContactWidth,
         DicomTags.WedgeChamferHeight,
         DicomTags.WedgeCurve,
-        DicomTags.RadiusAlongWedge,
+        DicomTags.RadiusAlongTheWedge,
         DicomTags.WhitePoint,
         DicomTags.PrimaryChromaticities,
         DicomTags.BatteryLevel,
@@ -2134,7 +2135,7 @@ public static class DicomTagsIndex
         DicomTags.RescaleIntercept,
         DicomTags.RescaleSlope,
         DicomTags.RescaleType,
-        DicomTags.WindowCenterWidthExplanation,
+        DicomTags.WindowCenterAndWidthExplanation,
         DicomTags.VOILUTFunction,
         DicomTags.GrayScale,
         DicomTags.RecommendedViewingMode,
@@ -2407,12 +2408,12 @@ public static class DicomTagsIndex
         DicomTags.WaveformAmplifierType,
         DicomTags.FilterLowFrequencyCharacteristicsSequence,
         DicomTags.FilterHighFrequencyCharacteristicsSequence,
-        DicomTags.SummarizedFilterLookupTable,
+        DicomTags.SummarizedFilterLookupTableSequence,
         DicomTags.NotchFilterCharacteristicsSequence,
         DicomTags.WaveformFilterType,
         DicomTags.AnalogFilterCharacteristicsSequence,
         DicomTags.AnalogFilterRollOff,
-        DicomTags.AnalogFilterType,
+        DicomTags.AnalogFilterTypeCodeSequence,
         DicomTags.DigitalFilterCharacteristicsSequence,
         DicomTags.DigitalFilterOrder,
         DicomTags.DigitalFilterTypeCodeSequence,
@@ -5129,7 +5130,67 @@ public static class DicomTagsIndex
         DicomTags.CurrentFrameFunctionalGroupsSequence,
     ];
 
-    private static readonly Dictionary<uint, DicomTag> _index = All.ToDictionary(dicomTag => ((uint)dicomTag.Group << 16) | dicomTag.Element);
+    private static readonly Dictionary<uint, DicomTag> _indexByGroupAndElement = All.ToDictionary(dicomTag => ((uint)dicomTag.Group << 16) | dicomTag.Element);
+    private static readonly Dictionary<string, DicomTag> _indexByName = All.ToDictionary(GetName, StringComparer.OrdinalIgnoreCase);
+
+    private static string GetName(DicomTag dicomTag)
+    {
+        // Manufacturer's Model Version -> ManufacturerModelVersion
+        // Intended Number of Fractions -> IntendedNumberOfFractions
+        // X-Ray Tube Current --> XRayTubeCurrent
+        // Address (Trial) --> AddressTrial
+        // Contrast/Bolus Agent --> ContrastBolusAgent
+        // 2D Degree of Freedom Axis
+        // Exposure in µAs -> ExposureInuAs
+        var name = new StringBuilder(dicomTag.Description);
+
+        // If the name starts with a digit, convert it to word form
+        if (char.IsDigit(name[0]))
+        {
+            char digit = name[0];
+            name.Remove(0, 1);
+            switch (digit)
+            {
+                case '0': name.Insert(0, "Zero"); break;
+                case '1': name.Insert(0, "One"); break;
+                case '2': name.Insert(0, "Two"); break;
+                case '3': name.Insert(0, "Three"); break;
+                case '4': name.Insert(0, "Four"); break;
+                case '5': name.Insert(0, "Five"); break;
+                case '6': name.Insert(0, "Six"); break;
+                case '7': name.Insert(0, "Seven"); break;
+                case '8': name.Insert(0, "Eight"); break;
+                case '9': name.Insert(0, "Nine"); break;
+            }
+        }
+
+        name.Replace("'s", "");
+        name.Replace("'", "");
+        name.Replace(",", "");
+        name.Replace("-", "");
+        name.Replace("(", "");
+        name.Replace(")", "");
+        name.Replace("/", "");
+        name.Replace("µ", "u");
+
+        // Capitalize words
+        for (int i = 0; i < name.Length; i++)
+        {
+            char c = name[i];
+            if (i == 0 || name[i - 1] == ' ')
+            {
+                if(char.IsLower(c))
+                {
+                    name[i] = char.ToUpperInvariant(c);
+                }
+            }
+        }
+
+        // Remove spaces
+        name.Replace(" ", "");
+
+        return name.ToString();
+    }
 
     /// <summary>
     /// Lookup a <see cref="DicomTag"/> by its group and element.
@@ -5140,7 +5201,25 @@ public static class DicomTagsIndex
     /// <returns>True if found; otherwise, false.</returns>
     public static bool TryLookup(ushort group, ushort element, [NotNullWhen(true)] out DicomTag? dicomTag)
     {
-        if (!_index.TryGetValue(((uint)group << 16) | element, out var tag))
+        if (!_indexByGroupAndElement.TryGetValue(((uint)group << 16) | element, out var tag))
+        {
+            dicomTag = null;
+            return false;
+        }
+
+        dicomTag = tag;
+        return true;
+    }
+
+    /// <summary>
+    /// Lookup a <see cref="DicomTag"/> by its group and element.
+    /// </summary>
+    /// <param name="name">The name of the DICOM tag, e.g. "AccessionNumber". See <see cref="DicomTags"/> for possible names</param>
+    /// <param name="dicomTag">The resulting DicomTag if found; otherwise, null.</param>
+    /// <returns>True if found; otherwise, false.</returns>
+    public static bool TryLookupByName(string name, [NotNullWhen(true)] out DicomTag? dicomTag)
+    {
+        if (!_indexByName.TryGetValue(name, out var tag))
         {
             dicomTag = null;
             return false;

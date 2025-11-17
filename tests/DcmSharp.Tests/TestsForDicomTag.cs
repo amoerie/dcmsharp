@@ -1,8 +1,8 @@
 ﻿namespace DcmSharp.Tests;
 
-public static class TestsForDicomTag
+public class TestsForDicomTag
 {
-    public class TestsForTryParse
+    public class TestsForTryParse: TestsForDicomTag
     {
         [Theory]
         [InlineData("(0010,0010)", 0x0010, 0x0010)]
