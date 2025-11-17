@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace DcmSharp;
 
-public class DicomTagsIndex
+public static class DicomTagsIndex
 {
     public static readonly DicomTag[] All =
     [
@@ -5131,7 +5131,14 @@ public class DicomTagsIndex
 
     private static readonly Dictionary<uint, DicomTag> _index = All.ToDictionary(dicomTag => ((uint)dicomTag.Group << 16) | dicomTag.Element);
 
-    internal static bool TryLookup(ushort group, ushort element, [NotNullWhen(true)] out DicomTag? dicomTag)
+    /// <summary>
+    /// Lookup a <see cref="DicomTag"/> by its group and element.
+    /// </summary>
+    /// <param name="group">The group</param>
+    /// <param name="element">The element</param>
+    /// <param name="dicomTag">The resulting DicomTag if found; otherwise, null.</param>
+    /// <returns>True if found; otherwise, false.</returns>
+    public static bool TryLookup(ushort group, ushort element, [NotNullWhen(true)] out DicomTag? dicomTag)
     {
         if (!_index.TryGetValue(((uint)group << 16) | element, out var tag))
         {

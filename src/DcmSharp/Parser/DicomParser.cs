@@ -251,8 +251,6 @@ internal sealed class DicomParser : IDicomParser
     static void Parse(ref DicomByteBuffer buffer, ref DicomParseState state, DicomParserOptions options,
         CancellationToken cancellationToken)
     {
-        StopParsingOptions? stopParsing = options.StopParsing;
-
         while (!buffer.IsEmpty)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -313,7 +311,7 @@ internal sealed class DicomParser : IDicomParser
             }
 
             // Check if we need to stop parsing
-            if (stopParsing is not null
+            if (options.StopParsing is { } stopParsing
                 && stopParsing.Depth == state.CurrentSequences.Count
                 && stopParsing.Group <= state.CurrentGroupNumber
                 && stopParsing.Element <= state.CurrentElementNumber)
@@ -321,12 +319,10 @@ internal sealed class DicomParser : IDicomParser
                 state.IsStopped = true;
 
                 // Close open sequences
-                while (state.CurrentSequence is not null)
+                while (state.CurrentSequence is { } currentSequence)
                 {
-                    var currentSequence = state.CurrentSequence.Value;
-                    if (state.CurrentSequenceItem is not null)
+                    if (state.CurrentSequenceItem is { } currentSequenceItem)
                     {
-                        var currentSequenceItem = state.CurrentSequenceItem.Value;
                         CloseCurrentSequenceItem(ref state, currentSequence, currentSequenceItem);
                     }
 
