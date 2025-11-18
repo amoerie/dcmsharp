@@ -12,7 +12,7 @@ public readonly record struct ReadOnlyDicomItem(
     public override string ToString()
     {
         return DicomTagsIndex.TryLookup(Group, Element, out var dicomTag)
-            ? $"(0x{Group:x4},0x{Element:x4}) {VR} {dicomTag.Description}"
+            ? $"(0x{Group:x4},0x{Element:x4}) {VR} {dicomTag.Name}"
             : $"(0x{Group:x4},0x{Element:x4}) {VR}";
     }
 }

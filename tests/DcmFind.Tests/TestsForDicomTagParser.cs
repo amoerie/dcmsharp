@@ -1,4 +1,4 @@
-using FellowOakDicom;
+using DcmSharp;
 using FluentAssertions;
 using Xunit;
 
@@ -11,16 +11,16 @@ public class TestsForDicomTagParser
     public void ShouldParseTagByGroupAndElement()
     {
         DicomTagParser.TryParse("(0008,0050)", out var dicomTag).Should().BeTrue();
-        dicomTag.Should().Be(DicomTag.AccessionNumber);
+        dicomTag.Should().Be(DicomTags.AccessionNumber);
     }
-        
+
     [Fact]
     public void ShouldParseTagByName()
     {
         DicomTagParser.TryParse("AccessionNumber", out var dicomTag).Should().BeTrue();
-        dicomTag.Should().Be(DicomTag.AccessionNumber);
+        dicomTag.Should().Be(DicomTags.AccessionNumber);
     }
-        
+
     [Fact]
     public void ShouldNotParseUnknownTag()
     {

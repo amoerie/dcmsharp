@@ -44,7 +44,7 @@ public class TestsForDicomTagIndex
         public void ShouldReturnTrueAndCorrectTagWhenGivenValidTag(string dicomTagName)
         {
             // Arrange & Act
-            bool result = DicomTagsIndex.TryLookupByName(dicomTagName, out DicomTag? tag);
+            bool result = DicomTagsIndex.TryLookupByKeyword(dicomTagName, out DicomTag? tag);
 
             // Assert
             Assert.True(result);
@@ -55,7 +55,7 @@ public class TestsForDicomTagIndex
         public void ShouldReturnFalseWhenGivenUnknownTag()
         {
             // Arrange & Act
-            bool result = DicomTagsIndex.TryLookupByName("VortexPhaseScintillator", out DicomTag? _);
+            bool result = DicomTagsIndex.TryLookupByKeyword("VortexPhaseScintillator", out DicomTag? _);
 
             // Assert
             Assert.False(result);
@@ -65,7 +65,7 @@ public class TestsForDicomTagIndex
         public void ShouldReturnFalseWhenGivenEmptyString()
         {
             // Arrange & Act
-            bool result = DicomTagsIndex.TryLookupByName("", out DicomTag? _);
+            bool result = DicomTagsIndex.TryLookupByKeyword("", out DicomTag? _);
 
             // Assert
             Assert.False(result);

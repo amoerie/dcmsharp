@@ -402,7 +402,7 @@ internal sealed class DicomParser : IDicomParser
             {
                 state.CurrentVr = DicomTagsIndex.TryLookup(state.CurrentGroupNumber, state.CurrentElementNumber,
                     out var dicomTag)
-                    ? dicomTag.VR
+                    ? dicomTag.ValueRepresentation
                     : DicomVR.UN;
 
                 if (state is { CurrentVr: DicomVR.UN, CurrentElementNumber: GroupLengthElement })

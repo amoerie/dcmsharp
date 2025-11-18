@@ -3,13 +3,20 @@
     <OutputType>Library</OutputType>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DcmSharp.SourceGenerator\DcmSharp.SourceGenerator.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false"/>
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Meziantou.Analyzer">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-    <PackageReference Include="System.IO.Pipelines" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+    <PackageReference Include="System.IO.Pipelines"/>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="ReadOnlyDicomDataset.TryGetDate.cs">
@@ -113,6 +120,12 @@
     </Compile>
     <Compile Update="DicomDataset.TryGet.cs">
       <DependentUpon>DicomDataset.cs</DependentUpon>
+    </Compile>
+    <Compile Update="DicomTag.TryParse.cs">
+      <DependentUpon>DicomTag.cs</DependentUpon>
+    </Compile>
+    <Compile Update="DicomItemFactory.Create.String.cs">
+      <DependentUpon>DicomItemFactory.cs</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

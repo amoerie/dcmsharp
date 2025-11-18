@@ -24,7 +24,7 @@ namespace DcmFind
                 return false;
             }
 
-            if (DicomTagsIndex.TryLookupByName(dicomTagAsString, out dicomTag))
+            if (DicomTagsIndex.TryLookupByKeyword(dicomTagAsString, out dicomTag))
             {
                 return true;
             }

@@ -14,7 +14,8 @@ public class TestsForQuery
         _dicomDataset = new DicomDataset();
         _dicomDataset.Add(DicomTags.AccessionNumber, "Pineapple");
         _dicomDataset.Add(DicomTags.Rows, 1000);
-        _dicomDataset.Add(DicomTags.StudyDate, new DateTime(2020, 1, 2));
+        _dicomDataset.Add(DicomTags.StudyDate, new DateOnly(2020, 1, 2));
+
     }
 
     public class TestsForEqualsQuery : TestsForQuery
@@ -22,7 +23,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenValuesAreEqual()
         {
-            var query = new EqualsQuery(DicomTag.AccessionNumber, "Pineapple");
+            var query = new EqualsQuery(DicomTags.AccessionNumber, "Pineapple");
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -30,7 +31,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldNotMatchWhenValuesAreNotEqual()
         {
-            var query = new EqualsQuery(DicomTag.AccessionNumber, "Pineapple2");
+            var query = new EqualsQuery(DicomTags.AccessionNumber, "Pineapple2");
 
             query.Matches(_dicomDataset).Should().BeFalse();
         }
@@ -38,7 +39,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldNotMatchWhenDicomTagIsNotPresent()
         {
-            var query = new EqualsQuery(DicomTag.AccessionNumber, "Pineapple");
+            var query = new EqualsQuery(DicomTags.AccessionNumber, "Pineapple");
 
             _dicomDataset.Clear();
 
@@ -53,7 +54,7 @@ public class TestsForQuery
         [InlineData("Pine%apple")]
         public void ShouldMatchWhenValuesMatchesWildcardInBeginning(string value)
         {
-            var query = new EqualsQuery(DicomTag.AccessionNumber, value);
+            var query = new EqualsQuery(DicomTags.AccessionNumber, value);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -64,7 +65,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldNotMatchWhenValuesAreEqual()
         {
-            var query = new NotEqualsQuery(DicomTag.AccessionNumber, "Pineapple");
+            var query = new NotEqualsQuery(DicomTags.AccessionNumber, "Pineapple");
 
             query.Matches(_dicomDataset).Should().BeFalse();
         }
@@ -72,7 +73,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenValuesAreNotEqual()
         {
-            var query = new NotEqualsQuery(DicomTag.AccessionNumber, "Pineapple2");
+            var query = new NotEqualsQuery(DicomTags.AccessionNumber, "Pineapple2");
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -80,7 +81,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenDicomTagIsNotPresent()
         {
-            var query = new NotEqualsQuery(DicomTag.AccessionNumber, "Pineapple");
+            var query = new NotEqualsQuery(DicomTags.AccessionNumber, "Pineapple");
 
             _dicomDataset.Clear();
 
@@ -95,7 +96,7 @@ public class TestsForQuery
         [InlineData("Pine%apple")]
         public void ShouldNotMatchWhenValuesMatchesWildcardInBeginning(string value)
         {
-            var query = new NotEqualsQuery(DicomTag.AccessionNumber, value);
+            var query = new NotEqualsQuery(DicomTags.AccessionNumber, value);
 
             query.Matches(_dicomDataset).Should().BeFalse();
         }
@@ -108,7 +109,7 @@ public class TestsForQuery
         [InlineData("Bana%na")]
         public void ShouldMatchWhenValuesDoesNotMatchWildcard(string value)
         {
-            var query = new NotEqualsQuery(DicomTag.AccessionNumber, value);
+            var query = new NotEqualsQuery(DicomTags.AccessionNumber, value);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -119,7 +120,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenNumberValueIsLowerThanNotInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.Rows, "1001", false);
+            var query = new LowerThanQuery(DicomTags.Rows, "1001", false);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -127,7 +128,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenNumberValueIsLowerThanInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.Rows, "1001", true);
+            var query = new LowerThanQuery(DicomTags.Rows, "1001", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -135,7 +136,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldNotMatchWhenNumberValueIsEqualAndNotInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.Rows, "1000", false);
+            var query = new LowerThanQuery(DicomTags.Rows, "1000", false);
 
             query.Matches(_dicomDataset).Should().BeFalse();
         }
@@ -143,7 +144,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenNumberValueIsEqualAndInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.Rows, "1000", true);
+            var query = new LowerThanQuery(DicomTags.Rows, "1000", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -151,7 +152,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenStringValueIsLowerThanNotInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.AccessionNumber, "Pineapplf", false);
+            var query = new LowerThanQuery(DicomTags.AccessionNumber, "Pineapplf", false);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -159,7 +160,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenStringValueIsLowerThanInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.AccessionNumber, "Pineapplf", true);
+            var query = new LowerThanQuery(DicomTags.AccessionNumber, "Pineapplf", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -167,7 +168,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldNotMatchWhenStringValueIsEqualAndNotInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.AccessionNumber, "Pineapple", false);
+            var query = new LowerThanQuery(DicomTags.AccessionNumber, "Pineapple", false);
 
             query.Matches(_dicomDataset).Should().BeFalse();
         }
@@ -175,7 +176,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenStringValueIsEqualAndInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.AccessionNumber, "Pineapple", true);
+            var query = new LowerThanQuery(DicomTags.AccessionNumber, "Pineapple", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -183,7 +184,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenDateValueIsLowerThanNotInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.StudyDate, "20200103", false);
+            var query = new LowerThanQuery(DicomTags.StudyDate, "20200103", false);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -191,7 +192,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenDateValueIsLowerThanInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.StudyDate, "20200103", true);
+            var query = new LowerThanQuery(DicomTags.StudyDate, "20200103", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -199,7 +200,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldNotMatchWhenDateValueIsEqualAndNotInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.StudyDate, "20200102", false);
+            var query = new LowerThanQuery(DicomTags.StudyDate, "20200102", false);
 
             query.Matches(_dicomDataset).Should().BeFalse();
         }
@@ -207,7 +208,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenDateValueIsEqualAndInclusive()
         {
-            var query = new LowerThanQuery(DicomTag.StudyDate, "20200102", true);
+            var query = new LowerThanQuery(DicomTags.StudyDate, "20200102", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -219,7 +220,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenNumberValueIsGreaterThanNotInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.Rows, "999", false);
+            var query = new GreaterThanQuery(DicomTags.Rows, "999", false);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -227,7 +228,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenNumberValueIsGreaterThanInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.Rows, "999", true);
+            var query = new GreaterThanQuery(DicomTags.Rows, "999", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -235,7 +236,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldNotMatchWhenNumberValueIsEqualAndNotInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.Rows, "1000", false);
+            var query = new GreaterThanQuery(DicomTags.Rows, "1000", false);
 
             query.Matches(_dicomDataset).Should().BeFalse();
         }
@@ -243,7 +244,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenNumberValueIsEqualAndInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.Rows, "1000", true);
+            var query = new GreaterThanQuery(DicomTags.Rows, "1000", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -251,7 +252,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenStringValueIsGreaterThanNotInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.AccessionNumber, "Pineappld", false);
+            var query = new GreaterThanQuery(DicomTags.AccessionNumber, "Pineappld", false);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -259,7 +260,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenStringValueIsGreaterThanInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.AccessionNumber, "Pineappld", true);
+            var query = new GreaterThanQuery(DicomTags.AccessionNumber, "Pineappld", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -267,7 +268,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldNotMatchWhenStringValueIsEqualAndNotInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.AccessionNumber, "Pineapple", false);
+            var query = new GreaterThanQuery(DicomTags.AccessionNumber, "Pineapple", false);
 
             query.Matches(_dicomDataset).Should().BeFalse();
         }
@@ -275,7 +276,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenStringValueIsEqualAndInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.AccessionNumber, "Pineapple", true);
+            var query = new GreaterThanQuery(DicomTags.AccessionNumber, "Pineapple", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -283,7 +284,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenDateValueIsGreaterThanNotInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.StudyDate, "20200101", false);
+            var query = new GreaterThanQuery(DicomTags.StudyDate, "20200101", false);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -291,7 +292,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenDateValueIsGreaterThanInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.StudyDate, "20200101", true);
+            var query = new GreaterThanQuery(DicomTags.StudyDate, "20200101", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
@@ -299,7 +300,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldNotMatchWhenDateValueIsEqualAndNotInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.StudyDate, "20200102", false);
+            var query = new GreaterThanQuery(DicomTags.StudyDate, "20200102", false);
 
             query.Matches(_dicomDataset).Should().BeFalse();
         }
@@ -307,7 +308,7 @@ public class TestsForQuery
         [Fact]
         public void ShouldMatchWhenDateValueIsEqualAndInclusive()
         {
-            var query = new GreaterThanQuery(DicomTag.StudyDate, "20200102", true);
+            var query = new GreaterThanQuery(DicomTags.StudyDate, "20200102", true);
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }

@@ -2,16 +2,18 @@
 
 public sealed partial record DicomDataset
 {
-    public void Add(DicomItem item)
+    public void Add(IDicomItem item)
     {
         if (item is null)
         {
             throw new ArgumentNullException(nameof(item));
         }
 
-        uint key = ((uint)item.Tag.Group << 16) | item.Tag.Element;
+        uint key = ((uint)item.Group << 16) | item.Element;
         _items.Add(key, item);
     }
 
-    public void Add(DicomTag tag, string value) => Add(DicomItemFactory.CreateFromString(tag, value));
+    public void Add(DicomTag tag, string value) => Add(DicomItemFactory.Create(tag, value));
+    public void Add(DicomTag tag, int value) => Add(DicomItemFactory.Create(tag, value));
+    public void Add(DicomTag tag, DateOnly value) => Add(DicomItemFactory.Create(tag, value));
 }
