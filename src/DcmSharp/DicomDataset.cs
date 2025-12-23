@@ -6,5 +6,6 @@ public sealed partial record DicomDataset
 
     public DicomDataset() {}
 
-
+    public DicomDataset(ReadOnlyDicomDataset readOnlyDicomDataset)
+        => throw new NotSupportedException("Constructor not implemented yet");
 }

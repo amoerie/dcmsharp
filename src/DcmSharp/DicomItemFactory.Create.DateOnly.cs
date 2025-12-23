@@ -23,7 +23,7 @@ public static partial class DicomItemFactory
             case DicomVR.DT:
                 return new DicomDateTime(group, element, [ new DateTime(value, new TimeOnly()) ]);
             default:
-                throw new DicomException($"Creating a DICOM item with VR {vr} with a value of type 'DateOnly' is not supported");
+                throw new DicomException($"Creating a DICOM item with VR {vr} with a value of type '{nameof(DateOnly)}' is not supported");
         }
     }
 }

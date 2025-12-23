@@ -12,9 +12,6 @@ public readonly partial record struct ReadOnlyDicomDataset
             switch (vr)
             {
                 case DicomVR.AE:
-                    if (content.Memory is { } memory)
-                    {
-                    }
                     break;
                 case DicomVR.AS:
                     break;

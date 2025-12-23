@@ -127,5 +127,14 @@
     <Compile Update="DicomItemFactory.Create.String.cs">
       <DependentUpon>DicomItemFactory.cs</DependentUpon>
     </Compile>
+    <Compile Update="DicomItemFactory.Create.DateOnly.cs">
+      <DependentUpon>DicomItemFactory.cs</DependentUpon>
+    </Compile>
+    <Compile Update="DicomItemFactory.Create.Double.cs">
+      <DependentUpon>DicomItemFactory.cs</DependentUpon>
+    </Compile>
+    <Compile Update="DicomItemFactory.Create.Int.cs">
+      <DependentUpon>DicomItemFactory.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
