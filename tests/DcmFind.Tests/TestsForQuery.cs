@@ -15,7 +15,6 @@ public class TestsForQuery
         _dicomDataset.Add(DicomTags.AccessionNumber, "Pineapple");
         _dicomDataset.Add(DicomTags.Rows, 1000);
         _dicomDataset.Add(DicomTags.StudyDate, new DateOnly(2020, 1, 2));
-
     }
 
     public class TestsForEqualsQuery : TestsForQuery
