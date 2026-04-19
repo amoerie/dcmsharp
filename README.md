@@ -2,7 +2,7 @@
 
 > **⚠️ Experimental — not production-ready**
 >
-> This library is under active development. APIs are unstable, behaviour may change without notice, and it has not been validated for clinical or production use. Use at your own risk.
+> APIs are unstable, behaviour may change without notice, and this has not been validated for clinical or production use. Use at your own risk.
 
 A high-performance .NET 9 library for parsing DICOM files, plus three CLI tools built on top of it.
 
