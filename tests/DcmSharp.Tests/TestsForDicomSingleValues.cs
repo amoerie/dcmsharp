@@ -1,6 +1,5 @@
 ﻿using DcmSharp.Parser;
 using FluentAssertions;
-using Xunit.Abstractions;
 
 namespace DcmSharp.Tests;
 
@@ -20,7 +19,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetString(DicomTags.SelectorAEValue, out string? value).Should().BeTrue();
@@ -34,7 +36,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetString(DicomTags.SelectorASValue, out string? value).Should().BeTrue();
@@ -48,7 +53,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetTag(DicomTags.SelectorATValue, out DicomTag? value).Should().BeTrue();
@@ -62,7 +70,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetDate(DicomTags.SelectorDAValue, out DateOnly value).Should().BeTrue();
@@ -76,7 +87,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetDecimal(DicomTags.SelectorDSValue, out decimal value).Should().BeTrue();
@@ -90,7 +104,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -107,7 +124,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetDouble(DicomTags.SelectorFDValue, out double value).Should().BeTrue();
@@ -121,7 +141,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetFloat(DicomTags.SelectorFLValue, out float value).Should().BeTrue();
@@ -135,7 +158,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetInt(DicomTags.SelectorISValue, out int value).Should().BeTrue();
@@ -149,7 +175,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetString(DicomTags.SelectorLOValue, out string? value).Should().BeTrue();
@@ -163,7 +192,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetString(DicomTags.SelectorLTValue, out string? value).Should().BeTrue();
@@ -177,7 +209,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -195,7 +230,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetString(DicomTags.SelectorSHValue, out string? value).Should().BeTrue();
@@ -209,7 +247,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetInt(DicomTags.SelectorSLValue, out int value).Should().BeTrue();
@@ -223,7 +264,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetShort(DicomTags.SelectorSSValue, out short value).Should().BeTrue();
@@ -237,7 +281,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetString(DicomTags.SelectorSTValue, out string? value).Should().BeTrue();
@@ -251,7 +298,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetLong(DicomTags.SelectorSVValue, out long value).Should().BeTrue();
@@ -265,7 +315,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetTime(DicomTags.SelectorTMValue, out TimeOnly value).Should().BeTrue();
@@ -279,7 +332,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetString(DicomTags.SelectorUCValue, out string? value).Should().BeTrue();
@@ -293,7 +349,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetString(DicomTags.SelectorUIValue, out string? value).Should().BeTrue();
@@ -307,7 +366,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetUInt(DicomTags.SelectorULValue, out uint value).Should().BeTrue();
@@ -321,7 +383,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetUShort(DicomTags.SelectorUSValue, out ushort value).Should().BeTrue();
@@ -335,7 +400,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetString(DicomTags.SelectorUTValue, out string? value).Should().BeTrue();
@@ -349,7 +417,10 @@ public sealed class TestsForDicomSingleValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/SingleValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetULong(DicomTags.SelectorUVValue, out ulong value).Should().BeTrue();

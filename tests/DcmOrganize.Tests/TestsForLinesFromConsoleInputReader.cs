@@ -21,7 +21,9 @@ public class TestsForLinesFromConsoleInputReader : IDisposable
     [Fact]
     public async Task ShouldReadEmptyString()
     {
-        var lines = await _linesFromConsoleInputReader.Read(CancellationToken.None).ToListAsync();
+        var lines = await _linesFromConsoleInputReader
+            .Read(TestContext.Current.CancellationToken)
+            .ToListAsync(TestContext.Current.CancellationToken);
 
         lines.Should().BeEmpty();
     }
@@ -32,7 +34,9 @@ public class TestsForLinesFromConsoleInputReader : IDisposable
         _consoleInputWriter.Write("Hello world");
         _consoleInputStream.Seek(0, SeekOrigin.Begin);
 
-        var lines = await _linesFromConsoleInputReader.Read(CancellationToken.None).ToListAsync();
+        var lines = await _linesFromConsoleInputReader
+            .Read(TestContext.Current.CancellationToken)
+            .ToListAsync(TestContext.Current.CancellationToken);
 
         lines.Should().BeEquivalentTo(new[] { "Hello world" });
     }
@@ -46,7 +50,9 @@ public class TestsForLinesFromConsoleInputReader : IDisposable
         _consoleInputWriter.Write(input);
         _consoleInputStream.Seek(0, SeekOrigin.Begin);
 
-        var lines = await _linesFromConsoleInputReader.Read(CancellationToken.None).ToListAsync();
+        var lines = await _linesFromConsoleInputReader
+            .Read(TestContext.Current.CancellationToken)
+            .ToListAsync(TestContext.Current.CancellationToken);
 
         lines.Should().BeEquivalentTo(new[] { "Hello", "World" });
     }
