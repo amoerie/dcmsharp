@@ -21,4 +21,8 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --configuration Release --no-restore --verbosity normal
+      run: |
+        dotnet test tests/DcmSharp.Tests/ --configuration Release --no-restore --verbosity normal
+        dotnet test tests/DcmAnonymize.Tests/ --configuration Release --no-restore --verbosity normal
+        dotnet test tests/DcmOrganize.Tests/ --configuration Release --no-restore --verbosity normal
+        dotnet test tests/DcmSharp.SourceGenerator.Tests/ --configuration Release --no-restore --verbosity normal

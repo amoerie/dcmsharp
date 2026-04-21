@@ -4,12 +4,23 @@ namespace DcmSharp;
 
 public static class DicomTagsIndex
 {
-    private static readonly Dictionary<uint, DicomTag> _indexByGroupAndElement =
-        DicomTags.All.ToDictionary(dicomTag => ((uint)dicomTag.Group << 16) | dicomTag.Element);
+    private static readonly Dictionary<uint, DicomTag> _indexByGroupAndElement = BuildByGroupAndElement();
+    private static Dictionary<uint, DicomTag> BuildByGroupAndElement()
+    {
+        var dict = new Dictionary<uint, DicomTag>();
+        foreach (var tag in DicomTags.All)
+            dict.TryAdd(((uint)tag.Group << 16) | tag.Element, tag);
+        return dict;
+    }
 
-    [Obsolete]
-    private static readonly Dictionary<string, DicomTag> _indexByKeyword =
-        DicomTags.All.ToDictionary(dicomTag => dicomTag.Keyword, StringComparer.OrdinalIgnoreCase);
+    private static readonly Dictionary<string, DicomTag> _indexByKeyword = BuildByKeyword();
+    private static Dictionary<string, DicomTag> BuildByKeyword()
+    {
+        var dict = new Dictionary<string, DicomTag>(StringComparer.OrdinalIgnoreCase);
+        foreach (var tag in DicomTags.All)
+            dict.TryAdd(tag.Keyword, tag);
+        return dict;
+    }
 
     /// <summary>
     /// Lookup a <see cref="DicomTag"/> by its group and element.
