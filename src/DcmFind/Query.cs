@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using DcmSharp;
 
@@ -6,12 +6,12 @@ namespace DcmFind
 {
     public interface IQuery
     {
-        bool Matches(ReadOnlyDicomDataset dicomDataset);
+        bool Matches(IDicomDataset dicomDataset);
     }
 
     public class EqualsQuery : IQuery
     {
-        private readonly Func<ReadOnlyDicomDataset, bool> _predicate;
+        private readonly Func<IDicomDataset, bool> _predicate;
 
         public EqualsQuery(DicomTag dicomTag, string value)
         {
@@ -22,7 +22,7 @@ namespace DcmFind
             _predicate = dicomDataset => regex.IsMatch(dicomDataset.TryGetString(dicomTag, out string? dicomTagValue) ? dicomTagValue : "");
         }
 
-        public bool Matches(ReadOnlyDicomDataset dicomDataset)
+        public bool Matches(IDicomDataset dicomDataset)
         {
             return _predicate(dicomDataset);
         }
@@ -30,7 +30,7 @@ namespace DcmFind
 
     public class NotEqualsQuery : IQuery
     {
-        private readonly Func<ReadOnlyDicomDataset, bool> _predicate;
+        private readonly Func<IDicomDataset, bool> _predicate;
 
         public NotEqualsQuery(DicomTag dicomTag, string value)
         {
@@ -41,7 +41,7 @@ namespace DcmFind
             _predicate = dicomDataset => !regex.IsMatch(dicomDataset.TryGetString(dicomTag, out string? dicomTagValue) ? dicomTagValue : "");
         }
 
-        public bool Matches(ReadOnlyDicomDataset dicomDataset)
+        public bool Matches(IDicomDataset dicomDataset)
         {
             return _predicate(dicomDataset);
         }
@@ -49,7 +49,7 @@ namespace DcmFind
 
     public class LowerThanQuery : IQuery
     {
-        private readonly Func<ReadOnlyDicomDataset, bool> _predicate;
+        private readonly Func<IDicomDataset, bool> _predicate;
 
         public LowerThanQuery(DicomTag dicomTag, string value, bool inclusive)
         {
@@ -95,7 +95,7 @@ namespace DcmFind
             }
         }
 
-        public bool Matches(ReadOnlyDicomDataset dicomDataset)
+        public bool Matches(IDicomDataset dicomDataset)
         {
             return _predicate(dicomDataset);
         }
@@ -103,7 +103,7 @@ namespace DcmFind
 
     public class GreaterThanQuery : IQuery
     {
-        private readonly Func<ReadOnlyDicomDataset, bool> _predicate;
+        private readonly Func<IDicomDataset, bool> _predicate;
 
         public GreaterThanQuery(DicomTag dicomTag, string value, bool inclusive)
         {
@@ -149,7 +149,7 @@ namespace DcmFind
             }
         }
 
-        public bool Matches(ReadOnlyDicomDataset dicomDataset)
+        public bool Matches(IDicomDataset dicomDataset)
         {
             return _predicate(dicomDataset);
         }
@@ -164,7 +164,7 @@ namespace DcmFind
             _dicomTag = dicomTag;
         }
 
-        public bool Matches(ReadOnlyDicomDataset dicomDataset)
+        public bool Matches(IDicomDataset dicomDataset)
         {
             return dicomDataset.TryGetMemory(_dicomTag, out _, out _);
         }

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace DcmSharp;
 
@@ -24,6 +24,8 @@ public static partial class DicomItemFactory
                 return new DicomSignedLong(group, element, [ value ]);
             case DicomVR.SV:
                 return new DicomSignedVeryLong(group, element, [ value ]);
+            case DicomVR.US:
+                return new DicomUnsignedShort(group, element, [ (ushort)value ]);
             default:
                 throw new DicomException($"Creating a DICOM item with VR {vr} with a value of type 'int' is not supported");
         }

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Channels;
 using DcmSharp;
@@ -9,7 +9,7 @@ using Spectre.Console.Cli;
 
 namespace DcmFind;
 
-public sealed record ProgramOptions(bool IgnoreRedirectedOutput, int ConsoleWindowWidth);
+public sealed record ProgramOptions(bool IgnoreRedirectedOutput, int ConsoleWindowWidth, IAnsiConsole? AnsiConsole = null);
 
 public class Program
 {
@@ -33,7 +33,14 @@ public class Program
     public async Task<int> MainAsync(string[] args)
     {
         var app = new CommandApp<FindCommand>();
-        app.Configure(configurator => configurator.Settings.Registrar.RegisterInstance(_options));
+        app.Configure(configurator =>
+        {
+            configurator.Settings.Registrar.RegisterInstance(_options);
+            if (_options.AnsiConsole != null)
+            {
+                configurator.Settings.Console = _options.AnsiConsole;
+            }
+        });
         return await app.RunAsync(args);
     }
 }
@@ -54,7 +61,7 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
 
         [CommandOption("-f|--file-pattern")]
         [Description("Only query files that satisfy this file pattern")]
-        [DefaultValue("*")]
+        [DefaultValue("*.dcm")]
         public string? FilePattern { get; init; }
 
         [CommandOption("-r|--recursive")]
@@ -92,8 +99,6 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
                 {
                     return ValidationResult.Error($"Query {query} could not be parsed");
                 }
-
-                return base.Validate();
             }
 
             if (FilePattern == null || string.IsNullOrEmpty(FilePattern))
@@ -114,6 +119,7 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
     protected override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] Settings settings, CancellationToken cancellationToken)
     {
         var services = new ServiceCollection();
+        services.AddLogging();
         services.AddDcmParse();
         await using var serviceProvider = services.BuildServiceProvider();
         var dicomParser = serviceProvider.GetRequiredService<IDicomParser>();

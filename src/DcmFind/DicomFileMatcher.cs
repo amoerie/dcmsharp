@@ -1,4 +1,4 @@
-﻿using System.Threading.Channels;
+using System.Threading.Channels;
 using DcmSharp;
 using DcmSharp.Parser;
 
@@ -32,7 +32,7 @@ public class DicomFileMatcher(IDicomParser dicomParser)
                     {
                         dicomDataset = await dicomParser.ParseReadOnlyAsync(new FileInfo(file), cancellationToken);
                     }
-                    catch (DicomException)
+                    catch (Exception) when (cancellationToken.IsCancellationRequested == false)
                     {
                         continue;
                     }
