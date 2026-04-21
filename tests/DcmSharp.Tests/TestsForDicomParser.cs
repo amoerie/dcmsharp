@@ -1,5 +1,4 @@
 using DcmSharp.Parser;
-using FluentAssertions;
 
 namespace DcmSharp.Tests;
 
@@ -27,7 +26,6 @@ public sealed class TestsForDicomParser
         );
 
         // Assert
-        dicomDataset.Should().NotBeNull();
     }
 
     [Fact]
@@ -43,7 +41,6 @@ public sealed class TestsForDicomParser
         );
 
         // Assert
-        dicomDataset.Should().NotBeNull();
     }
 
     [Theory]
@@ -63,10 +60,10 @@ public sealed class TestsForDicomParser
         );
 
         // Act
-        dicomDataset.TryGetString(group, element, out string? actualValue).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetString(group, element, out string? actualValue));
 
         // Assert
-        actualValue.Should().Be(expectedValue);
+        Assert.Equal(expectedValue, actualValue);
     }
 
     [Theory]
@@ -86,10 +83,10 @@ public sealed class TestsForDicomParser
         );
 
         // Act
-        dicomDataset.TryGetString(group, element, out string? actualValue).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetString(group, element, out string? actualValue));
 
         // Assert
-        actualValue.Should().Be(expectedValue);
+        Assert.Equal(expectedValue, actualValue);
     }
 
     [Fact]
@@ -103,30 +100,29 @@ public sealed class TestsForDicomParser
         );
 
         // Act + Assert
-        dicomDataset
-            .TryGetSequence(
+        Assert.True(
+            dicomDataset.TryGetSequence(
                 DicomTags.SourceImageSequence,
                 out ReadOnlyDicomDataset[]? sourceImageSequence
             )
-            .Should()
-            .BeTrue();
-        sourceImageSequence.Should().NotBeNull();
+        );
+        Assert.NotNull(sourceImageSequence);
         var firstSourceImage = sourceImageSequence![0];
-        firstSourceImage.Should().NotBeNull();
-        firstSourceImage
-            .TryGetSequence(
+        Assert.True(
+            firstSourceImage.TryGetSequence(
                 DicomTags.PurposeOfReferenceCodeSequence,
                 out ReadOnlyDicomDataset[]? purposeOfReferenceCodeSequence
             )
-            .Should()
-            .BeTrue();
-        purposeOfReferenceCodeSequence.Should().NotBeNull();
+        );
+        Assert.NotNull(purposeOfReferenceCodeSequence);
         var firstPurposeOfReferenceCodeSequence = purposeOfReferenceCodeSequence![0];
-        firstPurposeOfReferenceCodeSequence
-            .TryGetString(DicomTags.CodeMeaning, out string? codeMeaning)
-            .Should()
-            .BeTrue();
-        codeMeaning.Should().Be("Uncompressed predecessor");
+        Assert.True(
+            firstPurposeOfReferenceCodeSequence.TryGetString(
+                DicomTags.CodeMeaning,
+                out string? codeMeaning
+            )
+        );
+        Assert.Equal("Uncompressed predecessor", codeMeaning);
     }
 
     [Fact]
@@ -140,12 +136,14 @@ public sealed class TestsForDicomParser
         );
 
         // Act
-        dicomDataset
-            .TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out string? orderNumber)
-            .Should()
-            .BeTrue();
+        Assert.True(
+            dicomDataset.TryGetString(
+                DicomTags.PlacerOrderNumberImagingServiceRequest,
+                out string? orderNumber
+            )
+        );
 
         // Assert
-        orderNumber.Should().Be("ORDER2024112213363");
+        Assert.Equal("ORDER2024112213363", orderNumber);
     }
 }

@@ -1,5 +1,4 @@
-﻿using DcmSharp.Parser;
-using FluentAssertions;
+using DcmSharp.Parser;
 
 namespace DcmSharp.Tests;
 
@@ -25,13 +24,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetStrings(DicomTags.SelectorAEValue, out string[]? values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetStrings(DicomTags.SelectorAEValue, out string[]? values));
 
         // Assert
-        values.Should().BeEquivalentTo(["MODALITY1", "MODALITY2"]);
+        Assert.Equivalent(new[] { "MODALITY1", "MODALITY2" }, values);
     }
 
     [Fact]
@@ -45,13 +41,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetStrings(DicomTags.SelectorASValue, out string[]? values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetStrings(DicomTags.SelectorASValue, out string[]? values));
 
         // Assert
-        values.Should().BeEquivalentTo(["025Y", "030D"]);
+        Assert.Equivalent(new[] { "025Y", "030D" }, values);
     }
 
     [Fact]
@@ -65,15 +58,13 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetTags(DicomTags.SelectorATValue, out DicomTag[]? values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetTags(DicomTags.SelectorATValue, out DicomTag[]? values));
 
         // Assert
-        values
-            .Should()
-            .BeEquivalentTo([DicomTags.TransferSyntaxUID, DicomTags.ImplementationClassUID]);
+        Assert.Equivalent(
+            new[] { DicomTags.TransferSyntaxUID, DicomTags.ImplementationClassUID },
+            values
+        );
     }
 
     [Fact]
@@ -87,15 +78,13 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetDates(DicomTags.SelectorDAValue, out DateOnly[]? values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetDates(DicomTags.SelectorDAValue, out DateOnly[]? values));
 
         // Assert
-        values
-            .Should()
-            .BeEquivalentTo([DateOnly.Parse("2024-12-03"), DateOnly.Parse("2024-11-03")]);
+        Assert.Equivalent(
+            new[] { DateOnly.Parse("2024-12-03"), DateOnly.Parse("2024-11-03") },
+            values
+        );
     }
 
     [Fact]
@@ -109,13 +98,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetDecimals(DicomTags.SelectorDSValue, out decimal[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetDecimals(DicomTags.SelectorDSValue, out decimal[] values));
 
         // Assert
-        values.Should().BeEquivalentTo([0.25m, 0.50m]);
+        Assert.Equivalent(new[] { 0.25m, 0.50m }, values);
     }
 
     [Fact]
@@ -129,18 +115,13 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetDateTimes(DicomTags.SelectorDTValue, out DateTime[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetDateTimes(DicomTags.SelectorDTValue, out DateTime[] values));
 
         // Assert
-        values
-            .Should()
-            .BeEquivalentTo([
-                DateTime.Parse("2024-12-03T12:00:00"),
-                DateTime.Parse("2024-11-03T12:00:00"),
-            ]);
+        Assert.Equivalent(
+            new[] { DateTime.Parse("2024-12-03T12:00:00"), DateTime.Parse("2024-11-03T12:00:00") },
+            values
+        );
     }
 
     [Fact]
@@ -154,13 +135,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetDoubles(DicomTags.SelectorFDValue, out double[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetDoubles(DicomTags.SelectorFDValue, out double[] values));
 
         // Assert
-        values.Should().BeEquivalentTo([-100.123, 200.456]);
+        Assert.Equivalent(new[] { -100.123, 200.456 }, values);
     }
 
     [Fact]
@@ -174,10 +152,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset.TryGetFloats(DicomTags.SelectorFLValue, out float[] values).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetFloats(DicomTags.SelectorFLValue, out float[] values));
 
         // Assert
-        values.Should().BeEquivalentTo([100.5f, 200.5]);
+        Assert.Equivalent(new[] { 100.5f, 200.5f }, values);
     }
 
     [Fact]
@@ -191,10 +169,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset.TryGetInts(DicomTags.SelectorISValue, out int[] values).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetInts(DicomTags.SelectorISValue, out int[] values));
 
         // Assert
-        values.Should().BeEquivalentTo([1, 2]);
+        Assert.Equivalent(new[] { 1, 2 }, values);
     }
 
     [Fact]
@@ -208,13 +186,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetStrings(DicomTags.SelectorLOValue, out string[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetStrings(DicomTags.SelectorLOValue, out string[] values));
 
         // Assert
-        values.Should().BeEquivalentTo(["Medical Center A", "Medical Center B"]);
+        Assert.Equivalent(new[] { "Medical Center A", "Medical Center B" }, values);
     }
 
     [Fact]
@@ -228,13 +203,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetStrings(DicomTags.SelectorLTValue, out string[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetStrings(DicomTags.SelectorLTValue, out string[] values));
 
         // Assert
-        values.Should().BeEquivalentTo(["Some long notes"]);
+        Assert.Equivalent(new[] { "Some long notes" }, values);
     }
 
     [Fact]
@@ -248,15 +220,14 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetPersonNames(DicomTags.SelectorPNValue, out PersonName[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(
+            dicomDataset.TryGetPersonNames(DicomTags.SelectorPNValue, out PersonName[] values)
+        );
 
         // Assert
         var expected1 = new PersonName("Dr", "Smith", null, null, null, null, null, null, null);
         var expected2 = new PersonName("Dr", "Jones", null, null, null, null, null, null, null);
-        values.Should().BeEquivalentTo([expected1, expected2]);
+        Assert.Equivalent(new[] { expected1, expected2 }, values);
     }
 
     [Fact]
@@ -270,13 +241,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetStrings(DicomTags.SelectorSHValue, out string[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetStrings(DicomTags.SelectorSHValue, out string[] values));
 
         // Assert
-        values.Should().BeEquivalentTo(["CT123", "CT456"]);
+        Assert.Equivalent(new[] { "CT123", "CT456" }, values);
     }
 
     [Fact]
@@ -290,10 +258,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset.TryGetInts(DicomTags.SelectorSLValue, out int[] values).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetInts(DicomTags.SelectorSLValue, out int[] values));
 
         // Assert
-        values.Should().BeEquivalentTo([-1, 2]);
+        Assert.Equivalent(new[] { -1, 2 }, values);
     }
 
     [Fact]
@@ -307,10 +275,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset.TryGetShorts(DicomTags.SelectorSSValue, out short[] values).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetShorts(DicomTags.SelectorSSValue, out short[] values));
 
         // Assert
-        values.Should().BeEquivalentTo([-32768, 32767]);
+        Assert.Equivalent(new short[] { -32768, 32767 }, values);
     }
 
     [Fact]
@@ -324,13 +292,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetStrings(DicomTags.SelectorSTValue, out string[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetStrings(DicomTags.SelectorSTValue, out string[] values));
 
         // Assert
-        values.Should().BeEquivalentTo(["History1"]);
+        Assert.Equivalent(new[] { "History1" }, values);
     }
 
     [Fact]
@@ -344,10 +309,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset.TryGetLongs(DicomTags.SelectorSVValue, out long[] values).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetLongs(DicomTags.SelectorSVValue, out long[] values));
 
         // Assert
-        values.Should().BeEquivalentTo([9223372036854775807, -9223372036854775808]);
+        Assert.Equivalent(new[] { 9223372036854775807, -9223372036854775808 }, values);
     }
 
     [Fact]
@@ -361,13 +326,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetTimes(DicomTags.SelectorTMValue, out TimeOnly[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetTimes(DicomTags.SelectorTMValue, out TimeOnly[] values));
 
         // Assert
-        values.Should().BeEquivalentTo([TimeOnly.Parse("12:00:00"), TimeOnly.Parse("13:00:00")]);
+        Assert.Equivalent(new[] { TimeOnly.Parse("12:00:00"), TimeOnly.Parse("13:00:00") }, values);
     }
 
     [Fact]
@@ -381,13 +343,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetStrings(DicomTags.SelectorUCValue, out string[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetStrings(DicomTags.SelectorUCValue, out string[] values));
 
         // Assert
-        values.Should().BeEquivalentTo(["Device A", "Device B"]);
+        Assert.Equivalent(new[] { "Device A", "Device B" }, values);
     }
 
     [Fact]
@@ -401,13 +360,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetStrings(DicomTags.SelectorUIValue, out string[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetStrings(DicomTags.SelectorUIValue, out string[] values));
 
         // Assert
-        values.Should().BeEquivalentTo(["1.2.3", "4.5.6"]);
+        Assert.Equivalent(new[] { "1.2.3", "4.5.6" }, values);
     }
 
     [Fact]
@@ -421,11 +377,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset.TryGetUInts(DicomTags.SelectorULValue, out uint[] values).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetUInts(DicomTags.SelectorULValue, out uint[] values));
 
         // Assert
-        List<uint> expected = [4294967295, 2];
-        values.Should().BeEquivalentTo(expected);
+        Assert.Equivalent(new uint[] { 4294967295, 2 }, values);
     }
 
     [Fact]
@@ -439,13 +394,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetUShorts(DicomTags.SelectorUSValue, out ushort[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetUShorts(DicomTags.SelectorUSValue, out ushort[] values));
 
         // Assert
-        values.Should().BeEquivalentTo([1, 100]);
+        Assert.Equivalent(new ushort[] { 1, 100 }, values);
     }
 
     [Fact]
@@ -459,13 +411,10 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset
-            .TryGetStrings(DicomTags.SelectorUTValue, out string[] values)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetStrings(DicomTags.SelectorUTValue, out string[] values));
 
         // Assert
-        values.Should().BeEquivalentTo(["Modified"]);
+        Assert.Equivalent(new[] { "Modified" }, values);
     }
 
     [Fact]
@@ -479,10 +428,9 @@ public sealed class TestsForDicomMultiValues
         );
 
         // Act
-        dicomDataset.TryGetULongs(DicomTags.SelectorUVValue, out ulong[] values).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetULongs(DicomTags.SelectorUVValue, out ulong[] values));
 
         // Assert
-        List<ulong> expected = [18446744073709551615, 18446744073709551614];
-        values.Should().BeEquivalentTo(expected);
+        Assert.Equivalent(new ulong[] { 18446744073709551615, 18446744073709551614 }, values);
     }
 }
