@@ -2,8 +2,8 @@
 
 public readonly partial record struct ReadOnlyDicomDataset
 {
-    public bool TryGetPersonNames(DicomTag tag, out PersonName[] values)
-        => TryGetPersonNames(tag.Group, tag.Element, out values);
+    public bool TryGetPersonNames(DicomTag tag, out PersonName[] values) =>
+        TryGetPersonNames(tag.Group, tag.Element, out values);
 
     public bool TryGetPersonNames(ushort group, ushort element, out PersonName[] values)
     {

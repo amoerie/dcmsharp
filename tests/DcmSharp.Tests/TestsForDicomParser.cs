@@ -44,7 +44,11 @@ public sealed class TestsForDicomParser
     [Theory]
     [InlineData(0x0008, 0x0018, "2.25.332838821141227624838581964210008219211")]
     [InlineData(0x0040, 0x2016, "ORDER2024081216321")]
-    public async Task ShouldRetrieveDicomTagFromExplicitVRDataset(ushort group, ushort element, string expectedValue)
+    public async Task ShouldRetrieveDicomTagFromExplicitVRDataset(
+        ushort group,
+        ushort element,
+        string expectedValue
+    )
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
@@ -60,7 +64,11 @@ public sealed class TestsForDicomParser
     [Theory]
     [InlineData(0x0008, 0x0018, "1.2.840.113619.2.1.2411.1031152382.365.1.736169244")]
     [InlineData(0x0028, 0x1054, "US")]
-    public async Task ShouldRetrieveDicomTagFromImplicitVRDataset(ushort group, ushort element, string expectedValue)
+    public async Task ShouldRetrieveDicomTagFromImplicitVRDataset(
+        ushort group,
+        ushort element,
+        string expectedValue
+    )
     {
         // Arrange
         var file = new FileInfo("./Dicom/ImplicitVR.dcm");
@@ -81,17 +89,29 @@ public sealed class TestsForDicomParser
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act + Assert
-        dicomDataset.TryGetSequence(DicomTags.SourceImageSequence, out ReadOnlyDicomDataset[]? sourceImageSequence)
-            .Should().BeTrue();
+        dicomDataset
+            .TryGetSequence(
+                DicomTags.SourceImageSequence,
+                out ReadOnlyDicomDataset[]? sourceImageSequence
+            )
+            .Should()
+            .BeTrue();
         sourceImageSequence.Should().NotBeNull();
         var firstSourceImage = sourceImageSequence![0];
         firstSourceImage.Should().NotBeNull();
-        firstSourceImage.TryGetSequence(DicomTags.PurposeOfReferenceCodeSequence,
-                out ReadOnlyDicomDataset[]? purposeOfReferenceCodeSequence)
-            .Should().BeTrue();
+        firstSourceImage
+            .TryGetSequence(
+                DicomTags.PurposeOfReferenceCodeSequence,
+                out ReadOnlyDicomDataset[]? purposeOfReferenceCodeSequence
+            )
+            .Should()
+            .BeTrue();
         purposeOfReferenceCodeSequence.Should().NotBeNull();
         var firstPurposeOfReferenceCodeSequence = purposeOfReferenceCodeSequence![0];
-        firstPurposeOfReferenceCodeSequence.TryGetString(DicomTags.CodeMeaning, out string? codeMeaning).Should().BeTrue();
+        firstPurposeOfReferenceCodeSequence
+            .TryGetString(DicomTags.CodeMeaning, out string? codeMeaning)
+            .Should()
+            .BeTrue();
         codeMeaning.Should().Be("Uncompressed predecessor");
     }
 
@@ -103,10 +123,12 @@ public sealed class TestsForDicomParser
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out string? orderNumber).Should().BeTrue();
+        dicomDataset
+            .TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out string? orderNumber)
+            .Should()
+            .BeTrue();
 
         // Assert
         orderNumber.Should().Be("ORDER2024112213363");
     }
-
 }

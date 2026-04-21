@@ -3,6 +3,10 @@
 internal class DicomOrganizeException : Exception
 {
     public DicomOrganizeException() { }
-    public DicomOrganizeException(string? message) : base(message) { }
-    public DicomOrganizeException(string? message, Exception? innerException) : base(message, innerException) { }
+
+    public DicomOrganizeException(string? message)
+        : base(message) { }
+
+    public DicomOrganizeException(string? message, Exception? innerException)
+        : base(message, innerException) { }
 }

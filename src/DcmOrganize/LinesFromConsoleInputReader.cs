@@ -16,18 +16,25 @@ public class LinesFromConsoleInputReader : ILinesFromConsoleInputReader
         _consoleInput = consoleInput ?? throw new ArgumentNullException(nameof(consoleInput));
     }
 
-    public async IAsyncEnumerable<string> Read([EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<string> Read(
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    )
     {
-        var cancellationCts = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        await using var registration = cancellationToken.Register(() => cancellationCts.SetCanceled());
+        var cancellationCts = new TaskCompletionSource<string?>(
+            TaskCreationOptions.RunContinuationsAsynchronously
+        );
+        await using var registration = cancellationToken.Register(() =>
+            cancellationCts.SetCanceled()
+        );
         Task<string?> cancellationTask = cancellationCts.Task;
-            
+
         while (!cancellationToken.IsCancellationRequested)
         {
             var line = await await Task.WhenAny(
-                Task.Run(() => _consoleInput.ReadLineAsync(), cancellationToken), 
-                cancellationTask);
-                
+                Task.Run(() => _consoleInput.ReadLineAsync(), cancellationToken),
+                cancellationTask
+            );
+
             if (line == null)
                 yield break;
 
