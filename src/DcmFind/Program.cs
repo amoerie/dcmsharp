@@ -111,7 +111,7 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
     }
 
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Disposal only happens after all tasks are completed")]
-    public override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] Settings settings)
+    protected override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] Settings settings, CancellationToken cancellationToken)
     {
         var services = new ServiceCollection();
         services.AddDcmParse();
