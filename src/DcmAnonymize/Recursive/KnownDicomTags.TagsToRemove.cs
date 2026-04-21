@@ -102,7 +102,6 @@ public static partial class KnownDicomTags
         DicomTag.EquipmentFrameOfReferenceDescription,
         DicomTag.EthicsCommitteeApprovalEffectivenessEndDate,
         DicomTag.EthicsCommitteeApprovalEffectivenessStartDate,
-        DicomTag.EthnicGroup,
         DicomTag.ExpectedCompletionDateTime,
         DicomTag.FindingsGroupRecordingDateTrialRETIRED,
         DicomTag.FindingsGroupRecordingTimeTrialRETIRED,
