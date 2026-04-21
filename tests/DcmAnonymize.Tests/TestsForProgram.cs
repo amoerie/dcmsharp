@@ -1,6 +1,5 @@
 using System.Text;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace DcmAnonymize.Tests;
 
@@ -23,7 +22,7 @@ public class TestsForDcmAnonymize : IAsyncLifetime
             testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
     }
 
-    public Task InitializeAsync()
+    public ValueTask InitializeAsync()
     {
         var testDataDirectory = new DirectoryInfo("./TestData");
         var sampleDicomFile = new FileInfo(
@@ -45,10 +44,10 @@ public class TestsForDcmAnonymize : IAsyncLifetime
             Output = _outputWriter,
             ErrorOutput = _errorOutputWriter,
         };
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         await _outputWriter.DisposeAsync();
         await _errorOutputWriter.DisposeAsync();
