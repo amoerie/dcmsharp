@@ -7,7 +7,8 @@ public readonly record struct ReadOnlyDicomItem(
     ushort Group,
     ushort Element,
     DicomVR VR,
-    ReadOnlyDicomItemContent Content)
+    ReadOnlyDicomItemContent Content
+)
 {
     public override string ToString()
     {

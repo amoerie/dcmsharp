@@ -33,7 +33,15 @@ internal sealed class DAParser
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
 
-        if (DateOnly.TryParseExact(charSpan, _formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedDate))
+        if (
+            DateOnly.TryParseExact(
+                charSpan,
+                _formats,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out DateOnly parsedDate
+            )
+        )
         {
             value = parsedDate;
             return true;
@@ -67,18 +75,20 @@ internal sealed class DAParser
         ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimEndSpaces(span);
 
         char[]? sharedChars = null;
-        Span<char> charSpan = trimmedSpan.Length < 255
-            ? stackalloc char[trimmedSpan.Length]
-            : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+        Span<char> charSpan =
+            trimmedSpan.Length < 255
+                ? stackalloc char[trimmedSpan.Length]
+                : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
 
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
 
         int numberOfValues = charSpan.Count('\\') + 1;
         Range[]? sharedRanges = null;
-        Span<Range> ranges = numberOfValues < 16
-            ? stackalloc Range[numberOfValues]
-            : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
+        Span<Range> ranges =
+            numberOfValues < 16
+                ? stackalloc Range[numberOfValues]
+                : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
         values = new DateOnly[numberOfValues];
@@ -88,7 +98,15 @@ internal sealed class DAParser
         {
             Range range = ranges[i];
 
-            if (!DateOnly.TryParseExact(charSpan[range], _formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedDate))
+            if (
+                !DateOnly.TryParseExact(
+                    charSpan[range],
+                    _formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateOnly parsedDate
+                )
+            )
             {
                 allOk = false;
                 break;
@@ -121,18 +139,20 @@ internal sealed class DAParser
         ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimEndSpaces(span);
 
         char[]? sharedChars = null;
-        Span<char> charSpan = trimmedSpan.Length < 255
-            ? stackalloc char[trimmedSpan.Length]
-            : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+        Span<char> charSpan =
+            trimmedSpan.Length < 255
+                ? stackalloc char[trimmedSpan.Length]
+                : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
 
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
 
         int numberOfValues = charSpan.Count('\\') + 1;
         Range[]? sharedRanges = null;
-        Span<Range> ranges = numberOfValues < 16
-            ? stackalloc Range[numberOfValues]
-            : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
+        Span<Range> ranges =
+            numberOfValues < 16
+                ? stackalloc Range[numberOfValues]
+                : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
         values = new string[numberOfValues];
@@ -154,5 +174,4 @@ internal sealed class DAParser
 
         return true;
     }
-
 }

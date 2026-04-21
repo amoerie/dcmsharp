@@ -7,11 +7,12 @@ public record AnonymizedPatient(
     string NationalNumber,
     DateTime BirthDate,
     string PatientId,
-    PatientSex? Sex);
+    PatientSex? Sex
+);
 
 public enum PatientSex
 {
     Male,
     Female,
-    Other
+    Other,
 }

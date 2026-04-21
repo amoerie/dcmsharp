@@ -19,14 +19,19 @@ public class TestsForDcmAnonymize : IAsyncLifetime
 
     public TestsForDcmAnonymize(ITestOutputHelper testOutputHelper)
     {
-        _testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
+        _testOutputHelper =
+            testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
     }
 
     public Task InitializeAsync()
     {
         var testDataDirectory = new DirectoryInfo("./TestData");
-        var sampleDicomFile = new FileInfo(Path.Join(testDataDirectory.Name, "SampleDicomFile.dcm"));
-        var sampleDicomFileCopy = new FileInfo(Path.Join(testDataDirectory.Name, $"SampleDicomFile_{Guid.NewGuid()}.dcm"));
+        var sampleDicomFile = new FileInfo(
+            Path.Join(testDataDirectory.Name, "SampleDicomFile.dcm")
+        );
+        var sampleDicomFileCopy = new FileInfo(
+            Path.Join(testDataDirectory.Name, $"SampleDicomFile_{Guid.NewGuid()}.dcm")
+        );
         File.Copy(sampleDicomFile.FullName, sampleDicomFileCopy.FullName);
         _dicomFile = sampleDicomFileCopy;
         _output = new StringBuilder();
@@ -38,7 +43,7 @@ public class TestsForDcmAnonymize : IAsyncLifetime
         {
             Input = _inputReader,
             Output = _outputWriter,
-            ErrorOutput = _errorOutputWriter
+            ErrorOutput = _errorOutputWriter,
         };
         return Task.CompletedTask;
     }
@@ -71,10 +76,7 @@ public class TestsForDcmAnonymize : IAsyncLifetime
         var expected = $"{_dicomFile.FullName}{Environment.NewLine}";
 
         // Act
-        var statusCode = await _program.Run(new[]
-        {
-            _dicomFile.FullName
-        });
+        var statusCode = await _program.Run(new[] { _dicomFile.FullName });
 
         // Assert
         _testOutputHelper.WriteLine(_output.ToString());
@@ -105,10 +107,7 @@ public class TestsForDcmAnonymize : IAsyncLifetime
     public async Task ShouldFailWhenPassedInvalidArgs()
     {
         // Arrange + Act
-        var statusCode = await _program.Run(new[]
-        {
-            "--fail"
-        });
+        var statusCode = await _program.Run(new[] { "--fail" });
 
         // Assert
         _testOutputHelper.WriteLine(_output.ToString());
@@ -123,11 +122,7 @@ public class TestsForDcmAnonymize : IAsyncLifetime
         var expected = $"{_dicomFile.FullName}{Environment.NewLine}";
 
         // Act
-        var statusCode = await _program.Run(new[]
-        {
-            _dicomFile.FullName,
-            "--parallelism", "4"
-        });
+        var statusCode = await _program.Run(new[] { _dicomFile.FullName, "--parallelism", "4" });
 
         // Assert
         _testOutputHelper.WriteLine(_output.ToString());
@@ -144,11 +139,9 @@ public class TestsForDcmAnonymize : IAsyncLifetime
         var expected = $"{_dicomFile.FullName}{Environment.NewLine}";
 
         // Act
-        var statusCode = await _program.Run(new[]
-        {
-            _dicomFile.FullName,
-            "--blank-rectangle", "(25,25)->(50,50)"
-        });
+        var statusCode = await _program.Run(
+            new[] { _dicomFile.FullName, "--blank-rectangle", "(25,25)->(50,50)" }
+        );
 
         // Assert
         _testOutputHelper.WriteLine(_output.ToString());

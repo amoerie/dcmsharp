@@ -12,7 +12,8 @@ public class DicomFileMatcher(IDicomParser dicomParser)
         bool writeToConsoleOutput,
         ChannelWriter<ConsoleOutput> consoleOutput,
         List<IQuery> queries,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         try
         {
@@ -30,7 +31,10 @@ public class DicomFileMatcher(IDicomParser dicomParser)
                     ReadOnlyDicomDataset dicomDataset;
                     try
                     {
-                        dicomDataset = await dicomParser.ParseReadOnlyAsync(new FileInfo(file), cancellationToken);
+                        dicomDataset = await dicomParser.ParseReadOnlyAsync(
+                            new FileInfo(file),
+                            cancellationToken
+                        );
                     }
                     catch (DicomException)
                     {

@@ -22,7 +22,8 @@ public class TestsForDcmFind : IDisposable
 
     public TestsForDcmFind(ITestOutputHelper testOutputHelper)
     {
-        _testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
+        _testOutputHelper =
+            testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
         _output = new StringBuilder();
         _outputWriter = new StringWriter(_output);
         _errorOutput = new StringBuilder();
@@ -58,7 +59,12 @@ public class TestsForDcmFind : IDisposable
         var statusCode = await new Program(options).MainAsync(Array.Empty<string>());
 
         // Assert
-        var actual = _output.ToString().Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var actual = _output
+            .ToString()
+            .Split(
+                Environment.NewLine,
+                StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
+            );
         actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
         Assert.Equal(string.Empty, _errorOutput.ToString());
         Assert.Equal(0, statusCode);
@@ -72,13 +78,17 @@ public class TestsForDcmFind : IDisposable
 
         // Act
         var options = new ProgramOptions(false, 400);
-        var statusCode = await new Program(options).MainAsync(new []
-        {
-            "--directory", _testFilesDirectory.FullName
-        });
+        var statusCode = await new Program(options).MainAsync(
+            new[] { "--directory", _testFilesDirectory.FullName }
+        );
 
         // Assert
-        var actual = _output.ToString().Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var actual = _output
+            .ToString()
+            .Split(
+                Environment.NewLine,
+                StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
+            );
         actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
         Assert.Equal(string.Empty, _errorOutput.ToString());
         Assert.Equal(0, statusCode);
@@ -92,14 +102,23 @@ public class TestsForDcmFind : IDisposable
 
         // Act
         var options = new ProgramOptions(false, 400);
-        var statusCode = await new Program(options).MainAsync(new []
-        {
-            "--directory", _testFilesDirectory.FullName,
-            "--query", "AccessionNumber=CR2022062117111"
-        });
+        var statusCode = await new Program(options).MainAsync(
+            new[]
+            {
+                "--directory",
+                _testFilesDirectory.FullName,
+                "--query",
+                "AccessionNumber=CR2022062117111",
+            }
+        );
 
         // Assert
-        var actual = _output.ToString().Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var actual = _output
+            .ToString()
+            .Split(
+                Environment.NewLine,
+                StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
+            );
         actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
         Assert.Equal(string.Empty, _errorOutput.ToString());
         Assert.Equal(0, statusCode);
@@ -113,18 +132,27 @@ public class TestsForDcmFind : IDisposable
 
         // Act
         var options = new ProgramOptions(false, 400);
-        var statusCode = await new Program(options).MainAsync(new []
-        {
-            "--directory", _testFilesDirectory.FullName,
-            "--query", "AccessionNumber=CR2022062117111",
-            "--limit", "1",
-        });
+        var statusCode = await new Program(options).MainAsync(
+            new[]
+            {
+                "--directory",
+                _testFilesDirectory.FullName,
+                "--query",
+                "AccessionNumber=CR2022062117111",
+                "--limit",
+                "1",
+            }
+        );
 
         // Assert
-        var actual = _output.ToString().Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var actual = _output
+            .ToString()
+            .Split(
+                Environment.NewLine,
+                StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
+            );
         actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
         Assert.Equal(string.Empty, _errorOutput.ToString());
         Assert.Equal(0, statusCode);
     }
-
 }

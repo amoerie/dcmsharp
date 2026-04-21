@@ -211,7 +211,9 @@ internal sealed class SSParser
         for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
-            values[i] = BitConverter.ToInt16(span.Slice(offset, Length)).ToString(CultureInfo.InvariantCulture);
+            values[i] = BitConverter
+                .ToInt16(span.Slice(offset, Length))
+                .ToString(CultureInfo.InvariantCulture);
         }
 
         return true;

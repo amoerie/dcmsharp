@@ -74,7 +74,6 @@ internal sealed class ATParser
             values[i] = $"{valueSpan[1]:X2}{valueSpan[0]:X2}{valueSpan[3]:X2}{valueSpan[2]:X2}";
         }
 
-
         return true;
     }
 }

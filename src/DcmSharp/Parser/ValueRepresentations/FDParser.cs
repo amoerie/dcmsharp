@@ -29,7 +29,7 @@ internal sealed class FDParser
 
         // We allow an explicit cast here because there is no "loss of precision" going from double to decimal
         // C# does not provide an implicit cast here because the conversion isn't exactly 1 to 1
-        value = (decimal) number;
+        value = (decimal)number;
         return true;
     }
 
@@ -75,7 +75,7 @@ internal sealed class FDParser
         for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
-            values[i] = (decimal) BitConverter.ToDouble(span.Slice(offset, Length));
+            values[i] = (decimal)BitConverter.ToDouble(span.Slice(offset, Length));
         }
 
         return true;
@@ -93,7 +93,9 @@ internal sealed class FDParser
         for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
-            values[i] = BitConverter.ToDouble(span.Slice(offset, Length)).ToString(CultureInfo.InvariantCulture);
+            values[i] = BitConverter
+                .ToDouble(span.Slice(offset, Length))
+                .ToString(CultureInfo.InvariantCulture);
         }
 
         return true;

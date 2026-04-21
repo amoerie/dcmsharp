@@ -2,13 +2,17 @@
 
 public class TestsForDicomTag
 {
-    public class TestsForTryParse: TestsForDicomTag
+    public class TestsForTryParse : TestsForDicomTag
     {
         [Theory]
         [InlineData("(0010,0010)", 0x0010, 0x0010)]
         [InlineData("0010,0010", 0x0010, 0x0010)]
         [InlineData("00100010", 0x0010, 0x0010)]
-        public void ShouldReturnTrueAndCorrectTagWhenGivenValidTag(string tagString, ushort expectedGroup, ushort expectedElement)
+        public void ShouldReturnTrueAndCorrectTagWhenGivenValidTag(
+            string tagString,
+            ushort expectedGroup,
+            ushort expectedElement
+        )
         {
             // Arrange & Act
             bool result = DicomTag.TryParse(tagString, out DicomTag? tag);

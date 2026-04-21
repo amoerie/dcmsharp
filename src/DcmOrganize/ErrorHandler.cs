@@ -16,7 +16,7 @@ internal class StopErrorHandler : IErrorHandler
     {
         _console = console ?? throw new ArgumentNullException(nameof(console));
     }
-        
+
     public void Handle(DicomOrganizeException error)
     {
         _console.Error.WriteLine(error.ToString());
@@ -32,7 +32,7 @@ internal class ContinueErrorHandler : IErrorHandler
     {
         _console = console ?? throw new ArgumentNullException(nameof(console));
     }
-        
+
     public void Handle(DicomOrganizeException error)
     {
         _console.Error.WriteLine(error.ToString());
