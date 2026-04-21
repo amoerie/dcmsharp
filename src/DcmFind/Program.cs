@@ -127,8 +127,6 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
         var parallelism = settings.Parallelism ?? 8;
         var progress = settings.NoProgress != true && (_options.IgnoreRedirectedOutput || !Console.IsOutputRedirected);
         var allTasks = new List<Task>();
-        using var cts = new CancellationTokenSource();
-        var cancellationToken = cts.Token;
 
         // Setup channels
         var filesChannel = Channel.CreateBounded<string>(new BoundedChannelOptions(parallelism * 100)
