@@ -17,12 +17,8 @@ jobs:
       with:
         global-json-file: global.json
     - name: Restore
-      run: dotnet restore
+      run: dotnet restore DcmSharp.CI.slnf
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build DcmSharp.CI.slnf --configuration Release --no-restore
     - name: Test
-      run: |
-        dotnet test tests/DcmSharp.Tests/ --configuration Release --no-restore --verbosity normal
-        dotnet test tests/DcmAnonymize.Tests/ --configuration Release --no-restore --verbosity normal
-        dotnet test tests/DcmOrganize.Tests/ --configuration Release --no-restore --verbosity normal
-        dotnet test tests/DcmSharp.SourceGenerator.Tests/ --configuration Release --no-restore --verbosity normal
+      run: dotnet test DcmSharp.CI.slnf --configuration Release --no-restore --verbosity normal
