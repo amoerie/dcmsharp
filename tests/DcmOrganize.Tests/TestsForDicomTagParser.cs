@@ -1,5 +1,4 @@
 using FellowOakDicom;
-using FluentAssertions;
 using Xunit;
 
 namespace DcmOrganize.Tests;
@@ -17,19 +16,19 @@ public class TestsForDicomTagParser
     public void ShouldParseTagByGroupAndElement()
     {
         var dicomTag = _dicomTagParser.Parse("(0008,0050)");
-        dicomTag.Should().Be(DicomTag.AccessionNumber);
+        Assert.Equal(DicomTag.AccessionNumber, dicomTag);
     }
 
     [Fact]
     public void ShouldParseTagByName()
     {
         var dicomTag = _dicomTagParser.Parse("AccessionNumber");
-        dicomTag.Should().Be(DicomTag.AccessionNumber);
+        Assert.Equal(DicomTag.AccessionNumber, dicomTag);
     }
 
     [Fact]
     public void ShouldNotParseUnknownTag()
     {
-        _dicomTagParser.Invoking(p => p.Parse("Banana")).Should().Throw<DicomTagParserException>();
+        Assert.Throws<DicomTagParserException>(() => _dicomTagParser.Parse("Banana"));
     }
 }

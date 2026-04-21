@@ -9,7 +9,6 @@ using DcmAnonymize.Study;
 using FellowOakDicom;
 using FellowOakDicom.Imaging;
 using FellowOakDicom.Imaging.NativeCodec;
-using FluentAssertions;
 using Xunit;
 
 namespace DcmAnonymize.Tests;
@@ -94,11 +93,11 @@ public class TestsForDicomAnonymizer
         await _anonymizer.AnonymizeAsync(metaInfo, dicomDataSet, _options);
 
         // Assert
-        dicomDataSet.Contains(DicomTag.PatientName).Should().BeTrue();
-        dicomDataSet.GetSingleValue<string>(DicomTag.PatientName).Should().NotBe("Bar^Foo");
-        dicomDataSet.GetSingleValue<string>(DicomTag.StudyInstanceUID).Should().NotBe("1");
-        dicomDataSet.GetSingleValue<string>(DicomTag.SeriesInstanceUID).Should().NotBe("1.1");
-        dicomDataSet.GetSingleValue<string>(DicomTag.SOPInstanceUID).Should().NotBe("1.1.1");
+        Assert.True(dicomDataSet.Contains(DicomTag.PatientName));
+        Assert.NotEqual("Bar^Foo", dicomDataSet.GetSingleValue<string>(DicomTag.PatientName));
+        Assert.NotEqual("1", dicomDataSet.GetSingleValue<string>(DicomTag.StudyInstanceUID));
+        Assert.NotEqual("1.1", dicomDataSet.GetSingleValue<string>(DicomTag.SeriesInstanceUID));
+        Assert.NotEqual("1.1.1", dicomDataSet.GetSingleValue<string>(DicomTag.SOPInstanceUID));
     }
 
     [Fact]
@@ -129,9 +128,9 @@ public class TestsForDicomAnonymizer
         // Assert
         var patientName1 = dicomDataSet1.GetSingleValue<string>(DicomTag.PatientName);
         var patientName2 = dicomDataSet2.GetSingleValue<string>(DicomTag.PatientName);
-        patientName1.Should().NotBe("Bar^Foo");
-        patientName2.Should().NotBe("Bar^Foo");
-        patientName1.Should().Be(patientName2);
+        Assert.NotEqual("Bar^Foo", patientName1);
+        Assert.NotEqual("Bar^Foo", patientName2);
+        Assert.Equal(patientName2, patientName1);
     }
 
     [Fact]
@@ -181,11 +180,11 @@ public class TestsForDicomAnonymizer
         var orderNumber3 = dicomDataSet3.GetSingleValue<string>(
             DicomTag.PlacerOrderNumberImagingServiceRequest
         );
-        orderNumber1.Should().NotBe("ORDER1");
-        orderNumber2.Should().NotBe("ORDER1");
-        orderNumber3.Should().NotBe("ORDER2");
-        orderNumber1.Should().Be(orderNumber2);
-        orderNumber3.Should().NotBe(orderNumber1);
+        Assert.NotEqual("ORDER1", orderNumber1);
+        Assert.NotEqual("ORDER1", orderNumber2);
+        Assert.NotEqual("ORDER2", orderNumber3);
+        Assert.Equal(orderNumber2, orderNumber1);
+        Assert.NotEqual(orderNumber1, orderNumber3);
     }
 
     [Fact]
@@ -216,9 +215,9 @@ public class TestsForDicomAnonymizer
         // Assert
         var studyInstanceUID1 = dicomDataSet1.GetSingleValue<string>(DicomTag.StudyInstanceUID);
         var studyInstanceUID2 = dicomDataSet2.GetSingleValue<string>(DicomTag.StudyInstanceUID);
-        studyInstanceUID1.Should().NotBe("1");
-        studyInstanceUID2.Should().NotBe("1");
-        studyInstanceUID1.Should().Be(studyInstanceUID2);
+        Assert.NotEqual("1", studyInstanceUID1);
+        Assert.NotEqual("1", studyInstanceUID2);
+        Assert.Equal(studyInstanceUID2, studyInstanceUID1);
     }
 
     [Fact]
@@ -249,9 +248,9 @@ public class TestsForDicomAnonymizer
         // Assert
         var seriesInstanceUID1 = dicomDataSet1.GetSingleValue<string>(DicomTag.SeriesInstanceUID);
         var seriesInstanceUID2 = dicomDataSet2.GetSingleValue<string>(DicomTag.SeriesInstanceUID);
-        seriesInstanceUID1.Should().NotBe("1");
-        seriesInstanceUID2.Should().NotBe("1");
-        seriesInstanceUID1.Should().Be(seriesInstanceUID2);
+        Assert.NotEqual("1", seriesInstanceUID1);
+        Assert.NotEqual("1", seriesInstanceUID2);
+        Assert.Equal(seriesInstanceUID2, seriesInstanceUID1);
     }
 
     [Fact]
@@ -282,9 +281,9 @@ public class TestsForDicomAnonymizer
         // Assert
         var sopInstanceUID1 = dicomDataSet1.GetSingleValue<string>(DicomTag.SOPInstanceUID);
         var sopInstanceUID2 = dicomDataSet2.GetSingleValue<string>(DicomTag.SOPInstanceUID);
-        sopInstanceUID1.Should().NotBe("1.1.1");
-        sopInstanceUID2.Should().NotBe("1.1.1");
-        sopInstanceUID1.Should().Be(sopInstanceUID2);
+        Assert.NotEqual("1.1.1", sopInstanceUID1);
+        Assert.NotEqual("1.1.1", sopInstanceUID2);
+        Assert.Equal(sopInstanceUID2, sopInstanceUID1);
     }
 
     [Fact]
@@ -327,9 +326,9 @@ public class TestsForDicomAnonymizer
             .GetSingleValue<string>(DicomTag.ReferencedSOPInstanceUID);
 
         // Ensure our test data is correct
-        sopInstanceUID.Should().NotBeNullOrEmpty();
-        firstReferencedSopInstanceUID.Should().NotBeNullOrEmpty();
-        firstReferencedSopInstanceUID.Should().Be(sopInstanceUID);
+        Assert.True((sopInstanceUID)?.Any());
+        Assert.True((firstReferencedSopInstanceUID)?.Any());
+        Assert.Equal(sopInstanceUID, firstReferencedSopInstanceUID);
 
         // Act
         await _anonymizer.AnonymizeAsync(dicomFile1.FileMetaInfo, dicomFile1.Dataset, _options);
@@ -351,15 +350,15 @@ public class TestsForDicomAnonymizer
             .GetSingleValue<string>(DicomTag.ReferencedSOPInstanceUID);
 
         // Ensure data is still present
-        sopInstanceUID2.Should().NotBeNullOrEmpty();
-        firstReferencedSopInstanceUID2.Should().NotBeNullOrEmpty();
+        Assert.True((sopInstanceUID2)?.Any());
+        Assert.True((firstReferencedSopInstanceUID2)?.Any());
 
         // Ensure data is anonymized
-        sopInstanceUID.Should().NotBe(sopInstanceUID2);
-        firstReferencedSopInstanceUID.Should().NotBe(firstReferencedSopInstanceUID2);
+        Assert.NotEqual(sopInstanceUID2, sopInstanceUID);
+        Assert.NotEqual(firstReferencedSopInstanceUID2, firstReferencedSopInstanceUID);
 
         // Ensure referential integrity is retained
-        sopInstanceUID2.Should().Be(firstReferencedSopInstanceUID2);
+        Assert.Equal(firstReferencedSopInstanceUID2, sopInstanceUID2);
     }
 
     [Theory]
@@ -395,9 +394,9 @@ public class TestsForDicomAnonymizer
         await _anonymizer.AnonymizeAsync(metaInfo, dataSet, _options);
 
         // Assert
-        originalDataset.Contains(tag).Should().BeTrue();
-        dataSet.Contains(tag).Should().BeFalse();
-        dataSet.Contains(DicomTag.PatientName).Should().BeTrue();
+        Assert.True(originalDataset.Contains(tag));
+        Assert.False(dataSet.Contains(tag));
+        Assert.True(dataSet.Contains(DicomTag.PatientName));
     }
 
     [Theory]
@@ -440,11 +439,14 @@ public class TestsForDicomAnonymizer
         );
 
         // Assert
-        originalDataset1.GetSingleValue<DicomUID>(tag).Should().Be(originalUID);
-        originalDataset2.GetSingleValue<DicomUID>(tag).Should().Be(originalUID);
-        dataSet1.GetSingleValue<DicomUID>(tag).Should().NotBe(originalUID);
-        dataSet2.GetSingleValue<DicomUID>(tag).Should().NotBe(originalUID);
-        dataSet1.GetSingleValue<DicomUID>(tag).Should().Be(dataSet2.GetSingleValue<DicomUID>(tag));
+        Assert.Equal(originalUID, originalDataset1.GetSingleValue<DicomUID>(tag));
+        Assert.Equal(originalUID, originalDataset2.GetSingleValue<DicomUID>(tag));
+        Assert.NotEqual(originalUID, dataSet1.GetSingleValue<DicomUID>(tag));
+        Assert.NotEqual(originalUID, dataSet2.GetSingleValue<DicomUID>(tag));
+        Assert.Equal(
+            dataSet2.GetSingleValue<DicomUID>(tag),
+            dataSet1.GetSingleValue<DicomUID>(tag)
+        );
     }
 
     [Theory]
@@ -496,25 +498,25 @@ public class TestsForDicomAnonymizer
         await _anonymizer.AnonymizeAsync(metaInfo, dataSet, _options);
 
         // Assert
-        originalDataset.Contains(tag).Should().BeTrue();
-        dataSet.Contains(tag).Should().BeTrue();
+        Assert.True(originalDataset.Contains(tag));
+        Assert.True(dataSet.Contains(tag));
         if (valueRepresentation == DicomVR.SQ)
         {
-            dataSet.GetSequence(tag).ToList().Should().HaveCount(1);
+            Assert.Single(dataSet.GetSequence(tag).ToList() ?? []);
         }
         else if (valueRepresentation == DicomVR.OB || valueRepresentation == DicomVR.UN)
         {
-            dataSet.GetValues<byte>(tag).Should().BeEmpty();
+            Assert.Empty(dataSet.GetValues<byte>(tag) ?? []);
         }
         else if (valueRepresentation == DicomVR.PN)
         {
             var personName = dataSet.GetDicomItem<DicomPersonName>(tag);
-            personName.First.Should().NotBeEmpty();
-            personName.Last.Should().NotBeEmpty();
+            Assert.NotEmpty(personName.First);
+            Assert.NotEmpty(personName.Last);
         }
         else
         {
-            dataSet.GetString(tag).Should().Be(string.Empty);
+            Assert.Equal(string.Empty, dataSet.GetString(tag));
         }
     }
 
@@ -544,7 +546,7 @@ public class TestsForDicomAnonymizer
         var dicomImage = new DicomImage(dicomDataSet);
         using var image = dicomImage.RenderImage();
         var color = image.GetPixel(700, 700);
-        color.Should().Be(Color32.Black);
+        Assert.Equal(Color32.Black, color);
     }
 
     [Fact]
@@ -575,7 +577,7 @@ public class TestsForDicomAnonymizer
         {
             using var image = dicomImage.RenderImage(frame);
             var color = image.GetPixel(100, 100);
-            color.Should().Be(Color32.Black);
+            Assert.Equal(Color32.Black, color);
         }
     }
 
@@ -624,10 +626,10 @@ public class TestsForDicomAnonymizer
             var anonymizedAccessionNumber = dicomDataSet.GetSingleValue<string>(
                 DicomTag.AccessionNumber
             );
-            anonymizedStudyInstanceUID.Should().NotBe(originalStudyInstanceUID);
-            anonymizedSeriesInstanceUID.Should().NotBe(originalSeriesInstanceUID);
-            anonymizedSopInstanceUID.Should().NotBe(originalSopInstanceUID);
-            anonymizedAccessionNumber.Should().NotBe(originalAccessionNumber);
+            Assert.NotEqual(originalStudyInstanceUID, anonymizedStudyInstanceUID);
+            Assert.NotEqual(originalSeriesInstanceUID, anonymizedSeriesInstanceUID);
+            Assert.NotEqual(originalSopInstanceUID, anonymizedSopInstanceUID);
+            Assert.NotEqual(originalAccessionNumber, anonymizedAccessionNumber);
         }
     }
 }

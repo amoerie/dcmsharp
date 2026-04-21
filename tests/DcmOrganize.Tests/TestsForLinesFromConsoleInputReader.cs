@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Xunit;
+﻿using Xunit;
 
 namespace DcmOrganize.Tests;
 
@@ -25,7 +24,7 @@ public class TestsForLinesFromConsoleInputReader : IDisposable
             .Read(TestContext.Current.CancellationToken)
             .ToListAsync(TestContext.Current.CancellationToken);
 
-        lines.Should().BeEmpty();
+        Assert.Empty(lines ?? []);
     }
 
     [Fact]
@@ -38,7 +37,7 @@ public class TestsForLinesFromConsoleInputReader : IDisposable
             .Read(TestContext.Current.CancellationToken)
             .ToListAsync(TestContext.Current.CancellationToken);
 
-        lines.Should().BeEquivalentTo(new[] { "Hello world" });
+        Assert.Equivalent(new[] { "Hello world" }, lines);
     }
 
     [Theory]
@@ -54,7 +53,7 @@ public class TestsForLinesFromConsoleInputReader : IDisposable
             .Read(TestContext.Current.CancellationToken)
             .ToListAsync(TestContext.Current.CancellationToken);
 
-        lines.Should().BeEquivalentTo(new[] { "Hello", "World" });
+        Assert.Equivalent(new[] { "Hello", "World" }, lines);
     }
 
     public void Dispose()
