@@ -30,7 +30,7 @@ public class DicomFileMatcher(IDicomParser dicomParser)
                     ReadOnlyDicomDataset dicomDataset;
                     try
                     {
-                        dicomDataset = await dicomParser.ParseAsync(new FileInfo(file), cancellationToken);
+                        dicomDataset = await dicomParser.ParseReadOnlyAsync(new FileInfo(file), cancellationToken);
                     }
                     catch (DicomException)
                     {

@@ -21,7 +21,7 @@ public sealed class TestsForDicomEncoding
     {
         // Arrange
         var file = new FileInfo("./Dicom/Encoded.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
         dicomDataset.TryGetString(DicomTags.SpecificCharacterSet, out string? specificCharacterSet).Should().BeTrue();

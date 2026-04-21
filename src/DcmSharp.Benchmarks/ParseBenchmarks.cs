@@ -45,6 +45,6 @@ public class ParseBenchmarks
     [Benchmark]
     public async Task DicomParser()
     {
-        using var _ = await _dicomParser.ParseAsync(_file);
+        using var _ = await _dicomParser.ParseReadOnlyAsync(_file);
     }
 }

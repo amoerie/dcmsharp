@@ -32,7 +32,7 @@ public sealed class TestsForDicomParserWithStopping
         };
 
         // Act + Assert
-        using var dicomDataset = await _dicomParser.ParseAsync(file, options);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
 
         // Assert
         dicomDataset.Should().NotBeNull();
@@ -62,7 +62,7 @@ public sealed class TestsForDicomParserWithStopping
         };
 
         // Act + Assert
-        using var dicomDataset = await _dicomParser.ParseAsync(file, options);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
 
         // Assert
         dicomDataset.Should().NotBeNull();
@@ -90,7 +90,7 @@ public sealed class TestsForDicomParserWithStopping
                 Depth = 2
             }
         };
-        using var dicomDataset = await _dicomParser.ParseAsync(file, options);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
 
         // Act + Assert
         dicomDataset.TryGetSequence(DicomTags.SourceImageSequence, out ReadOnlyDicomDataset[]? sourceImageSequence)
@@ -124,7 +124,7 @@ public sealed class TestsForDicomParserWithStopping
         };
 
         // Act
-        using var dicomDataset = await _dicomParser.ParseAsync(file, options);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
         dicomDataset.TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out string? orderNumber).Should().BeTrue();
 
         // Assert

@@ -22,7 +22,7 @@ public sealed class TestsForDicomParser
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
 
         // Act + Assert
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Assert
         dicomDataset.Should().NotBeNull();
@@ -35,7 +35,7 @@ public sealed class TestsForDicomParser
         var file = new FileInfo("./Dicom/ImplicitVR.dcm");
 
         // Act + Assert
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Assert
         dicomDataset.Should().NotBeNull();
@@ -48,7 +48,7 @@ public sealed class TestsForDicomParser
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
         dicomDataset.TryGetString(group, element, out string? actualValue).Should().BeTrue();
@@ -64,7 +64,7 @@ public sealed class TestsForDicomParser
     {
         // Arrange
         var file = new FileInfo("./Dicom/ImplicitVR.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
         dicomDataset.TryGetString(group, element, out string? actualValue).Should().BeTrue();
@@ -78,7 +78,7 @@ public sealed class TestsForDicomParser
     {
         // Arrange
         var file = new FileInfo("./Dicom/TestPatternPalette.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act + Assert
         dicomDataset.TryGetSequence(DicomTags.SourceImageSequence, out ReadOnlyDicomDataset[]? sourceImageSequence)
@@ -100,7 +100,7 @@ public sealed class TestsForDicomParser
     {
         // Arrange
         var file = new FileInfo("./Dicom/Encoded.dcm");
-        using var dicomDataset = await _dicomParser.ParseAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
         dicomDataset.TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out string? orderNumber).Should().BeTrue();

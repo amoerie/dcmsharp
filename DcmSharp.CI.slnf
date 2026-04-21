@@ -1,0 +1,17 @@
+{
+  "solution": {
+    "path": "DcmSharp.sln",
+    "projects": [
+      "src\\DcmAnonymize\\DcmAnonymize.csproj",
+      "src\\DcmFind\\DcmFind.csproj",
+      "src\\DcmOrganize\\DcmOrganize.csproj",
+      "src\\DcmSharp\\DcmSharp.csproj",
+      "src\\DcmSharp.Benchmarks\\DcmSharp.Benchmarks.csproj",
+      "src\\DcmSharp.SourceGenerator\\DcmSharp.SourceGenerator.csproj",
+      "tests\\DcmAnonymize.Tests\\DcmAnonymize.Tests.csproj",
+      "tests\\DcmOrganize.Tests\\DcmOrganize.Tests.csproj",
+      "tests\\DcmSharp.SourceGenerator.Tests\\DcmSharp.SourceGenerator.Tests.csproj",
+      "tests\\DcmSharp.Tests\\DcmSharp.Tests.csproj"
+    ]
+  }
+}

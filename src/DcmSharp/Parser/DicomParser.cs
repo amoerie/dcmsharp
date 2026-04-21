@@ -10,9 +10,12 @@ namespace DcmSharp.Parser;
 
 public interface IDicomParser
 {
-    Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, CancellationToken cancellationToken = default);
+    Task<ReadOnlyDicomDataset> ParseReadOnlyAsync(FileInfo file, CancellationToken cancellationToken = default);
 
-    Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, DicomParserOptions options,
+    Task<ReadOnlyDicomDataset> ParseReadOnlyAsync(FileInfo file, DicomParserOptions options,
+        CancellationToken cancellationToken = default);
+
+    Task ParseAsync(FileInfo file, IDicomDatasetHandler handler, DicomParserOptions? options = null,
         CancellationToken cancellationToken = default);
 }
 
@@ -27,9 +30,7 @@ internal sealed class DicomParser : IDicomParser
     private static readonly DicomItemDictionaryPool _smallDicomItemDictionaryPool =
         new DicomItemDictionaryPool(maxPoolSize: 256);
 
-    private static readonly DicomDatasetsPool _datasetsPool = new DicomDatasetsPool(256, 8);
     private static readonly DicomMemoriesPool _memoriesPool = new DicomMemoriesPool(1024, 32);
-    private static readonly DicomFragmentsPool _fragmentsPool = new DicomFragmentsPool(1024, 32);
 
     private static readonly FileStreamOptions _fileStreamOptions = new FileStreamOptions
     {
@@ -39,34 +40,11 @@ internal sealed class DicomParser : IDicomParser
     private readonly ILogger<DicomParser> _logger;
     private readonly DicomValueParser _valueParser;
 
-    /// <summary>
-    /// This is the block size when data needs to buffered
-    /// </summary>
-    private const int BufferSize = 1024 * 1024; // 1 MB
-
-    /// <summary>
-    /// This the minimum size of each memory block that will hold the data of the DICOM dataset
-    /// </summary>
+    private const int BufferSize = 1024 * 1024;
     private const int MinimumMemoryBlockSize = 16384;
-
-    /// <summary>
-    /// This is the maximum number of bytes C# allows to store in a byte array (note that it is slightly lower than int.MaxValue)
-    /// </summary>
     private const int MaxArrayLength = 2_147_483_591;
-
-    /// <summary>
-    /// DICOM files typically use this length for sequences
-    /// </summary>
     private const uint UndefinedLength = 0xffffffff;
-
-    /// <summary>
-    /// The File Meta Information Group number
-    /// </summary>
     private const ushort FileMetaInformationGroup = 0x0002;
-
-    /// <summary>
-    /// The Group Length element number
-    /// </summary>
     private const ushort GroupLengthElement = 0x0000;
 
     private static readonly byte[] _implicitVRLittleEndianBytes = "1.2.840.10008.1.2"u8.ToArray() switch
@@ -87,20 +65,44 @@ internal sealed class DicomParser : IDicomParser
         _valueParser = valueParser ?? throw new ArgumentNullException(nameof(valueParser));
     }
 
-    public Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, CancellationToken cancellationToken = default)
+    public Task<ReadOnlyDicomDataset> ParseReadOnlyAsync(FileInfo file, CancellationToken cancellationToken = default)
     {
-        return ParseAsync(file, DicomParserOptions.Default, cancellationToken);
+        return ParseReadOnlyAsync(file, DicomParserOptions.Default, cancellationToken);
     }
 
     [SuppressMessage("Usage", "MA0004:Use Task.ConfigureAwait")]
-    public async Task<ReadOnlyDicomDataset> ParseAsync(FileInfo file, DicomParserOptions options,
+    public async Task<ReadOnlyDicomDataset> ParseReadOnlyAsync(FileInfo file, DicomParserOptions options,
         CancellationToken cancellationToken = default)
     {
+        var memories = new DicomMemories(_memoriesPool);
+        var handler = new ReadOnlyDicomDatasetHandler(
+            _largeDicomItemDictionaryPool, _smallDicomItemDictionaryPool, memories, _valueParser);
         var pipe = new Pipe();
         var fillPipeTask = FillPipeAsync(file, pipe.Writer, cancellationToken);
-        var readPipeTask = ReadPipeAsync(pipe.Reader, options, cancellationToken);
+        var readPipeTask = ReadPipeAsync(pipe.Reader, handler, memories, options, cancellationToken);
         await Task.WhenAll(fillPipeTask, readPipeTask);
-        return await readPipeTask;
+        return handler.Result;
+    }
+
+    [SuppressMessage("Usage", "MA0004:Use Task.ConfigureAwait")]
+    public async Task ParseAsync(FileInfo file, IDicomDatasetHandler handler, DicomParserOptions? options = null,
+        CancellationToken cancellationToken = default)
+    {
+        // Memory is allocated from the pool during parsing and slices are passed to the handler callbacks.
+        // Per IDicomDatasetHandler contract, rawValue memory is only valid during the callback.
+        // We dispose the pool memory here so that rented arrays are returned after all callbacks fire.
+        var memories = new DicomMemories(_memoriesPool);
+        try
+        {
+            var pipe = new Pipe();
+            var fillPipeTask = FillPipeAsync(file, pipe.Writer, cancellationToken);
+            var readPipeTask = ReadPipeAsync(pipe.Reader, handler, memories, options ?? DicomParserOptions.Default, cancellationToken);
+            await Task.WhenAll(fillPipeTask, readPipeTask);
+        }
+        finally
+        {
+            memories.Dispose();
+        }
     }
 
     private async Task FillPipeAsync(FileInfo file, PipeWriter pipeWriter,
@@ -108,7 +110,6 @@ internal sealed class DicomParser : IDicomParser
     {
         try
         {
-            // Open the file stream for reading
             await using var fileStream = file.Open(_fileStreamOptions);
             long fileLength = fileStream.Length;
             int bufferSize = (int)Math.Min(BufferSize, fileLength);
@@ -116,53 +117,33 @@ internal sealed class DicomParser : IDicomParser
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-
-                // Request a memory block from the PipeWriter
                 Memory<byte> memory = pipeWriter.GetMemory(bufferSize);
-
-                // Read data from the file stream into the memory block
                 int bytesRead = fileStream.Read(memory.Span);
 
                 if (bytesRead == 0)
-                {
-                    break; // End of file reached
-                }
+                    break;
 
-                // Tell the PipeWriter how much data was actually read
                 pipeWriter.Advance(bytesRead);
-
-                // Make the data available to the PipeReader
                 FlushResult result = await pipeWriter.FlushAsync(cancellationToken);
 
                 if (result.IsCompleted || result.IsCanceled)
-                {
-                    break; // PipeReader signaled completion or cancellation
-                }
+                    break;
             }
         }
         finally
         {
-            // Signal to the PipeWriter that we're done writing
             await pipeWriter.CompleteAsync();
         }
     }
 
-    private async Task<ReadOnlyDicomDataset> ReadPipeAsync(PipeReader reader, DicomParserOptions options,
-        CancellationToken cancellationToken = default)
+    private async Task ReadPipeAsync(PipeReader reader, IDicomDatasetHandler handler, DicomMemories memories,
+        DicomParserOptions options, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(reader);
 
-        var dicomDataset =
-            new ReadOnlyDicomDataset(_largeDicomItemDictionaryPool, new DicomMemories(_memoriesPool), _valueParser);
-
-        // Ensure DICOM3
-        // The first 128 bytes should be empty
-        // Then, the next 4 bytes should spell DICM
         ReadResult result = await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
         if (result.Buffer.Length < 132)
-        {
             throw new DicomException("DICOM file is too small to be valid, expected at least 132 bytes");
-        }
 
         EnsureValidPreamble(result.Buffer.Slice(128, 4));
         reader.AdvanceTo(result.Buffer.GetPosition(132));
@@ -170,7 +151,11 @@ internal sealed class DicomParser : IDicomParser
 
         var state = new DicomParseState
         {
-            ReadOnlyDicomDataset = dicomDataset, Logger = _logger, ValueParser = _valueParser, Position = position,
+            Handler = handler,
+            Memories = memories,
+            Logger = _logger,
+            ValueParser = _valueParser,
+            Position = position,
         };
 
         try
@@ -180,9 +165,7 @@ internal sealed class DicomParser : IDicomParser
                 result = await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
 
                 if (result.Buffer.Length == 0)
-                {
                     break;
-                }
 
                 ReadOnlySequence<byte> sequence = result.Buffer;
                 DicomByteBuffer buffer = new DicomByteBuffer(result.Buffer);
@@ -192,10 +175,8 @@ internal sealed class DicomParser : IDicomParser
                 if (parsed == 0)
                 {
                     if (result.IsCompleted)
-                    {
                         throw new DicomException(
                             $"DICOM file could not be parsed completely, parsing stopped at position {position}");
-                    }
                 }
                 else
                 {
@@ -206,12 +187,8 @@ internal sealed class DicomParser : IDicomParser
                 reader.AdvanceTo(sequence.Start, sequence.End);
 
                 if (result.IsCompleted || state.IsStopped)
-                {
                     break;
-                }
             }
-
-            return state.ReadOnlyDicomDataset;
         }
         finally
         {
@@ -225,11 +202,8 @@ internal sealed class DicomParser : IDicomParser
         {
             var bufferSpan = buffer.FirstSpan;
             if (bufferSpan[0] != 'D' || bufferSpan[1] != 'I' || bufferSpan[2] != 'C' || bufferSpan[3] != 'M')
-            {
                 throw new DicomException(
                     "This file does not look like a DICOM file, expected 'DICM' at position 128-132");
-            }
-
             return;
         }
 
@@ -259,52 +233,27 @@ internal sealed class DicomParser : IDicomParser
             {
                 case DicomParseStage.ParseGroup:
                     if (!TryParseGroup(ref buffer, ref state))
-                    {
                         return;
-                    }
-
-                    // ParseGroup always transitions to ParseElement
                     goto case DicomParseStage.ParseElement;
                 case DicomParseStage.ParseElement:
                     if (!TryParseElement(ref buffer, ref state))
-                    {
                         return;
-                    }
-
-                    // Implicit VR files or certain items skip the VR parsing stage
                     if (state.ParseStage == DicomParseStage.ParseLength)
-                    {
                         goto case DicomParseStage.ParseLength;
-                    }
-
                     goto case DicomParseStage.ParseVR;
                 case DicomParseStage.ParseVR:
                     if (!TryParseVr(ref buffer, ref state))
-                    {
                         return;
-                    }
-
-                    // ParseVR always transitions to ParseLength
                     goto case DicomParseStage.ParseLength;
                 case DicomParseStage.ParseLength:
                     if (!TryParseLength(ref buffer, ref state))
-                    {
                         return;
-                    }
-
-                    // Sequence related logic may cause a jump from ParseLength to ParseGroup again
                     if (state.ParseStage == DicomParseStage.ParseGroup)
-                    {
                         goto case DicomParseStage.ParseGroup;
-                    }
-
                     goto case DicomParseStage.ParseValue;
                 case DicomParseStage.ParseValue:
                     if (!TryParseValue(ref buffer, ref state))
-                    {
                         return;
-                    }
-
                     break;
                 default:
                     throw new DicomException("Unknown parse stage: " + state.ParseStage);
@@ -318,15 +267,18 @@ internal sealed class DicomParser : IDicomParser
             {
                 state.IsStopped = true;
 
-                // Close open sequences
-                while (state.CurrentSequence is { } currentSequence)
+                // Close open sequences so the handler can finalize them
+                while (state.CurrentSequence is not null)
                 {
-                    if (state.CurrentSequenceItem is { } currentSequenceItem)
+                    if (state.CurrentSequenceItem is not null)
                     {
-                        CloseCurrentSequenceItem(ref state, currentSequence, currentSequenceItem);
+                        state.Handler.OnSequenceItemEnd();
+                        state.CurrentSequenceItem = null;
                     }
 
-                    CloseCurrentSequence(ref state, currentSequence);
+                    state.Handler.OnSequenceEnd();
+                    state.CurrentSequence = state.CurrentSequences.TryPop(out var parentSeq) ? parentSeq : null;
+                    state.CurrentSequenceItem = state.CurrentSequenceItems.TryPop(out var parentItem) ? parentItem : null;
                 }
 
                 return;
@@ -334,22 +286,24 @@ internal sealed class DicomParser : IDicomParser
 
             if (state.CurrentSequence is not null)
             {
-                var currentSequence = state.CurrentSequence.Value;
-
-                // Handle sequence item with explicit length instead of item delimitation items
+                // Handle sequence item with explicit length
                 if (state.CurrentSequenceItem is { } currentSequenceItem
                     && currentSequenceItem.EndPosition is { } sequenceItemEndPosition
                     && state.Position >= sequenceItemEndPosition)
                 {
-                    CloseCurrentSequenceItem(ref state, currentSequence, currentSequenceItem);
+                    state.Handler.OnSequenceItemEnd();
+                    state.CurrentSequenceItem = null;
                     state.ParseStage = DicomParseStage.ParseGroup;
                 }
 
-                // Handle sequence with explicit length instead of sequence delimitation items
-                if (currentSequence.EndPosition is { } currentSequenceEndPosition
+                // Handle sequence with explicit length
+                if (state.CurrentSequence is { } currentSequence
+                    && currentSequence.EndPosition is { } currentSequenceEndPosition
                     && state.Position >= currentSequenceEndPosition)
                 {
-                    CloseCurrentSequence(ref state, currentSequence);
+                    state.Handler.OnSequenceEnd();
+                    state.CurrentSequence = state.CurrentSequences.TryPop(out var parentSeq) ? parentSeq : null;
+                    state.CurrentSequenceItem = state.CurrentSequenceItems.TryPop(out var parentItem) ? parentItem : null;
                     state.ParseStage = DicomParseStage.ParseGroup;
                 }
             }
@@ -359,10 +313,7 @@ internal sealed class DicomParser : IDicomParser
     static bool TryParseGroup(ref DicomByteBuffer buffer, ref DicomParseState state)
     {
         if (!buffer.TryReadShort(ref state.Position, out state.ShortHolder))
-        {
-            // state.Logger.LogTrace("Not enough bytes to parse group, returning");
             return false;
-        }
 
         state.CurrentGroupNumber = (ushort)state.ShortHolder;
         state.ParseStage = DicomParseStage.ParseElement;
@@ -372,24 +323,15 @@ internal sealed class DicomParser : IDicomParser
     static bool TryParseElement(ref DicomByteBuffer buffer, ref DicomParseState state)
     {
         if (!buffer.TryReadShort(ref state.Position, out state.ShortHolder))
-        {
-            // state.Logger.LogTrace("Not enough bytes to parse element, returning");
             return false;
-        }
 
         state.CurrentElementNumber = (ushort)state.ShortHolder;
-        // state.Logger.LogTrace("Parsed element 0x{ElementNumber:x4}", state.CurrentElementNumber);
 
         if (state.CurrentGroupNumber > FileMetaInformationGroup)
         {
-            // When the file meta info group is finished, and the transfer syntax is implicit VR,
-            // we need to switch to implicit VR from here on out
             if (state is { IsExplicitVR: true, SetToImplicitVrAfterFileMetaInfo: true })
-            {
                 state.IsExplicitVR = false;
-            }
 
-            // Items, Item Delimitation Items and Sequence Delimitation Items do not provide a VR at all
             if (state.CurrentGroupNumber is ItemGroup &&
                 state.CurrentElementNumber is Item or ItemDelimitationItem or SequenceDelimitationItem)
             {
@@ -397,7 +339,6 @@ internal sealed class DicomParser : IDicomParser
                 return true;
             }
 
-            // Implicit VR files do not provide a VR, the VR must be inferred from the group and element numbers
             if (!state.IsExplicitVR)
             {
                 state.CurrentVr = DicomTagsIndex.TryLookup(state.CurrentGroupNumber, state.CurrentElementNumber,
@@ -406,10 +347,7 @@ internal sealed class DicomParser : IDicomParser
                     : DicomVR.UN;
 
                 if (state is { CurrentVr: DicomVR.UN, CurrentElementNumber: GroupLengthElement })
-                {
-                    // Group Length = UL
                     state.CurrentVr = DicomVR.UL;
-                }
 
                 state.ParseStage = DicomParseStage.ParseLength;
                 return true;
@@ -422,20 +360,13 @@ internal sealed class DicomParser : IDicomParser
 
     static bool TryParseVr(ref DicomByteBuffer buffer, ref DicomParseState state)
     {
-        // VR uses 2 bytes, just like a short
         if (!buffer.TryReadVr(ref state.Position, out byte b1, out byte b2))
-        {
-            // state.Logger.LogTrace("Not enough bytes to parse VR, returning");
             return false;
-        }
 
         if (!DicomVRParser.TryParse(b1, b2, out DicomVR? parsedVr))
-        {
             throw new DicomException(
                 $"Invalid DICOM file, could not parse ({b1:x4},{b2:x4}) to a known DICOM VR");
-        }
 
-        // state.Logger.LogTrace("Parsed VR {VR}", parsedVr.Value);
         state.CurrentVr = parsedVr.Value;
         state.ParseStage = DicomParseStage.ParseLength;
         return true;
@@ -443,100 +374,69 @@ internal sealed class DicomParser : IDicomParser
 
     static bool TryParseLength(ref DicomByteBuffer buffer, ref DicomParseState state)
     {
-        // Sequence Items or Sequence Delimitation Items use 4 bytes for their value length
-        // When the length is specified, DICOM files are not obliged to add an Item Delimitation Item at the end of each item
         if (state.CurrentGroupNumber is ItemGroup)
         {
             if (!buffer.TryReadInt(ref state.Position, out state.IntHolder))
-            {
-                // state.Logger.LogTrace("Not enough bytes to parse element, returning");
                 return false;
-            }
 
             uint rawLongValueLength = (uint)state.IntHolder;
 
-            // Handle sequences
-            if (state.CurrentSequence is { } currentSequence)
+            if (state.CurrentSequence is not null)
             {
-                // Handle sequence item
                 if (state.CurrentElementNumber is Item)
                 {
                     if (state.CurrentSequenceItem is not null)
-                    {
                         throw new DicomException(
                             $"Encountered a DICOM sequence item ({state.CurrentGroupNumber:x4},{state.CurrentElementNumber:x4}) without a preceding DICOM delimitation item");
-                    }
 
-                    // Open a new sequence item
-
-                    // Sequence items may use explicit lengths instead of item delimitation items
-                    // In that case we must close the sequence item after the specified number of bytes have been parsed
                     long? sequenceItemLength = rawLongValueLength == UndefinedLength ? null : rawLongValueLength;
                     long? sequenceItemEndPosition = state.Position + sequenceItemLength;
-                    ReadOnlyDicomDataset sequenceItemDataset = new ReadOnlyDicomDataset(_smallDicomItemDictionaryPool,
-                        new DicomMemories(_memoriesPool), state.ValueParser);
-                    state.CurrentSequenceItem = new ReadOnlyDicomSequenceItem(sequenceItemDataset, sequenceItemEndPosition);
+                    state.CurrentSequenceItem = new SequencePosition(sequenceItemEndPosition);
+                    state.Handler.OnSequenceItemStart();
 
                     state.ParseStage = DicomParseStage.ParseGroup;
                     return true;
                 }
 
-                // Handle item delimitation item
                 if (state.CurrentElementNumber is ItemDelimitationItem)
                 {
-                    if (state.CurrentSequenceItem is not { } currentSequenceItem)
-                    {
+                    if (state.CurrentSequenceItem is null)
                         throw new DicomException(
                             "Encountered a DICOM item delimitation item without a preceding DICOM item");
-                    }
 
-                    CloseCurrentSequenceItem(ref state, currentSequence, currentSequenceItem);
+                    state.Handler.OnSequenceItemEnd();
+                    state.CurrentSequenceItem = null;
                     state.ParseStage = DicomParseStage.ParseGroup;
                     return true;
                 }
 
-                // Handle sequence delimitation item
                 if (state.CurrentElementNumber is SequenceDelimitationItem)
                 {
-                    CloseCurrentSequence(ref state, currentSequence);
+                    state.Handler.OnSequenceEnd();
+                    state.CurrentSequence = state.CurrentSequences.TryPop(out var parentSeq) ? parentSeq : null;
+                    state.CurrentSequenceItem = state.CurrentSequenceItems.TryPop(out var parentItem) ? parentItem : null;
                     state.ParseStage = DicomParseStage.ParseGroup;
                     return true;
                 }
             }
-
-            // Handle fragments
-            else if (state.CurrentFragments is not null)
+            else if (state.IsParsingFragments)
             {
                 if (state.CurrentElementNumber is Item)
                 {
                     if (rawLongValueLength > MaxArrayLength)
-                    {
                         throw new NotSupportedException(
                             "DcmParser does not support DICOM files with values larger than 2 GB yet");
-                    }
 
                     state.LongValueLength = (int)rawLongValueLength;
-                    // state.Logger.LogTrace("Parsed Value Length {LongValueLength}", state.LongValueLength);
                     state.ShortValueLength = null;
-
                     state.ParseStage = DicomParseStage.ParseValue;
                     return true;
                 }
 
                 if (state.CurrentElementNumber is SequenceDelimitationItem)
                 {
-                    state.CurrentDicomItem = new ReadOnlyDicomItem(state.CurrentFragmentsGroupNumber,
-                        state.CurrentFragmentsElementNumber, state.CurrentFragmentsVR,
-                        ReadOnlyDicomItemContent.Create(state.CurrentFragments.ToReadOnly()));
-                    // state.Logger.LogTrace("Parsed fragmented tag {Tag}", state.CurrentDicomItem);
-                    state.ReadOnlyDicomDataset.Add(state.CurrentFragmentsGroupNumber,
-                        state.CurrentFragmentsElementNumber,
-                        state.CurrentDicomItem.Value);
-                    state.CurrentFragmentsGroupNumber = default;
-                    state.CurrentFragmentsElementNumber = default;
-                    state.CurrentFragmentsVR = default;
-                    state.CurrentFragments = null;
-
+                    state.Handler.OnFragmentsEnd();
+                    state.IsParsingFragments = false;
                     state.ParseStage = DicomParseStage.ParseGroup;
                     return true;
                 }
@@ -546,86 +446,59 @@ internal sealed class DicomParser : IDicomParser
             }
         }
 
-        // Implicit VR always uses 32 bit length
-        // Explicit VR sometimes uses 32 bit length, sometimes 16 bit length, depending on the VR
-        // However, reading the value length for Explicit VR requires skipping 2 bytes, while implicit VR does not
         if ((state.IsExplicitVR && state.CurrentVr.Is32BitLength()) || !state.IsExplicitVR)
         {
             if (state.IsExplicitVR)
             {
                 if (!buffer.TryReadExplicitVrLongValueLength(ref state.Position, out state.IntHolder))
-                {
-                    // state.Logger.LogTrace("Not enough bytes to parse explicit VR value length, returning");
                     return false;
-                }
             }
             else
             {
                 if (!buffer.TryReadImplicitVrLongValueLength(ref state.Position, out state.IntHolder))
-                {
-                    // state.Logger.LogTrace("Not enough bytes to parse implicit VR value length, returning");
                     return false;
-                }
             }
 
             uint rawLongValueLength = (uint)state.IntHolder;
 
             if (state.CurrentVr == DicomVR.SQ)
             {
-                // New sequence started, store current level in a stack
                 if (state.CurrentSequence is { } currentSequence)
-                {
                     state.CurrentSequences.Push(currentSequence);
-                }
 
                 if (state.CurrentSequenceItem is { } currentSequenceItem)
-                {
                     state.CurrentSequenceItems.Push(currentSequenceItem);
-                }
 
-                // Sequences may use explicit lengths instead of sequence delimitation items
-                // In that case we must close the sequence after the specified number of bytes have been parsed
                 long? sequenceLength = rawLongValueLength == UndefinedLength ? null : rawLongValueLength;
                 long? sequenceEndPosition = state.Position + sequenceLength;
-                var dicomSequence = new ReadOnlyDicomSequence(state.CurrentGroupNumber, state.CurrentElementNumber,
-                    new DicomDatasets(_datasetsPool), sequenceEndPosition);
-                state.CurrentSequence = dicomSequence;
+                state.CurrentSequence = new SequencePosition(sequenceEndPosition);
                 state.CurrentSequenceItem = null;
+                state.Handler.OnSequenceStart(state.CurrentGroupNumber, state.CurrentElementNumber);
                 state.ParseStage = DicomParseStage.ParseGroup;
                 return true;
             }
 
             if (rawLongValueLength == UndefinedLength)
             {
-                state.CurrentFragmentsGroupNumber = state.CurrentGroupNumber;
-                state.CurrentFragmentsElementNumber = state.CurrentElementNumber;
-                state.CurrentFragmentsVR = state.CurrentVr;
-                state.CurrentFragments = new DicomFragments(_fragmentsPool);
+                state.IsParsingFragments = true;
+                state.Handler.OnFragmentsStart(state.CurrentGroupNumber, state.CurrentElementNumber, state.CurrentVr);
                 state.ParseStage = DicomParseStage.ParseGroup;
                 return true;
             }
 
             if (rawLongValueLength > MaxArrayLength)
-            {
                 throw new NotSupportedException(
                     "DcmParser does not support DICOM files with values larger than 2 GB yet");
-            }
 
             state.LongValueLength = (int)rawLongValueLength;
-
-            // state.Logger.LogTrace("Parsed Value Length {LongValueLength}", state.LongValueLength);
             state.ShortValueLength = null;
         }
         else
         {
             if (!buffer.TryReadShort(ref state.Position, out state.ShortHolder))
-            {
-                // state.Logger.LogTrace("Not enough bytes to parse value length, returning");
                 return false;
-            }
 
             state.ShortValueLength = (ushort)state.ShortHolder;
-            // state.Logger.LogTrace("Parsed Value Length {ShortValueLength}", state.ShortValueLength);
             state.LongValueLength = null;
         }
 
@@ -635,83 +508,64 @@ internal sealed class DicomParser : IDicomParser
 
     static bool TryParseValue(ref DicomByteBuffer buffer, ref DicomParseState state)
     {
-        // 16 bit length flow
         if (state.ShortValueLength is not null)
         {
             ushort remaining = (ushort)buffer.Remaining;
 
-            // no memory allocated yet for this value
             if (state.CurrentValueMemory is null)
             {
-                // We can parse the value in one go
                 if (remaining >= state.ShortValueLength.Value)
                 {
                     state.CurrentValueMemory = AllocateShortMemory(ref state, state.ShortValueLength.Value);
                     state.CurrentShortValueMemoryOffset = 0;
-
                     buffer.TryRead(ref state.Position, state.CurrentValueMemory.Value.Span);
                 }
-                // We cannot parse the value in one go, prep memory and keep track of how much we have left to parse
                 else
                 {
                     state.CurrentValueMemory = AllocateShortMemory(ref state, state.ShortValueLength.Value);
                     state.CurrentShortValueMemoryOffset = remaining;
                     Span<byte> currentValueSpan = state.CurrentValueMemory.Value.Span[..remaining];
                     buffer.TryRead(ref state.Position, currentValueSpan);
-                    // We still have more bytes to read
                     return false;
                 }
             }
-            // some memory was already allocated for this value
             else
             {
-                // We are parsing the value in bits and pieces
                 int bytesToRead = Math.Min(
                     state.ShortValueLength.Value - state.CurrentShortValueMemoryOffset,
                     remaining);
-
                 Span<byte> currentValueSpan =
                     state.CurrentValueMemory.Value.Span.Slice(state.CurrentShortValueMemoryOffset, bytesToRead);
                 buffer.TryRead(ref state.Position, currentValueSpan);
                 state.CurrentShortValueMemoryOffset += (ushort)bytesToRead;
 
                 if (state.CurrentShortValueMemoryOffset < state.ShortValueLength.Value)
-                {
-                    // We still have more bytes to read
                     return false;
-                }
             }
         }
-        // 32 bit length flow
         else if (state.LongValueLength is not null)
         {
             int remaining = (int)buffer.Remaining;
 
-            // no memory allocated yet for this value
             if (state.CurrentValueMemory is null)
             {
-                // We can parse the value in one go
                 if (remaining >= state.LongValueLength.Value)
                 {
                     state.CurrentValueMemory = AllocateLongMemory(ref state, state.LongValueLength.Value);
                     Span<byte> currentValueSpan = state.CurrentValueMemory.Value.Span;
                     buffer.TryRead(ref state.Position, currentValueSpan);
                 }
-                // We cannot parse the value in one go, prep memory and keep track of how much we have left to parse
                 else
                 {
                     state.CurrentValueMemory = AllocateLongMemory(ref state, state.LongValueLength.Value);
                     state.CurrentLongValueMemoryOffset = remaining;
                     Span<byte> currentValueSpan = state.CurrentValueMemory.Value.Span[..remaining];
                     buffer.TryRead(ref state.Position, currentValueSpan);
-                    // We still have more bytes to read
                     return false;
                 }
             }
-            // some memory was already allocated for this value
             else
             {
-                // We are parsing the value in bits and pieces
                 int bytesToRead = Math.Min(state.LongValueLength.Value - state.CurrentLongValueMemoryOffset,
                     remaining);
                 Span<byte> currentValueSpan = state.CurrentValueMemory.Value.Span.Slice(
@@ -721,10 +575,7 @@ internal sealed class DicomParser : IDicomParser
                 state.CurrentLongValueMemoryOffset += bytesToRead;
 
                 if (state.CurrentLongValueMemoryOffset < state.LongValueLength.Value)
-                {
-                    // We still have more bytes to read
                     return false;
-                }
             }
         }
         else
@@ -733,47 +584,39 @@ internal sealed class DicomParser : IDicomParser
                 $"Both {nameof(state.ShortValueLength)} and {nameof(state.LongValueLength)} are null, this is a bug");
         }
 
-        if (state.CurrentFragments is not null)
+        if (state.IsParsingFragments)
         {
-            state.CurrentFragments.Add(state.CurrentValueMemory.Value);
+            state.Handler.OnFragment(state.CurrentValueMemory.Value);
             state.CurrentValueMemory = null;
             state.CurrentShortValueMemoryOffset = 0;
             state.CurrentLongValueMemoryOffset = 0;
         }
         else
         {
-            state.CurrentDicomItem = new ReadOnlyDicomItem(state.CurrentGroupNumber, state.CurrentElementNumber,
-                state.CurrentVr, ReadOnlyDicomItemContent.Create(state.CurrentValueMemory.Value));
+            var valueMemory = state.CurrentValueMemory.Value;
             state.CurrentValueMemory = null;
             state.CurrentShortValueMemoryOffset = 0;
             state.CurrentLongValueMemoryOffset = 0;
 
-            // If we're currently parsing a SQ item, add the newly parsed DICOM item to the sequence item dataset
-            // instead of the top level dataset
-            var dataset = state.CurrentSequenceItem?.ReadOnlyDicomDataset ?? state.ReadOnlyDicomDataset;
-
-            // state.Logger.LogTrace("Parsed tag {Tag}", state.CurrentDicomItem);
             if (state.CurrentElementNumber != GroupLengthElement)
             {
-                dataset.Add(state.CurrentGroupNumber, state.CurrentElementNumber,
-                    state.CurrentDicomItem.Value);
+                state.Handler.OnItem(state.CurrentGroupNumber, state.CurrentElementNumber,
+                    state.CurrentVr, valueMemory);
             }
 
             if (state.CurrentGroupNumber == DicomTags.TransferSyntaxUID.Group
                 && state.CurrentElementNumber == DicomTags.TransferSyntaxUID.Element
-                && state.CurrentDicomItem.Value.Content.Memory!.Value.Span.SequenceEqual(
-                    _implicitVRLittleEndianBytes))
+                && valueMemory.Span.SequenceEqual(_implicitVRLittleEndianBytes))
             {
                 state.SetToImplicitVrAfterFileMetaInfo = true;
             }
 
             if (state.CurrentGroupNumber == DicomTags.SpecificCharacterSet.Group
                 && state.CurrentElementNumber == DicomTags.SpecificCharacterSet.Element
-                && state.CurrentDicomItem.Value.Content.Memory is { } specificCharacterSetBytes
-                && state.ValueParser.CS.TryParse(specificCharacterSetBytes.Span, out string? specificCharacterSet)
+                && state.ValueParser.CS.TryParse(valueMemory.Span, out string? specificCharacterSet)
                 && DicomEncoding.TryParse(specificCharacterSet, out Encoding? encoding))
             {
-                dataset.Encoding = encoding;
+                state.Handler.OnEncoding(encoding);
             }
         }
 
@@ -781,48 +624,9 @@ internal sealed class DicomParser : IDicomParser
         return true;
     }
 
-    static void CloseCurrentSequenceItem(ref DicomParseState state, ReadOnlyDicomSequence currentSequence,
-        ReadOnlyDicomSequenceItem currentSequenceItem)
-    {
-        currentSequence.Items.Add(currentSequenceItem.ReadOnlyDicomDataset);
-        state.CurrentSequenceItem = null;
-    }
-
-    static void CloseCurrentSequence(ref DicomParseState state, ReadOnlyDicomSequence currentSequence)
-    {
-        state.CurrentDicomItem = new ReadOnlyDicomItem(currentSequence.Group,
-            currentSequence.Element, DicomVR.SQ,
-            ReadOnlyDicomItemContent.Create(currentSequence.Items.ToReadOnly()));
-
-        // state.Logger.LogTrace("Parsed sequence tag {Tag}", state.CurrentDicomItem);
-
-        if (state.CurrentSequenceItems.TryPop(out var currentSequenceItem))
-        {
-            currentSequenceItem.ReadOnlyDicomDataset.Add(currentSequence.Group, currentSequence.Element,
-                state.CurrentDicomItem.Value);
-            state.CurrentSequenceItem = currentSequenceItem;
-        }
-        else
-        {
-            state.ReadOnlyDicomDataset.Add(currentSequence.Group, currentSequence.Element,
-                state.CurrentDicomItem.Value);
-            state.CurrentSequenceItem = null;
-        }
-
-        if (state.CurrentSequences.TryPop(out currentSequence))
-        {
-            state.CurrentSequence = currentSequence;
-        }
-        else
-        {
-            state.CurrentSequence = null;
-        }
-    }
-
     static Memory<byte> AllocateShortMemory(ref DicomParseState state, ushort memoryLength)
     {
         var memory = state.Memory;
-        // Enough space remains in current memory, just advance the offset
         if (memory is not null && memory.Value.Length - state.MemoryOffset >= memoryLength)
         {
             int oldMemoryOffset = state.MemoryOffset;
@@ -830,16 +634,14 @@ internal sealed class DicomParser : IDicomParser
             return memory.Value.Memory.Slice(oldMemoryOffset, memoryLength);
         }
 
-        // Not enough space remains, allocate new memory
         memory = new DicomMemory(_shortArrayPool, MinimumMemoryBlockSize);
         state.MemoryOffset = memoryLength;
-        state.ReadOnlyDicomDataset.AddMemory(memory.Value);
+        state.Memories.Add(memory.Value);
         return memory.Value.Memory[..memoryLength];
     }
 
     static Memory<byte> AllocateLongMemory(ref DicomParseState state, int memoryLength)
     {
-        // Optimization: if we can still fit this into the short memory, use that instead
         if (state.Memory is { } shortMemory && shortMemory.Length - state.MemoryOffset >= memoryLength)
         {
             int oldMemoryOffset = state.MemoryOffset;
@@ -849,7 +651,7 @@ internal sealed class DicomParser : IDicomParser
 
         var pool = memoryLength < 1_048_576 ? _shortArrayPool : _longArrayPool;
         var memory = new DicomMemory(pool, memoryLength);
-        state.ReadOnlyDicomDataset.AddMemory(memory);
+        state.Memories.Add(memory);
         return memory.Memory;
     }
 }
