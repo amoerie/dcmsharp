@@ -1,6 +1,5 @@
 ﻿using DcmSharp.Parser;
 using FluentAssertions;
-using Xunit.Abstractions;
 
 namespace DcmSharp.Tests;
 
@@ -20,7 +19,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -37,7 +39,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -54,7 +59,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -73,7 +81,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -92,7 +103,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -109,7 +123,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -131,7 +148,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -148,7 +168,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetFloats(DicomTags.SelectorFLValue, out float[] values).Should().BeTrue();
@@ -162,7 +185,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetInts(DicomTags.SelectorISValue, out int[] values).Should().BeTrue();
@@ -176,7 +202,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -193,7 +222,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -210,7 +242,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -229,7 +264,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -246,7 +284,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetInts(DicomTags.SelectorSLValue, out int[] values).Should().BeTrue();
@@ -260,7 +301,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetShorts(DicomTags.SelectorSSValue, out short[] values).Should().BeTrue();
@@ -274,7 +318,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -291,7 +338,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetLongs(DicomTags.SelectorSVValue, out long[] values).Should().BeTrue();
@@ -305,7 +355,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -322,7 +375,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -339,7 +395,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -356,7 +415,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetUInts(DicomTags.SelectorULValue, out uint[] values).Should().BeTrue();
@@ -371,7 +433,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -388,7 +453,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset
@@ -405,7 +473,10 @@ public sealed class TestsForDicomMultiValues
     {
         // Arrange
         var file = new FileInfo("./Dicom/MultiValues.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetULongs(DicomTags.SelectorUVValue, out ulong[] values).Should().BeTrue();

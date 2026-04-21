@@ -1,6 +1,5 @@
 using DcmSharp.Parser;
 using FluentAssertions;
-using Xunit.Abstractions;
 
 namespace DcmSharp.Tests;
 
@@ -22,7 +21,10 @@ public sealed class TestsForDicomParser
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
 
         // Act + Assert
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Assert
         dicomDataset.Should().NotBeNull();
@@ -35,7 +37,10 @@ public sealed class TestsForDicomParser
         var file = new FileInfo("./Dicom/ImplicitVR.dcm");
 
         // Act + Assert
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Assert
         dicomDataset.Should().NotBeNull();
@@ -52,7 +57,10 @@ public sealed class TestsForDicomParser
     {
         // Arrange
         var file = new FileInfo("./Dicom/ExplicitVR.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetString(group, element, out string? actualValue).Should().BeTrue();
@@ -72,7 +80,10 @@ public sealed class TestsForDicomParser
     {
         // Arrange
         var file = new FileInfo("./Dicom/ImplicitVR.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset.TryGetString(group, element, out string? actualValue).Should().BeTrue();
@@ -86,7 +97,10 @@ public sealed class TestsForDicomParser
     {
         // Arrange
         var file = new FileInfo("./Dicom/TestPatternPalette.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act + Assert
         dicomDataset
@@ -120,7 +134,10 @@ public sealed class TestsForDicomParser
     {
         // Arrange
         var file = new FileInfo("./Dicom/Encoded.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset

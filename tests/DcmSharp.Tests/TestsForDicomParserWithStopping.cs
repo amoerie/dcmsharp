@@ -1,6 +1,5 @@
 using DcmSharp.Parser;
 using FluentAssertions;
-using Xunit.Abstractions;
 
 namespace DcmSharp.Tests;
 
@@ -32,7 +31,11 @@ public sealed class TestsForDicomParserWithStopping
         };
 
         // Act + Assert
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            options,
+            TestContext.Current.CancellationToken
+        );
 
         // Assert
         dicomDataset.Should().NotBeNull();
@@ -65,7 +68,11 @@ public sealed class TestsForDicomParserWithStopping
         };
 
         // Act + Assert
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            options,
+            TestContext.Current.CancellationToken
+        );
 
         // Assert
         dicomDataset.Should().NotBeNull();
@@ -93,7 +100,11 @@ public sealed class TestsForDicomParserWithStopping
                 Depth = 2,
             },
         };
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            options,
+            TestContext.Current.CancellationToken
+        );
 
         // Act + Assert
         dicomDataset
@@ -139,7 +150,11 @@ public sealed class TestsForDicomParserWithStopping
         };
 
         // Act
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            options,
+            TestContext.Current.CancellationToken
+        );
         dicomDataset
             .TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out string? orderNumber)
             .Should()

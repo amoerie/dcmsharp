@@ -429,8 +429,14 @@ public class TestsForDicomAnonymizer
 
         // Act
         await Task.WhenAll(
-            Task.Run(() => _anonymizer.AnonymizeAsync(metaInfo1, dataSet1, _options)),
-            Task.Run(() => _anonymizer.AnonymizeAsync(metaInfo2, dataSet2, _options))
+            Task.Run(
+                () => _anonymizer.AnonymizeAsync(metaInfo1, dataSet1, _options),
+                TestContext.Current.CancellationToken
+            ),
+            Task.Run(
+                () => _anonymizer.AnonymizeAsync(metaInfo2, dataSet2, _options),
+                TestContext.Current.CancellationToken
+            )
         );
 
         // Assert

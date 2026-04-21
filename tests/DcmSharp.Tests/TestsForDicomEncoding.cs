@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using DcmSharp.Parser;
 using FluentAssertions;
-using Xunit.Abstractions;
 
 namespace DcmSharp.Tests;
 
@@ -21,7 +20,10 @@ public sealed class TestsForDicomEncoding
     {
         // Arrange
         var file = new FileInfo("./Dicom/Encoded.dcm");
-        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
+        using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(
+            file,
+            TestContext.Current.CancellationToken
+        );
 
         // Act
         dicomDataset

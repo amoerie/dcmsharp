@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using FluentAssertions;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace DcmFind.Tests;
 

@@ -211,6 +211,6 @@ public class TestsForDicomTagsGenerator
         };
 
         // Act
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 }
