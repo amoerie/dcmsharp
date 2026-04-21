@@ -9,6 +9,5 @@
     <PackageReference Include="KeyedSemaphores" />
     <PackageReference Include="Polly" />
     <PackageReference Include="System.CommandLine" />
-    <PackageReference Include="System.Threading.Channels" />
   </ItemGroup>
 </Project>
