@@ -93,7 +93,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetDateTime(DicomTags.SelectorDTValue, out DateTime value).Should().BeTrue();
+        dicomDataset
+            .TryGetDateTime(DicomTags.SelectorDTValue, out DateTime value)
+            .Should()
+            .BeTrue();
 
         // Assert
         value.Should().Be(DateTime.Parse("2024-12-03T12:00:00"));
@@ -177,7 +180,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetPersonName(DicomTags.SelectorPNValue, out PersonName value).Should().BeTrue();
+        dicomDataset
+            .TryGetPersonName(DicomTags.SelectorPNValue, out PersonName value)
+            .Should()
+            .BeTrue();
 
         // Assert
         var expected = new PersonName("Dr", "Smith", null, null, null, null, null, null, null);

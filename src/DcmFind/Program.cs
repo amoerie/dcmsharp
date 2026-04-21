@@ -76,7 +76,9 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
         public int? Parallelism { get; init; }
 
         [CommandOption("--no-progress")]
-        [Description("Disables printing the file currently being inspected. Automatically disabled if the output is piped.")]
+        [Description(
+            "Disables printing the file currently being inspected. Automatically disabled if the output is piped."
+        )]
         public bool? NoProgress { get; init; }
 
         public override ValidationResult Validate()
@@ -110,8 +112,16 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
         _options = options ?? throw new ArgumentNullException(nameof(options));
     }
 
-    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Disposal only happens after all tasks are completed")]
-    protected override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] Settings settings, CancellationToken cancellationToken)
+    [SuppressMessage(
+        "ReSharper",
+        "AccessToDisposedClosure",
+        Justification = "Disposal only happens after all tasks are completed"
+    )]
+    protected override async Task<int> ExecuteAsync(
+        [NotNull] CommandContext context,
+        [NotNull] Settings settings,
+        CancellationToken cancellationToken
+    )
     {
         var services = new ServiceCollection();
         services.AddDcmParse();
@@ -125,28 +135,36 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
         var query = settings.Query;
         var limit = settings.Limit ?? int.MaxValue;
         var parallelism = settings.Parallelism ?? 8;
-        var progress = settings.NoProgress != true && (_options.IgnoreRedirectedOutput || !Console.IsOutputRedirected);
+        var progress =
+            settings.NoProgress != true
+            && (_options.IgnoreRedirectedOutput || !Console.IsOutputRedirected);
         var allTasks = new List<Task>();
 
         // Setup channels
-        var filesChannel = Channel.CreateBounded<string>(new BoundedChannelOptions(parallelism * 100)
-        {
-            SingleWriter = true,
-            SingleReader = false,
-            AllowSynchronousContinuations = false
-        });
-        var matchedFilesChannel = Channel.CreateUnbounded<string>(new UnboundedChannelOptions
-        {
-            SingleWriter = false,
-            SingleReader = true,
-            AllowSynchronousContinuations = false
-        });
-        var consoleOutputChannel = Channel.CreateBounded<ConsoleOutput>(new BoundedChannelOptions(parallelism * 100)
-        {
-            SingleWriter = false,
-            SingleReader = true,
-            AllowSynchronousContinuations = false
-        });
+        var filesChannel = Channel.CreateBounded<string>(
+            new BoundedChannelOptions(parallelism * 100)
+            {
+                SingleWriter = true,
+                SingleReader = false,
+                AllowSynchronousContinuations = false,
+            }
+        );
+        var matchedFilesChannel = Channel.CreateUnbounded<string>(
+            new UnboundedChannelOptions
+            {
+                SingleWriter = false,
+                SingleReader = true,
+                AllowSynchronousContinuations = false,
+            }
+        );
+        var consoleOutputChannel = Channel.CreateBounded<ConsoleOutput>(
+            new BoundedChannelOptions(parallelism * 100)
+            {
+                SingleWriter = false,
+                SingleReader = true,
+                AllowSynchronousContinuations = false,
+            }
+        );
 
         // Parse query
         var queries = new List<IQuery>();
@@ -162,7 +180,14 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
 
         // Enumerate files
         var fileEnumeratorTask = Task.Run(
-            async () => await FileEnumerator.EnumerateAsync(filesChannel.Writer, directory, filePattern, recursive, cancellationToken),
+            async () =>
+                await FileEnumerator.EnumerateAsync(
+                    filesChannel.Writer,
+                    directory,
+                    filePattern,
+                    recursive,
+                    cancellationToken
+                ),
             cancellationToken
         );
         allTasks.Add(fileEnumeratorTask);
@@ -172,42 +197,56 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
         for (var i = 0; i < parallelism; i++)
         {
             var matchTask = Task.Run(
-                async () => await dicomFileMatcher.MatchAsync(
-                    filesChannel.Reader,
-                    matchedFilesChannel.Writer,
-                    progress,
-                    consoleOutputChannel.Writer,
-                    queries,
-                    cancellationToken
-                ),
-                cancellationToken);
+                async () =>
+                    await dicomFileMatcher.MatchAsync(
+                        filesChannel.Reader,
+                        matchedFilesChannel.Writer,
+                        progress,
+                        consoleOutputChannel.Writer,
+                        queries,
+                        cancellationToken
+                    ),
+                cancellationToken
+            );
             matchTasks.Add(matchTask);
             allTasks.Add(matchTask);
         }
-        var matchingFinishedTask = Task.Run(async () =>
-        {
-            // Close matched files channel when all matchers have completed
-            await Task.WhenAll(matchTasks);
-            matchedFilesChannel.Writer.Complete();
-        }, cancellationToken);
+        var matchingFinishedTask = Task.Run(
+            async () =>
+            {
+                // Close matched files channel when all matchers have completed
+                await Task.WhenAll(matchTasks);
+                matchedFilesChannel.Writer.Complete();
+            },
+            cancellationToken
+        );
         allTasks.Add(matchingFinishedTask);
 
         // Collect output
         var writeMatchedFilesToOutputTask = Task.Run(
-            async () => await MatchedDicomFilesConsoleOutputWriter.WriteAsync(
-                matchedFilesChannel.Reader,
-                consoleOutputChannel.Writer,
-                limit,
-                cancellationToken
-            )
-        , cancellationToken);
+            async () =>
+                await MatchedDicomFilesConsoleOutputWriter.WriteAsync(
+                    matchedFilesChannel.Reader,
+                    consoleOutputChannel.Writer,
+                    limit,
+                    cancellationToken
+                ),
+            cancellationToken
+        );
         allTasks.Add(writeMatchedFilesToOutputTask);
 
         // Write output to Console task
-        var writeOutputTask = Task.Run(async () =>
-        {
-            await ConsoleOutputWriter.WriteAsync(consoleOutputChannel.Reader, _options, cancellationToken);
-        }, cancellationToken);
+        var writeOutputTask = Task.Run(
+            async () =>
+            {
+                await ConsoleOutputWriter.WriteAsync(
+                    consoleOutputChannel.Reader,
+                    _options,
+                    cancellationToken
+                );
+            },
+            cancellationToken
+        );
 
         allTasks.Add(writeOutputTask);
 

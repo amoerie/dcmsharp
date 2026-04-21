@@ -8,56 +8,64 @@ internal class RootCommandFactory
 
     public RootCommandFactory(IRootCommandHandler rootCommandHandler)
     {
-        _rootCommandHandler = rootCommandHandler ?? throw new ArgumentNullException(nameof(rootCommandHandler));
+        _rootCommandHandler =
+            rootCommandHandler ?? throw new ArgumentNullException(nameof(rootCommandHandler));
     }
 
     public RootCommand Create()
     {
         var filesOption = new Option<IEnumerable<FileInfo>>(
-            aliases: new[] {"-f", "--files"},
-            description: "Organize these DICOM files. When missing, this option will be read from the piped input.")
+            aliases: new[] { "-f", "--files" },
+            description: "Organize these DICOM files. When missing, this option will be read from the piped input."
+        )
         {
             Arity = ArgumentArity.ZeroOrMore,
         };
 
         var directoryOption = new Option<DirectoryInfo>(
-            aliases: new[] {"-d", "--directory"},
+            aliases: new[] { "-d", "--directory" },
             description: "Organize DICOM files in this directory",
-            getDefaultValue: () => new DirectoryInfo(Environment.CurrentDirectory))
+            getDefaultValue: () => new DirectoryInfo(Environment.CurrentDirectory)
+        )
         {
             Arity = ArgumentArity.ZeroOrOne,
         };
-            
+
         var patternOption = new Option<string>(
-            aliases: new[] {"-p", "--pattern"},
+            aliases: new[] { "-p", "--pattern" },
             description: "Write DICOM files using this pattern. DICOM tags are supported. Fallback for missing DICOM tags are supported. Nested directories will be created on demand.",
-            getDefaultValue: () => "{PatientName}/{AccessionNumber}/{SeriesNumber}/{InstanceNumber ?? SOPInstanceUID} - {Guid}.dcm")
+            getDefaultValue: () =>
+                "{PatientName}/{AccessionNumber}/{SeriesNumber}/{InstanceNumber ?? SOPInstanceUID} - {Guid}.dcm"
+        )
         {
             Arity = ArgumentArity.ZeroOrOne,
         };
-            
+
         var actionOption = new Option<Action>(
-            aliases: new[] {"-a", "--action"},
+            aliases: new[] { "-a", "--action" },
             description: "Action to execute for each file",
-            getDefaultValue: () => Action.Move)
+            getDefaultValue: () => Action.Move
+        )
         {
-            Arity = ArgumentArity.ZeroOrOne
+            Arity = ArgumentArity.ZeroOrOne,
         };
-            
+
         var parallelismOption = new Option<int>(
-            aliases: new[] {"--parallelism"},
+            aliases: new[] { "--parallelism" },
             description: "Process this many files in parallel",
-            getDefaultValue: () => 8)
+            getDefaultValue: () => 8
+        )
         {
-            Arity = ArgumentArity.ZeroOrOne
+            Arity = ArgumentArity.ZeroOrOne,
         };
 
         var errorModeOption = new Option<ErrorMode>(
-            aliases: new[] {"--errorMode"},
+            aliases: new[] { "--errorMode" },
             description: "Specifies what to do when an error occurs",
-            getDefaultValue: () => ErrorMode.Stop)
+            getDefaultValue: () => ErrorMode.Stop
+        )
         {
-            Arity = ArgumentArity.ZeroOrOne
+            Arity = ArgumentArity.ZeroOrOne,
         };
 
         var organizeCommand = new RootCommand("Organize DCM files")
@@ -67,9 +75,9 @@ internal class RootCommandFactory
             patternOption,
             actionOption,
             parallelismOption,
-            errorModeOption
+            errorModeOption,
         };
-            
+
         organizeCommand.SetHandler(context =>
         {
             var bindingContext = context.BindingContext;
@@ -89,7 +97,7 @@ internal class RootCommandFactory
                 Pattern = pattern,
                 Action = action,
                 Parallelism = parallelism,
-                ErrorMode = errorMode
+                ErrorMode = errorMode,
             };
             _rootCommandHandler.ExecuteAsync(console, options, cancellationToken);
         });

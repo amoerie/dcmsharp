@@ -19,13 +19,19 @@ public static partial class DicomItemFactory
         switch (vr)
         {
             case DicomVR.IS:
-                return new DicomIntegerString(group, element, [ value.ToString(CultureInfo.InvariantCulture) ]);
+                return new DicomIntegerString(
+                    group,
+                    element,
+                    [value.ToString(CultureInfo.InvariantCulture)]
+                );
             case DicomVR.SL:
-                return new DicomSignedLong(group, element, [ value ]);
+                return new DicomSignedLong(group, element, [value]);
             case DicomVR.SV:
-                return new DicomSignedVeryLong(group, element, [ value ]);
+                return new DicomSignedVeryLong(group, element, [value]);
             default:
-                throw new DicomException($"Creating a DICOM item with VR {vr} with a value of type 'int' is not supported");
+                throw new DicomException(
+                    $"Creating a DICOM item with VR {vr} with a value of type 'int' is not supported"
+                );
         }
     }
 }

@@ -6,7 +6,11 @@ public readonly struct ReadOnlyDicomFragments : IDisposable
     private readonly ReadOnlyMemory<byte>[] _fragments;
     private readonly int _length;
 
-    internal ReadOnlyDicomFragments(DicomFragmentsPool pool, ReadOnlyMemory<byte>[] fragments, int length)
+    internal ReadOnlyDicomFragments(
+        DicomFragmentsPool pool,
+        ReadOnlyMemory<byte>[] fragments,
+        int length
+    )
     {
         _pool = pool;
         _fragments = fragments ?? throw new ArgumentNullException(nameof(fragments));

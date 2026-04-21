@@ -15,11 +15,24 @@ namespace DcmFind
 
         public EqualsQuery(DicomTag dicomTag, string value)
         {
-            if (dicomTag == null) throw new ArgumentNullException(nameof(dicomTag));
-            if (value == null) throw new ArgumentNullException(nameof(value));
+            if (dicomTag == null)
+                throw new ArgumentNullException(nameof(dicomTag));
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
             var pattern = $"^{Regex.Escape(value).Replace("%", ".*")}$";
-            var regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant);
-            _predicate = dicomDataset => regex.IsMatch(dicomDataset.TryGetString(dicomTag, out string? dicomTagValue) ? dicomTagValue : "");
+            var regex = new Regex(
+                pattern,
+                RegexOptions.Compiled
+                    | RegexOptions.IgnoreCase
+                    | RegexOptions.Singleline
+                    | RegexOptions.CultureInvariant
+            );
+            _predicate = dicomDataset =>
+                regex.IsMatch(
+                    dicomDataset.TryGetString(dicomTag, out string? dicomTagValue)
+                        ? dicomTagValue
+                        : ""
+                );
         }
 
         public bool Matches(ReadOnlyDicomDataset dicomDataset)
@@ -34,11 +47,24 @@ namespace DcmFind
 
         public NotEqualsQuery(DicomTag dicomTag, string value)
         {
-            if (dicomTag == null) throw new ArgumentNullException(nameof(dicomTag));
-            if (value == null) throw new ArgumentNullException(nameof(value));
+            if (dicomTag == null)
+                throw new ArgumentNullException(nameof(dicomTag));
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
             var pattern = $"^{Regex.Escape(value).Replace("%", ".*")}$";
-            var regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant);
-            _predicate = dicomDataset => !regex.IsMatch(dicomDataset.TryGetString(dicomTag, out string? dicomTagValue) ? dicomTagValue : "");
+            var regex = new Regex(
+                pattern,
+                RegexOptions.Compiled
+                    | RegexOptions.IgnoreCase
+                    | RegexOptions.Singleline
+                    | RegexOptions.CultureInvariant
+            );
+            _predicate = dicomDataset =>
+                !regex.IsMatch(
+                    dicomDataset.TryGetString(dicomTag, out string? dicomTagValue)
+                        ? dicomTagValue
+                        : ""
+                );
         }
 
         public bool Matches(ReadOnlyDicomDataset dicomDataset)
@@ -53,44 +79,62 @@ namespace DcmFind
 
         public LowerThanQuery(DicomTag dicomTag, string value, bool inclusive)
         {
-            if (dicomTag == null) throw new ArgumentNullException(nameof(dicomTag));
-            if (value == null) throw new ArgumentNullException(nameof(value));
+            if (dicomTag == null)
+                throw new ArgumentNullException(nameof(dicomTag));
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
 
-            if (DateTime.TryParseExact(value, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTimeValue))
+            if (
+                DateTime.TryParseExact(
+                    value,
+                    "yyyyMMdd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var dateTimeValue
+                )
+            )
             {
                 if (inclusive)
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
-                                                 && dateTimeDicomTagValue <= dateTimeValue;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
+                        && dateTimeDicomTagValue <= dateTimeValue;
                 }
                 else
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
-                                                 && dateTimeDicomTagValue < dateTimeValue;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
+                        && dateTimeDicomTagValue < dateTimeValue;
                 }
             }
             else if (long.TryParse(value, out var longValue))
             {
                 if (inclusive)
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
-                                                 && longDicomTagValue <= longValue;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
+                        && longDicomTagValue <= longValue;
                 }
                 else
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
-                                                 && longDicomTagValue < longValue;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
+                        && longDicomTagValue < longValue;
                 }
             }
             else
             {
                 if (inclusive)
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetString(dicomTag, out var dicomTagValue) && string.CompareOrdinal(dicomTagValue, value) <= 0;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetString(dicomTag, out var dicomTagValue)
+                        && string.CompareOrdinal(dicomTagValue, value) <= 0;
                 }
                 else
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetString(dicomTag, out var dicomTagValue) && string.CompareOrdinal(dicomTagValue, value) < 0;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetString(dicomTag, out var dicomTagValue)
+                        && string.CompareOrdinal(dicomTagValue, value) < 0;
                 }
             }
         }
@@ -107,44 +151,62 @@ namespace DcmFind
 
         public GreaterThanQuery(DicomTag dicomTag, string value, bool inclusive)
         {
-            if (dicomTag == null) throw new ArgumentNullException(nameof(dicomTag));
-            if (value == null) throw new ArgumentNullException(nameof(value));
+            if (dicomTag == null)
+                throw new ArgumentNullException(nameof(dicomTag));
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
 
-            if (DateTime.TryParseExact(value, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTimeValue))
+            if (
+                DateTime.TryParseExact(
+                    value,
+                    "yyyyMMdd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var dateTimeValue
+                )
+            )
             {
                 if (inclusive)
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
-                                                 && dateTimeDicomTagValue >= dateTimeValue;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
+                        && dateTimeDicomTagValue >= dateTimeValue;
                 }
                 else
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
-                                                 && dateTimeDicomTagValue > dateTimeValue;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetDateTime(dicomTag, out var dateTimeDicomTagValue)
+                        && dateTimeDicomTagValue > dateTimeValue;
                 }
             }
             else if (long.TryParse(value, out var longValue))
             {
                 if (inclusive)
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
-                                                 && longDicomTagValue >= longValue;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
+                        && longDicomTagValue >= longValue;
                 }
                 else
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
-                                                 && longDicomTagValue > longValue;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetLong(dicomTag, out var longDicomTagValue)
+                        && longDicomTagValue > longValue;
                 }
             }
             else
             {
                 if (inclusive)
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetString(dicomTag, out var dicomTagValue) && string.CompareOrdinal(dicomTagValue, value) >= 0;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetString(dicomTag, out var dicomTagValue)
+                        && string.CompareOrdinal(dicomTagValue, value) >= 0;
                 }
                 else
                 {
-                    _predicate = dicomDataset => dicomDataset.TryGetString(dicomTag, out var dicomTagValue) && string.CompareOrdinal(dicomTagValue, value) > 0;
+                    _predicate = dicomDataset =>
+                        dicomDataset.TryGetString(dicomTag, out var dicomTagValue)
+                        && string.CompareOrdinal(dicomTagValue, value) > 0;
                 }
             }
         }
@@ -155,7 +217,7 @@ namespace DcmFind
         }
     }
 
-    public class ContainsTagQuery: IQuery
+    public class ContainsTagQuery : IQuery
     {
         private readonly DicomTag _dicomTag;
 

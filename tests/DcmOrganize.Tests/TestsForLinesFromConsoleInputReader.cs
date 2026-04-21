@@ -34,10 +34,7 @@ public class TestsForLinesFromConsoleInputReader : IDisposable
 
         var lines = await _linesFromConsoleInputReader.Read(CancellationToken.None).ToListAsync();
 
-        lines.Should().BeEquivalentTo(new []
-        {
-            "Hello world"
-        });
+        lines.Should().BeEquivalentTo(new[] { "Hello world" });
     }
 
     [Theory]
@@ -51,11 +48,7 @@ public class TestsForLinesFromConsoleInputReader : IDisposable
 
         var lines = await _linesFromConsoleInputReader.Read(CancellationToken.None).ToListAsync();
 
-        lines.Should().BeEquivalentTo(new []
-        {
-            "Hello",
-            "World"
-        });
+        lines.Should().BeEquivalentTo(new[] { "Hello", "World" });
     }
 
     public void Dispose()

@@ -11,7 +11,8 @@ public readonly record struct PersonName(
     string? IdeographicFamilyName,
     string? IdeographicGivenName,
     string? PhoneticFamilyName,
-    string? PhoneticGivenName)
+    string? PhoneticGivenName
+)
 {
     public override string ToString()
     {

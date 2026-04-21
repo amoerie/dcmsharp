@@ -31,18 +31,20 @@ internal sealed class CSParser
         ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimSpaces(span);
 
         char[]? sharedChars = null;
-        Span<char> charSpan = trimmedSpan.Length < 255
-            ? stackalloc char[trimmedSpan.Length]
-            : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+        Span<char> charSpan =
+            trimmedSpan.Length < 255
+                ? stackalloc char[trimmedSpan.Length]
+                : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
 
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
 
         int numberOfValues = charSpan.Count('\\') + 1;
         Range[]? sharedRanges = null;
-        Span<Range> ranges = numberOfValues < 16
-            ? stackalloc Range[numberOfValues]
-            : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
+        Span<Range> ranges =
+            numberOfValues < 16
+                ? stackalloc Range[numberOfValues]
+                : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
         values = new string[numberOfValues];
@@ -64,5 +66,4 @@ internal sealed class CSParser
 
         return true;
     }
-
 }

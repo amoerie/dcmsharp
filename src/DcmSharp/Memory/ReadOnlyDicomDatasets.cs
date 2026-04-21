@@ -6,7 +6,11 @@ public readonly struct ReadOnlyDicomDatasets : IDisposable
     private readonly ReadOnlyDicomDataset[] _datasets;
     private readonly int _length;
 
-    internal ReadOnlyDicomDatasets(DicomDatasetsPool datasetsPool, ReadOnlyDicomDataset[] datasets, int length)
+    internal ReadOnlyDicomDatasets(
+        DicomDatasetsPool datasetsPool,
+        ReadOnlyDicomDataset[] datasets,
+        int length
+    )
     {
         _datasetsPool = datasetsPool;
         _datasets = datasets ?? throw new ArgumentNullException(nameof(datasets));

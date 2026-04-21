@@ -19,11 +19,13 @@ public static partial class DicomItemFactory
         switch (vr)
         {
             case DicomVR.DA:
-                return new DicomDate(group, element, [ value ]);
+                return new DicomDate(group, element, [value]);
             case DicomVR.DT:
-                return new DicomDateTime(group, element, [ new DateTime(value, new TimeOnly()) ]);
+                return new DicomDateTime(group, element, [new DateTime(value, new TimeOnly())]);
             default:
-                throw new DicomException($"Creating a DICOM item with VR {vr} with a value of type '{nameof(DateOnly)}' is not supported");
+                throw new DicomException(
+                    $"Creating a DICOM item with VR {vr} with a value of type '{nameof(DateOnly)}' is not supported"
+                );
         }
     }
 }

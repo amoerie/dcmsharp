@@ -4,7 +4,7 @@ namespace DcmFind
 {
     public static class QueryParser
     {
-        private static readonly string[] SupportedOperators = {"<=", ">=", "!=", "=", "<", ">" };
+        private static readonly string[] SupportedOperators = { "<=", ">=", "!=", "=", "<", ">" };
 
         public static bool TryParse(string? queryAsString, out IQuery? query)
         {
@@ -14,7 +14,11 @@ namespace DcmFind
                 return false;
 
             var matchedOperator = SupportedOperators
-                .Select(o => new { Operator = o, Index = queryAsString.IndexOf(o, StringComparison.OrdinalIgnoreCase)})
+                .Select(o => new
+                {
+                    Operator = o,
+                    Index = queryAsString.IndexOf(o, StringComparison.OrdinalIgnoreCase),
+                })
                 .Where(match => match.Index != -1)
                 .MinBy(match => match.Index);
 
@@ -27,8 +31,13 @@ namespace DcmFind
                     return true;
                 }
 
-                var supportedOperatorsAsString = string.Join(" or ", SupportedOperators.Select(c => $"'{c}'"));
-                Console.Error.WriteLine($"Query '{queryAsString}' is not recognized as a DICOM tag and does not contain any of the supported operators: {supportedOperatorsAsString}");
+                var supportedOperatorsAsString = string.Join(
+                    " or ",
+                    SupportedOperators.Select(c => $"'{c}'")
+                );
+                Console.Error.WriteLine(
+                    $"Query '{queryAsString}' is not recognized as a DICOM tag and does not contain any of the supported operators: {supportedOperatorsAsString}"
+                );
                 return false;
             }
 
@@ -39,7 +48,9 @@ namespace DcmFind
                 return false;
             }
 
-            var queryValue = queryAsString.Substring(matchedOperator.Index + matchedOperator.Operator.Length).Trim();
+            var queryValue = queryAsString
+                .Substring(matchedOperator.Index + matchedOperator.Operator.Length)
+                .Trim();
 
             switch (@operator)
             {

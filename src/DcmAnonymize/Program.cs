@@ -21,13 +21,21 @@ public class Program
     // ReSharper disable ClassNeverInstantiated.Global
     public class Options
     {
-        [Value(0, HelpText = "Anonymize these DICOM files. When missing, this option will be read from the piped input.", Required = false)]
+        [Value(
+            0,
+            HelpText = "Anonymize these DICOM files. When missing, this option will be read from the piped input.",
+            Required = false
+        )]
         public IEnumerable<string>? Files { get; set; }
 
         [Option('p', "parallelism", Default = 8, HelpText = "Process this many files in parallel")]
         public int Parallelism { get; set; }
 
-        [Option("blank-rectangle", HelpText = "One or more rectangular regions to blank in the pixel data. Provide values in the shape (x1,y1)->(x2,y2), e.g. (0,0)->(10,10)", Required = false)]
+        [Option(
+            "blank-rectangle",
+            HelpText = "One or more rectangular regions to blank in the pixel data. Provide values in the shape (x1,y1)->(x2,y2), e.g. (0,0)->(10,10)",
+            Required = false
+        )]
         public IEnumerable<string>? RectanglesToBlank { get; set; }
     }
 
@@ -86,7 +94,8 @@ public class Program
 
     private async Task AnonymizeAsync(Options options)
     {
-        if (options == null) throw new ArgumentNullException(nameof(options));
+        if (options == null)
+            throw new ArgumentNullException(nameof(options));
 
         IEnumerable<FileInfo> ReadFilesFromConsole()
         {
@@ -97,9 +106,10 @@ public class Program
             }
         }
 
-        var files = options.Files != null && options.Files.Any()
-            ? options.Files.Select(f => new FileInfo(f))
-            : ReadFilesFromConsole();
+        var files =
+            options.Files != null && options.Files.Any()
+                ? options.Files.Select(f => new FileInfo(f))
+                : ReadFilesFromConsole();
         var parallelism = options.Parallelism;
         var randomNameGenerator = new RandomNameGenerator();
         var nationalNumberGenerator = new NationalNumberGenerator();
@@ -120,11 +130,17 @@ public class Program
                 .Create(files)
                 .GetPartitions(parallelism)
                 .AsParallel()
-                .Select(partition => AnonymizeFilesAsync(partition, anonymizer, anonymizationOptions))
+                .Select(partition =>
+                    AnonymizeFilesAsync(partition, anonymizer, anonymizationOptions)
+                )
         );
     }
 
-    private async Task AnonymizeFilesAsync(IEnumerator<FileInfo> files, DicomAnonymizer anonymizer, AnonymizationOptions options)
+    private async Task AnonymizeFilesAsync(
+        IEnumerator<FileInfo> files,
+        DicomAnonymizer anonymizer,
+        AnonymizationOptions options
+    )
     {
         using (files)
         {
@@ -135,10 +151,22 @@ public class Program
         }
     }
 
-    private async Task AnonymizeFileAsync(FileInfo file, DicomAnonymizer anonymizer, AnonymizationOptions options)
+    private async Task AnonymizeFileAsync(
+        FileInfo file,
+        DicomAnonymizer anonymizer,
+        AnonymizationOptions options
+    )
     {
         DicomFile dicomFile;
-        using (var inputFileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096))
+        using (
+            var inputFileStream = new FileStream(
+                file.FullName,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.Read,
+                4096
+            )
+        )
         {
             try
             {
@@ -151,7 +179,11 @@ public class Program
             }
         }
 
-        if (file.Name == "DICOMDIR" || dicomFile.FileMetaInfo.MediaStorageSOPClassUID == DicomUID.MediaStorageDirectoryStorage)
+        if (
+            file.Name == "DICOMDIR"
+            || dicomFile.FileMetaInfo.MediaStorageSOPClassUID
+                == DicomUID.MediaStorageDirectoryStorage
+        )
         {
             File.Delete(file.FullName);
             return;
@@ -163,7 +195,9 @@ public class Program
         }
         catch (Exception e)
         {
-            await ErrorOutput.WriteLineAsync($"Failed to generate anonymous data for the provided DICOM file: {file.FullName}\n{e}");
+            await ErrorOutput.WriteLineAsync(
+                $"Failed to generate anonymous data for the provided DICOM file: {file.FullName}\n{e}"
+            );
             return;
         }
 
@@ -173,7 +207,9 @@ public class Program
         }
         catch (Exception e)
         {
-            await ErrorOutput.WriteLineAsync($"Failed to overwrite the original DICOM file: {file.FullName}\n{e}");
+            await ErrorOutput.WriteLineAsync(
+                $"Failed to overwrite the original DICOM file: {file.FullName}\n{e}"
+            );
             return;
         }
 

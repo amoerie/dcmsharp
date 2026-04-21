@@ -5,8 +5,12 @@ namespace DcmAnonymize.Names;
 
 public class RandomNameGenerator
 {
-    private readonly Lazy<string[]> _firstNames = new Lazy<string[]>(() => ReadEmbeddedResource("DcmAnonymize.Names.first-names.txt").ToArray());
-    private readonly Lazy<string[]> _lastNames = new Lazy<string[]>(() => ReadEmbeddedResource("DcmAnonymize.Names.last-names.txt").ToArray());
+    private readonly Lazy<string[]> _firstNames = new Lazy<string[]>(() =>
+        ReadEmbeddedResource("DcmAnonymize.Names.first-names.txt").ToArray()
+    );
+    private readonly Lazy<string[]> _lastNames = new Lazy<string[]>(() =>
+        ReadEmbeddedResource("DcmAnonymize.Names.last-names.txt").ToArray()
+    );
     private readonly Random _random = new Random();
 
     public RandomName GenerateRandomName()
@@ -25,12 +29,12 @@ public class RandomNameGenerator
         var assembly = Assembly.GetExecutingAssembly();
 
         using var stream = assembly.GetManifestResourceStream(resourceName);
-            
+
         if (stream == null)
             yield break;
 
         using var reader = new StreamReader(stream, Encoding.UTF8);
-            
+
         string? line;
         while ((line = reader.ReadLine()) != null)
         {

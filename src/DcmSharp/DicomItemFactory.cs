@@ -1,5 +1,3 @@
 ﻿namespace DcmSharp;
 
-public static partial class DicomItemFactory
-{
-}
+public static partial class DicomItemFactory { }

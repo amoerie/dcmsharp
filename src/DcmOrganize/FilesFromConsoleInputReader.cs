@@ -13,10 +13,14 @@ internal class FilesFromConsoleInputReader : IFilesFromConsoleInputReader
 
     public FilesFromConsoleInputReader(ILinesFromConsoleInputReader linesFromConsoleInputReader)
     {
-        _linesFromConsoleInputReader = linesFromConsoleInputReader ?? throw new ArgumentNullException(nameof(linesFromConsoleInputReader));
+        _linesFromConsoleInputReader =
+            linesFromConsoleInputReader
+            ?? throw new ArgumentNullException(nameof(linesFromConsoleInputReader));
     }
 
-    public async IAsyncEnumerable<FileInfo> Read([EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<FileInfo> Read(
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    )
     {
         await foreach (var line in _linesFromConsoleInputReader.Read(cancellationToken))
         {

@@ -43,28 +43,43 @@ public class ValueBenchmarks
     [Benchmark(Baseline = true)]
     public int FellowOakDicom()
     {
-        _ = _dicomFile.Dataset.TryGetString(global::FellowOakDicom.DicomTag.SOPInstanceUID, out string sopInstanceUID);
-        _ = _dicomFile.Dataset.TryGetString(global::FellowOakDicom.DicomTag.PatientID, out string patientId);
-        _ = _dicomFile.Dataset.TryGetString(global::FellowOakDicom.DicomTag.Modality, out string modality);
-        _ = _dicomFile.Dataset.TryGetSingleValue(global::FellowOakDicom.DicomTag.ExposureTime, out int? exposureTime);
+        _ = _dicomFile.Dataset.TryGetString(
+            global::FellowOakDicom.DicomTag.SOPInstanceUID,
+            out string sopInstanceUID
+        );
+        _ = _dicomFile.Dataset.TryGetString(
+            global::FellowOakDicom.DicomTag.PatientID,
+            out string patientId
+        );
+        _ = _dicomFile.Dataset.TryGetString(
+            global::FellowOakDicom.DicomTag.Modality,
+            out string modality
+        );
+        _ = _dicomFile.Dataset.TryGetSingleValue(
+            global::FellowOakDicom.DicomTag.ExposureTime,
+            out int? exposureTime
+        );
 
         return (sopInstanceUID?.Length ?? 0)
-               + (patientId?.Length ?? 0)
-               + (modality?.Length ?? 0)
-               + (exposureTime ?? 0);
+            + (patientId?.Length ?? 0)
+            + (modality?.Length ?? 0)
+            + (exposureTime ?? 0);
     }
 
     [Benchmark]
     public int DicomParser()
     {
-        _ = _readOnlyDicomDataset.TryGetString(DicomTags.SOPInstanceUID, out string? sopInstanceUID);
+        _ = _readOnlyDicomDataset.TryGetString(
+            DicomTags.SOPInstanceUID,
+            out string? sopInstanceUID
+        );
         _ = _readOnlyDicomDataset.TryGetString(DicomTags.PatientID, out string? patientId);
         _ = _readOnlyDicomDataset.TryGetString(DicomTags.Modality, out string? modality);
         _ = _readOnlyDicomDataset.TryGetInt(DicomTags.ExposureTime, out int exposureTime);
 
         return (sopInstanceUID?.Length ?? 0)
-               + (patientId?.Length ?? 0)
-               + (modality?.Length ?? 0)
-               + exposureTime;
+            + (patientId?.Length ?? 0)
+            + (modality?.Length ?? 0)
+            + exposureTime;
     }
 }

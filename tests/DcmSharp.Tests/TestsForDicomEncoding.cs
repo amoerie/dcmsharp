@@ -24,9 +24,18 @@ public sealed class TestsForDicomEncoding
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SpecificCharacterSet, out string? specificCharacterSet).Should().BeTrue();
-        dicomDataset.TryGetPersonName(DicomTags.PatientName, out PersonName patientName).Should().BeTrue();
-        dicomDataset.TryGetString(DicomTags.PatientName, out string? patientNameString).Should().BeTrue();
+        dicomDataset
+            .TryGetString(DicomTags.SpecificCharacterSet, out string? specificCharacterSet)
+            .Should()
+            .BeTrue();
+        dicomDataset
+            .TryGetPersonName(DicomTags.PatientName, out PersonName patientName)
+            .Should()
+            .BeTrue();
+        dicomDataset
+            .TryGetString(DicomTags.PatientName, out string? patientNameString)
+            .Should()
+            .BeTrue();
 
         // Assert
         DicomEncoding.TryParse(specificCharacterSet!, out var encoding).Should().BeTrue();
@@ -35,5 +44,4 @@ public sealed class TestsForDicomEncoding
         patientName.FamilyName.Should().Be("Åseline");
         patientNameString.Should().Be("Åseline^Jørgen");
     }
-
 }

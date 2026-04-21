@@ -9,7 +9,8 @@ public class DicomTagCleaner
 
     public DicomTagCleaner(RandomNameGenerator randomNameGenerator)
     {
-        _randomNameGenerator = randomNameGenerator ?? throw new ArgumentNullException(nameof(randomNameGenerator));
+        _randomNameGenerator =
+            randomNameGenerator ?? throw new ArgumentNullException(nameof(randomNameGenerator));
     }
 
     public void Clean(DicomDataset dataset, DicomItem item)
@@ -21,7 +22,9 @@ public class DicomTagCleaner
             case DicomVRCode.PN:
                 // Generate random name
                 var randomName = _randomNameGenerator.GenerateRandomName();
-                dataset.AddOrUpdate(new DicomPersonName(tag, randomName.LastName, randomName.FirstName));
+                dataset.AddOrUpdate(
+                    new DicomPersonName(tag, randomName.LastName, randomName.FirstName)
+                );
                 break;
             case DicomVRCode.SQ:
                 dataset.AddOrUpdate<DicomDataset>(DicomVR.SQ, tag);

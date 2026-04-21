@@ -22,7 +22,12 @@ internal sealed class DSParser
         Span<char> charSpan = stackalloc char[Math.Min(MaxLength, trimmedSpan.Length)];
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
-        return decimal.TryParse(charSpan, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+        return decimal.TryParse(
+            charSpan,
+            NumberStyles.Float,
+            CultureInfo.InvariantCulture,
+            out value
+        );
     }
 
     public bool TryParse(ReadOnlySpan<byte> span, out double value)
@@ -33,7 +38,7 @@ internal sealed class DSParser
             return false;
         }
 
-        value = (double) number;
+        value = (double)number;
         return true;
     }
 
@@ -45,7 +50,7 @@ internal sealed class DSParser
             return false;
         }
 
-        value = (float) number;
+        value = (float)number;
         return true;
     }
 
@@ -68,12 +73,12 @@ internal sealed class DSParser
 
     public bool TryParseAll(ReadOnlySpan<byte> span, out double[] values)
     {
-        return TryParseAll(span, static x => (double) x, out values);
+        return TryParseAll(span, static x => (double)x, out values);
     }
 
     public bool TryParseAll(ReadOnlySpan<byte> span, out float[] values)
     {
-        return TryParseAll(span, static x => (float) x, out values);
+        return TryParseAll(span, static x => (float)x, out values);
     }
 
     public bool TryParseAll(ReadOnlySpan<byte> span, out string[] values)
@@ -82,7 +87,11 @@ internal sealed class DSParser
     }
 
     [SkipLocalsInit]
-    private static bool TryParseAll<T>(ReadOnlySpan<byte> span, Func<decimal, T> converter, out T[] values)
+    private static bool TryParseAll<T>(
+        ReadOnlySpan<byte> span,
+        Func<decimal, T> converter,
+        out T[] values
+    )
     {
         if (span.IsEmpty)
         {
@@ -93,18 +102,20 @@ internal sealed class DSParser
         ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimSpaces(span);
 
         char[]? sharedChars = null;
-        Span<char> charSpan = trimmedSpan.Length < 255
-            ? stackalloc char[trimmedSpan.Length]
-            : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+        Span<char> charSpan =
+            trimmedSpan.Length < 255
+                ? stackalloc char[trimmedSpan.Length]
+                : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
 
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
 
         int numberOfValues = charSpan.Count('\\') + 1;
         Range[]? sharedRanges = null;
-        Span<Range> ranges = numberOfValues < 16
-            ? stackalloc Range[numberOfValues]
-            : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
+        Span<Range> ranges =
+            numberOfValues < 16
+                ? stackalloc Range[numberOfValues]
+                : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
         values = new T[numberOfValues];
@@ -113,7 +124,14 @@ internal sealed class DSParser
         for (int i = 0; i < ranges.Length; i++)
         {
             Range range = ranges[i];
-            if (decimal.TryParse(charSpan[range], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out decimal value))
+            if (
+                decimal.TryParse(
+                    charSpan[range],
+                    NumberStyles.Float,
+                    NumberFormatInfo.InvariantInfo,
+                    out decimal value
+                )
+            )
             {
                 values[i] = converter(value);
             }
@@ -135,5 +153,4 @@ internal sealed class DSParser
 
         return allOk;
     }
-
 }

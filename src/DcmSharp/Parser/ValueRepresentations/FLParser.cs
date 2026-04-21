@@ -41,7 +41,7 @@ internal sealed class FLParser
 
         // We allow an explicit cast here because there is no "loss of precision" going from float to decimal
         // C# does not provide an implicit cast here because the conversion isn't exactly 1 to 1
-        value = (decimal) number;
+        value = (decimal)number;
         return true;
     }
 
@@ -105,7 +105,7 @@ internal sealed class FLParser
         for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
-            values[i] = (decimal) BitConverter.ToSingle(span.Slice(offset, Length));
+            values[i] = (decimal)BitConverter.ToSingle(span.Slice(offset, Length));
         }
 
         return true;
@@ -123,7 +123,9 @@ internal sealed class FLParser
         for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
-            values[i] = BitConverter.ToSingle(span.Slice(offset, Length)).ToString(CultureInfo.InvariantCulture);
+            values[i] = BitConverter
+                .ToSingle(span.Slice(offset, Length))
+                .ToString(CultureInfo.InvariantCulture);
         }
 
         return true;
