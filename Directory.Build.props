@@ -2,7 +2,7 @@
 <Project>
   <PropertyGroup>
     <!-- C# Version -->
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
 
     <!-- Packaging -->
