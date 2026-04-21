@@ -30,7 +30,7 @@ public class ValueBenchmarks
         _file = new FileInfo($"./Dicom/ExplicitVR.dcm");
         _dicomParser = _serviceProvider.GetRequiredService<IDicomParser>();
         _dicomFile = DicomFile.Open(_file.FullName, FileReadOption.ReadLargeOnDemand);
-        _readOnlyDicomDataset = _dicomParser.ParseAsync(_file).Result;
+        _readOnlyDicomDataset = _dicomParser.ParseReadOnlyAsync(_file).Result;
     }
 
     [GlobalCleanup]
