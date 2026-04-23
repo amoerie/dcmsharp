@@ -1,10 +1,11 @@
 using System.Threading.Channels;
 using DcmSharp;
 using DcmSharp.Parser;
+using Microsoft.Extensions.Logging;
 
 namespace DcmFind;
 
-public class DicomFileMatcher(IDicomParser dicomParser)
+public class DicomFileMatcher(IDicomParser dicomParser, ILogger<DicomFileMatcher> logger)
 {
     public async Task MatchAsync(
         ChannelReader<string> input,
@@ -32,25 +33,29 @@ public class DicomFileMatcher(IDicomParser dicomParser)
                     {
                         dicomDataset = await dicomParser.ParseReadOnlyAsync(new FileInfo(file), cancellationToken);
                     }
-                    catch (Exception) when (cancellationToken.IsCancellationRequested == false)
+                    catch (Exception ex) when (cancellationToken.IsCancellationRequested == false)
                     {
+                        logger.LogDebug(ex, "Skipping file {File}: could not be parsed as DICOM", file);
                         continue;
                     }
 
-                    var matches = true;
-                    for (var i = 0; i < queries.Count; i++)
+                    using (dicomDataset)
                     {
-                        var query = queries[i];
-                        if (!query.Matches(dicomDataset))
+                        var matches = true;
+                        for (var i = 0; i < queries.Count; i++)
                         {
-                            matches = false;
-                            break;
+                            var query = queries[i];
+                            if (!query.Matches(dicomDataset))
+                            {
+                                matches = false;
+                                break;
+                            }
                         }
-                    }
 
-                    if (matches)
-                    {
-                        await output.WriteAsync(file, cancellationToken);
+                        if (matches)
+                        {
+                            await output.WriteAsync(file, cancellationToken);
+                        }
                     }
                 }
             }

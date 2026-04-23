@@ -4,6 +4,7 @@ using System.Threading.Channels;
 using DcmSharp;
 using DcmSharp.Parser;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -123,7 +124,8 @@ public class FindCommand : AsyncCommand<FindCommand.Settings>
         services.AddDcmParse();
         await using var serviceProvider = services.BuildServiceProvider();
         var dicomParser = serviceProvider.GetRequiredService<IDicomParser>();
-        var dicomFileMatcher = new DicomFileMatcher(dicomParser);
+        var dicomFileMatcherLogger = serviceProvider.GetRequiredService<ILogger<DicomFileMatcher>>();
+        var dicomFileMatcher = new DicomFileMatcher(dicomParser, dicomFileMatcherLogger);
 
         var directory = new DirectoryInfo(settings.Directory!).FullName;
         var filePattern = settings.FilePattern!;

@@ -13,8 +13,10 @@ public sealed partial record DicomDataset
             return false;
         }
 
-        value = ReadOnlyMemory<byte>.Empty;
-        vr = tag.ValueRepresentation;
-        return true;
+        // Raw byte extraction is not implemented for in-memory item types yet.
+        // Returning false is safer than reporting success with an empty buffer.
+        value = default;
+        vr = default;
+        return false;
     }
 }
