@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace DcmSharp;
 
@@ -24,6 +24,12 @@ public static partial class DicomItemFactory
                 return new DicomSignedLong(group, element, [ value ]);
             case DicomVR.SV:
                 return new DicomSignedVeryLong(group, element, [ value ]);
+            case DicomVR.US:
+                if (value < ushort.MinValue || value > ushort.MaxValue)
+                {
+                    throw new DicomException($"Creating a DICOM item with VR {vr} with a value of type 'int' requires a value in the range {ushort.MinValue} to {ushort.MaxValue}");
+                }
+                return new DicomUnsignedShort(group, element, [ (ushort)value ]);
             default:
                 throw new DicomException($"Creating a DICOM item with VR {vr} with a value of type 'int' is not supported");
         }
