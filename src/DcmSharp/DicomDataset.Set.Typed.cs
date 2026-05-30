@@ -16,11 +16,14 @@ public sealed partial record DicomDataset
 
     public void Set(DicomTag<ushort> tag, ushort value) => SetItem(DicomItemFactory.Create(tag, value));
 
-    public void Set(DicomTag<short> tag, short value) => SetItem(DicomItemFactory.Create(tag, (int)value));
+    public void Set(DicomTag<short> tag, short value)
+        => SetItem(new DicomSignedShort(tag.Group, tag.Element, [value]));
 
-    public void Set(DicomTag<uint> tag, uint value) => SetItem(DicomItemFactory.Create(tag, (int)value));
+    public void Set(DicomTag<uint> tag, uint value)
+        => SetItem(new DicomUnsignedLong(tag.Group, tag.Element, [value]));
 
-    public void Set(DicomTag<long> tag, long value) => SetItem(DicomItemFactory.Create(tag, (int)value));
+    public void Set(DicomTag<long> tag, long value)
+        => SetItem(new DicomSignedVeryLong(tag.Group, tag.Element, [value]));
 
     public void Set(DicomTag<float> tag, float value)
         => SetItem(new DicomFloatingPointSingle(tag.Group, tag.Element, [value]));

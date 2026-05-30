@@ -205,9 +205,9 @@ namespace DcmSharp.SourceGenerator
                 case "PN":
                     return isSingleValued ? "PersonName" : "PersonName[]";
 
-                // Attribute Tag
+                // Attribute Tag — no typed TryGet overloads yet, remain untyped
                 case "AT":
-                    return isSingleValued ? "DicomTag" : "DicomTag[]";
+                    return null;
 
                 // Binary data VRs — always opaque bytes
                 case "OB":

@@ -145,10 +145,10 @@ public sealed class TestsForTypedDicomTags
         var name = new PersonName("DOE", "JOHN", null, null, null, null, null, null, null);
         dataset.Set(DicomTags.PatientName, name);
 
-        dataset.TryGet(DicomTags.PatientName, out PersonName? value).Should().BeTrue();
+        dataset.TryGet(DicomTags.PatientName, out PersonName value).Should().BeTrue();
 
-        value!.Value.FamilyName.Should().Be("DOE");
-        value.Value.GivenName.Should().Be("JOHN");
+        value.FamilyName.Should().Be("DOE");
+        value.GivenName.Should().Be("JOHN");
     }
 
     [Fact]

@@ -9,12 +9,43 @@ public sealed partial record DicomDataset
 
     public bool TryGet(DicomTag<string[]> tag, [NotNullWhen(true)] out string[]? value)
     {
-        // Delegate to TryGetString and wrap in array for now
-        if (TryGetString(tag, out string? single))
+        if (!TryGet(tag, out IDicomItem? item))
         {
-            value = [single];
-            return true;
+            value = default;
+            return false;
         }
+
+        switch (item)
+        {
+            case DicomApplicationEntity { Value: { Length: > 0 } v }:
+                value = v;
+                return true;
+            case DicomAgeString { Value: { Length: > 0 } v }:
+                value = v;
+                return true;
+            case DicomCodeString { Value: { Length: > 0 } v }:
+                value = v;
+                return true;
+            case DicomDecimalString { Value: { Length: > 0 } v }:
+                value = v;
+                return true;
+            case DicomIntegerString { Value: { Length: > 0 } v }:
+                value = v;
+                return true;
+            case DicomLongString { Value: { Length: > 0 } v }:
+                value = v;
+                return true;
+            case DicomShortString { Value: { Length: > 0 } v }:
+                value = v;
+                return true;
+            case DicomUnlimitedCharacters { Value: { Length: > 0 } v }:
+                value = v;
+                return true;
+            case DicomUniqueIdentifier { Value: { Length: > 0 } v }:
+                value = v;
+                return true;
+        }
+
         value = default;
         return false;
     }
@@ -173,7 +204,7 @@ public sealed partial record DicomDataset
         return false;
     }
 
-    public bool TryGet(DicomTag<PersonName> tag, [NotNullWhen(true)] out PersonName? value)
+    public bool TryGet(DicomTag<PersonName> tag, out PersonName value)
     {
         if (!TryGet(tag, out IDicomItem? item))
         {
