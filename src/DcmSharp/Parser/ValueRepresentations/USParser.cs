@@ -271,7 +271,9 @@ internal sealed class USParser
         for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
-            values[i] = BitConverter.ToUInt16(span.Slice(offset, Length)).ToString(CultureInfo.InvariantCulture);
+            values[i] = BitConverter
+                .ToUInt16(span.Slice(offset, Length))
+                .ToString(CultureInfo.InvariantCulture);
         }
 
         return true;

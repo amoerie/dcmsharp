@@ -5,7 +5,11 @@ namespace DcmFind;
 
 public static class ConsoleOutputWriter
 {
-    public static async Task WriteAsync(ChannelReader<ConsoleOutput> input, ProgramOptions options, CancellationToken cancellationToken)
+    public static async Task WriteAsync(
+        ChannelReader<ConsoleOutput> input,
+        ProgramOptions options,
+        CancellationToken cancellationToken
+    )
     {
         var writer = options.AnsiConsole?.Profile.Out.Writer ?? Console.Out;
 
@@ -13,18 +17,22 @@ public static class ConsoleOutputWriter
         {
             ConsoleOutput? previous = null;
             var outputToWrite = new StringBuilder();
-            
+
             while (await input.WaitToReadAsync(cancellationToken))
             {
                 while (input.TryRead(out var current))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    if (current.Overwrite && current.StringToWrite.Length > options.ConsoleWindowWidth)
+                    if (
+                        current.Overwrite
+                        && current.StringToWrite.Length > options.ConsoleWindowWidth
+                    )
                     {
                         current = new ConsoleOutput(
                             current.StringToWrite.Substring(0, options.ConsoleWindowWidth),
-                            current.Overwrite);
+                            current.Overwrite
+                        );
                     }
 
                     // Overwrite previous string?
@@ -35,11 +43,14 @@ public static class ConsoleOutputWriter
 
                         // Write new output
                         outputToWrite.Append(current.StringToWrite);
-                        
+
                         // If new string is shorter than previous string, overwrite with spaces
                         if (current.StringToWrite.Length < previous.Value.StringToWrite.Length)
                         {
-                            outputToWrite.Append(' ', previous.Value.StringToWrite.Length - current.StringToWrite.Length);    
+                            outputToWrite.Append(
+                                ' ',
+                                previous.Value.StringToWrite.Length - current.StringToWrite.Length
+                            );
                         }
                     }
                     else

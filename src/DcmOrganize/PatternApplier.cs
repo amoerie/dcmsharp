@@ -15,9 +15,10 @@ public class PatternApplier : IPatternApplier
     public PatternApplier(IDicomTagParser dicomTagParser, IFolderNameCleaner folderNameCleaner)
     {
         _dicomTagParser = dicomTagParser ?? throw new ArgumentNullException(nameof(dicomTagParser));
-        _folderNameCleaner = folderNameCleaner ?? throw new ArgumentNullException(nameof(folderNameCleaner));
+        _folderNameCleaner =
+            folderNameCleaner ?? throw new ArgumentNullException(nameof(folderNameCleaner));
     }
-        
+
     public string Apply(DicomDataset dicomDataset, string filePattern)
     {
         var file = filePattern.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
@@ -27,7 +28,11 @@ public class PatternApplier : IPatternApplier
 
         while (openCurlyBraceIndex != -1 && closingCurlyBraceIndex != -1)
         {
-            var expression = file.Substring(openCurlyBraceIndex, closingCurlyBraceIndex - openCurlyBraceIndex).Trim('{', '}');
+            var expression = file.Substring(
+                    openCurlyBraceIndex,
+                    closingCurlyBraceIndex - openCurlyBraceIndex
+                )
+                .Trim('{', '}');
             var expressionTokens = new Stack<string>(
                 expression
                     .Split("??", StringSplitOptions.RemoveEmptyEntries)
@@ -46,9 +51,10 @@ public class PatternApplier : IPatternApplier
                 else if (nextToken.StartsWith("'") && nextToken.EndsWith("'"))
                 {
                     // Constant
-                    expressionValue = nextToken.Trim('\''); 
+                    expressionValue = nextToken.Trim('\'');
                 }
-                else {
+                else
+                {
                     DicomTag dicomTag;
                     try
                     {
@@ -56,24 +62,32 @@ public class PatternApplier : IPatternApplier
                     }
                     catch (DicomTagParserException e)
                     {
-                        throw new PatternException("Failed to parse DICOM tag while applying pattern", e);
+                        throw new PatternException(
+                            "Failed to parse DICOM tag while applying pattern",
+                            e
+                        );
                     }
 
-                    expressionValue = dicomDataset.GetValueOrDefault(dicomTag, 0, (string?) null)?.Replace('^', ' ');
+                    expressionValue = dicomDataset
+                        .GetValueOrDefault(dicomTag, 0, (string?)null)
+                        ?.Replace('^', ' ');
                 }
             }
 
             if (expressionValue == null)
             {
-                throw new PatternException($"DICOM tag expression '{expression}' is not present in DICOM dataset");
+                throw new PatternException(
+                    $"DICOM tag expression '{expression}' is not present in DICOM dataset"
+                );
             }
 
             if (directorySeparatorIndex >= closingCurlyBraceIndex)
                 expressionValue = _folderNameCleaner.Clean(expressionValue);
 
-            file = file.Substring(0, openCurlyBraceIndex)
-                   + expressionValue
-                   + file.Substring(Math.Min(file.Length - 1, closingCurlyBraceIndex + 1));
+            file =
+                file.Substring(0, openCurlyBraceIndex)
+                + expressionValue
+                + file.Substring(Math.Min(file.Length - 1, closingCurlyBraceIndex + 1));
 
             openCurlyBraceIndex = file.IndexOf('{');
             closingCurlyBraceIndex = file.IndexOf('}');

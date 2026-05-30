@@ -107,24 +107,25 @@ public enum DicomVR : byte
     UT,
 
     /// <summary>Unsigned Very Long</summary>
-    UV
+    UV,
 }
 
 public static class ExtensionsForDicomVR
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Is32BitLength(this DicomVR vr) => vr is
-        DicomVR.OB
-        or DicomVR.OD
-        or DicomVR.OW
-        or DicomVR.OF
-        or DicomVR.OL
-        or DicomVR.OV
-        or DicomVR.SQ
-        or DicomVR.SV
-        or DicomVR.UC
-        or DicomVR.UN
-        or DicomVR.UR
-        or DicomVR.UT
-        or DicomVR.UV;
+    public static bool Is32BitLength(this DicomVR vr) =>
+        vr
+            is DicomVR.OB
+                or DicomVR.OD
+                or DicomVR.OW
+                or DicomVR.OF
+                or DicomVR.OL
+                or DicomVR.OV
+                or DicomVR.SQ
+                or DicomVR.SV
+                or DicomVR.UC
+                or DicomVR.UN
+                or DicomVR.UR
+                or DicomVR.UT
+                or DicomVR.UV;
 }

@@ -2,8 +2,8 @@
 
 public readonly partial record struct ReadOnlyDicomDataset
 {
-    public bool TryGetStrings(DicomTag tag, out string[] values)
-        => TryGetStrings(tag.Group, tag.Element, out values);
+    public bool TryGetStrings(DicomTag tag, out string[] values) =>
+        TryGetStrings(tag.Group, tag.Element, out values);
 
     public bool TryGetStrings(ushort group, ushort element, out string[] values)
     {
@@ -40,15 +40,15 @@ public readonly partial record struct ReadOnlyDicomDataset
             case DicomVR.LO:
                 return _valueParser.LO.TryParseAll(memory.Value.Span, encoding, out values);
             case DicomVR.LT:
+            {
+                if (_valueParser.LT.TryParse(memory.Value.Span, encoding, out string? value))
                 {
-                    if (_valueParser.LT.TryParse(memory.Value.Span, encoding, out string? value))
-                    {
-                        values = [value];
-                        return true;
-                    }
-
-                    break;
+                    values = [value];
+                    return true;
                 }
+
+                break;
+            }
             case DicomVR.PN:
                 return _valueParser.PN.TryParseAll(memory.Value.Span, encoding, out values);
             case DicomVR.SH:
@@ -58,15 +58,15 @@ public readonly partial record struct ReadOnlyDicomDataset
             case DicomVR.SS:
                 return _valueParser.SS.TryParseAll(memory.Value.Span, out values);
             case DicomVR.ST:
+            {
+                if (_valueParser.ST.TryParse(memory.Value.Span, encoding, out string? value))
                 {
-                    if (_valueParser.ST.TryParse(memory.Value.Span, encoding, out string? value))
-                    {
-                        values = [value];
-                        return true;
-                    }
-
-                    break;
+                    values = [value];
+                    return true;
                 }
+
+                break;
+            }
             case DicomVR.SV:
                 return _valueParser.SV.TryParseAll(memory.Value.Span, out values);
             case DicomVR.TM:
@@ -80,15 +80,15 @@ public readonly partial record struct ReadOnlyDicomDataset
             case DicomVR.US:
                 return _valueParser.US.TryParseAll(memory.Value.Span, out values);
             case DicomVR.UT:
+            {
+                if (_valueParser.UT.TryParse(memory.Value.Span, encoding, out string? value))
                 {
-                    if (_valueParser.UT.TryParse(memory.Value.Span, encoding, out string? value))
-                    {
-                        values = [value];
-                        return true;
-                    }
-
-                    break;
+                    values = [value];
+                    return true;
                 }
+
+                break;
+            }
             case DicomVR.UV:
                 return _valueParser.UV.TryParseAll(memory.Value.Span, out values);
         }

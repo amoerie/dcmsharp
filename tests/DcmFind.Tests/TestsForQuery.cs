@@ -211,7 +211,6 @@ public class TestsForQuery
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
-
     }
 
     public class TestsForGreaterThanQuery : TestsForQuery
@@ -311,8 +310,5 @@ public class TestsForQuery
 
             query.Matches(_dicomDataset).Should().BeTrue();
         }
-
     }
-
-
 }

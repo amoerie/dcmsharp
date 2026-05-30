@@ -9,7 +9,9 @@ namespace DcmSharp.Parser;
 [StructLayout(LayoutKind.Auto)]
 internal readonly record struct SequencePosition(long? EndPosition);
 
-[DebuggerDisplay("[Stage:{ParseStage}] [Tag:({CurrentGroupNumber,h}, {CurrentElementNumber,h})] [Vr:{CurrentVr}]")]
+[DebuggerDisplay(
+    "[Stage:{ParseStage}] [Tag:({CurrentGroupNumber,h}, {CurrentElementNumber,h})] [Vr:{CurrentVr}]"
+)]
 internal struct DicomParseState
 {
     public ILogger Logger = default!;
@@ -57,7 +59,5 @@ internal struct DicomParseState
     /* Fragment mode flag — dataset construction lives in the handler */
     public bool IsParsingFragments = false;
 
-    public DicomParseState()
-    {
-    }
+    public DicomParseState() { }
 }

@@ -91,6 +91,6 @@ public static partial class KnownDicomTags
         DicomTag.VerifyingObserverSequence,
         DicomTag.VerifyingOrganization,
         DicomTag.XRayDetectorID,
-        DicomTag.XRaySourceID
+        DicomTag.XRaySourceID,
     }.ToHashSet();
 }

@@ -46,7 +46,9 @@ public static partial class DicomItemFactory
             case DicomVR.UV:
                 return new DicomUniversalResource(group, element, value);
             default:
-                throw new DicomException($"Creating a DICOM item with VR {vr} with a value of type 'string' is not supported");
+                throw new DicomException(
+                    $"Creating a DICOM item with VR {vr} with a value of type 'string' is not supported"
+                );
         }
     }
 }

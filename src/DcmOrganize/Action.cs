@@ -3,5 +3,5 @@
 public enum Action
 {
     Move,
-    Copy
+    Copy,
 }

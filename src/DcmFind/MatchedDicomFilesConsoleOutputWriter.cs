@@ -4,7 +4,12 @@ namespace DcmFind;
 
 public static class MatchedDicomFilesConsoleOutputWriter
 {
-    public static async Task WriteAsync(ChannelReader<string> input, ChannelWriter<ConsoleOutput> output, int limit, CancellationToken cancellationToken)
+    public static async Task WriteAsync(
+        ChannelReader<string> input,
+        ChannelWriter<ConsoleOutput> output,
+        int limit,
+        CancellationToken cancellationToken
+    )
     {
         var numberOfMatches = 0;
         try

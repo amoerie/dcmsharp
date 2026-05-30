@@ -19,7 +19,9 @@ public static partial class DicomItemFactory
             case DicomVR.US:
                 return new DicomUnsignedShort(group, element, [value]);
             default:
-                throw new DicomException($"Creating a DICOM item with VR {vr} with a value of type 'ushort' is not supported");
+                throw new DicomException(
+                    $"Creating a DICOM item with VR {vr} with a value of type 'ushort' is not supported"
+                );
         }
     }
 }

@@ -34,8 +34,7 @@ internal sealed class PNParser
     [SkipLocalsInit]
     private static PersonName Parse(ReadOnlySpan<char> span)
     {
-        string?
-            familyName = null,
+        string? familyName = null,
             givenName = null,
             middleName = null,
             namePrefix = null,
@@ -151,11 +150,24 @@ internal sealed class PNParser
             }
         }
 
-        return new PersonName(familyName, givenName, middleName, namePrefix, nameSuffix,
-            ideographicFamilyName, ideographicGivenName, phoneticFamilyName, phoneticGivenName);
+        return new PersonName(
+            familyName,
+            givenName,
+            middleName,
+            namePrefix,
+            nameSuffix,
+            ideographicFamilyName,
+            ideographicGivenName,
+            phoneticFamilyName,
+            phoneticGivenName
+        );
     }
 
-    public bool TryParse(ReadOnlySpan<byte> span, Encoding encoding, [NotNullWhen(true)] out string? value)
+    public bool TryParse(
+        ReadOnlySpan<byte> span,
+        Encoding encoding,
+        [NotNullWhen(true)] out string? value
+    )
     {
         if (span.IsEmpty)
         {
@@ -179,18 +191,20 @@ internal sealed class PNParser
         ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimEndSpaces(span);
 
         char[]? sharedChars = null;
-        Span<char> charSpan = trimmedSpan.Length < 255
-            ? stackalloc char[trimmedSpan.Length]
-            : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+        Span<char> charSpan =
+            trimmedSpan.Length < 255
+                ? stackalloc char[trimmedSpan.Length]
+                : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
 
         int written = encoding.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
 
         int numberOfValues = charSpan.Count('\\') + 1;
         Range[]? sharedRanges = null;
-        Span<Range> ranges = numberOfValues < 16
-            ? stackalloc Range[numberOfValues]
-            : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
+        Span<Range> ranges =
+            numberOfValues < 16
+                ? stackalloc Range[numberOfValues]
+                : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
         values = new PersonName[numberOfValues];
@@ -226,18 +240,20 @@ internal sealed class PNParser
         ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimEndSpaces(span);
 
         char[]? sharedChars = null;
-        Span<char> charSpan = trimmedSpan.Length < 255
-            ? stackalloc char[trimmedSpan.Length]
-            : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+        Span<char> charSpan =
+            trimmedSpan.Length < 255
+                ? stackalloc char[trimmedSpan.Length]
+                : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
 
         int written = encoding.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
 
         int numberOfValues = charSpan.Count('\\') + 1;
         Range[]? sharedRanges = null;
-        Span<Range> ranges = numberOfValues < 16
-            ? stackalloc Range[numberOfValues]
-            : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
+        Span<Range> ranges =
+            numberOfValues < 16
+                ? stackalloc Range[numberOfValues]
+                : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
         values = new string[numberOfValues];
@@ -259,6 +275,4 @@ internal sealed class PNParser
 
         return true;
     }
-
-
 }

@@ -5,9 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DcmSharp.SourceGenerator\DcmSharp.SourceGenerator.csproj"
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false"/>
+    <ProjectReference
+      Include="..\DcmSharp.SourceGenerator\DcmSharp.SourceGenerator.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false"
+    />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,7 +17,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="ReadOnlyDicomDataset.TryGetDate.cs">

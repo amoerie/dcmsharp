@@ -211,7 +211,9 @@ internal sealed class ULParser
         for (int i = 0; i < values.Length; i++)
         {
             int offset = i * Length;
-            values[i] = BitConverter.ToUInt32(span.Slice(offset, Length)).ToString(CultureInfo.InvariantCulture);
+            values[i] = BitConverter
+                .ToUInt32(span.Slice(offset, Length))
+                .ToString(CultureInfo.InvariantCulture);
         }
 
         return true;

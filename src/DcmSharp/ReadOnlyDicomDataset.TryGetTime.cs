@@ -2,8 +2,8 @@
 
 public readonly partial record struct ReadOnlyDicomDataset
 {
-    public bool TryGetTime(DicomTag tag, out TimeOnly value)
-        => TryGetTime(tag.Group, tag.Element, out value);
+    public bool TryGetTime(DicomTag tag, out TimeOnly value) =>
+        TryGetTime(tag.Group, tag.Element, out value);
 
     public bool TryGetTime(ushort group, ushort element, out TimeOnly value)
     {

@@ -22,7 +22,12 @@ internal sealed class ISParser
         Span<char> charSpan = stackalloc char[Math.Min(MaxLength, trimmedSpan.Length)];
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
-        return int.TryParse(charSpan, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out value);
+        return int.TryParse(
+            charSpan,
+            NumberStyles.Integer,
+            NumberFormatInfo.InvariantInfo,
+            out value
+        );
     }
 
     public bool TryParse(ReadOnlySpan<byte> span, out long value)
@@ -116,7 +121,11 @@ internal sealed class ISParser
     }
 
     [SkipLocalsInit]
-    private static bool TryParseAll<T>(ReadOnlySpan<byte> span, Func<int, T> converter, out T[] values)
+    private static bool TryParseAll<T>(
+        ReadOnlySpan<byte> span,
+        Func<int, T> converter,
+        out T[] values
+    )
     {
         if (span.IsEmpty)
         {
@@ -127,18 +136,20 @@ internal sealed class ISParser
         ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimSpaces(span);
 
         char[]? sharedChars = null;
-        Span<char> charSpan = trimmedSpan.Length < 255
-            ? stackalloc char[trimmedSpan.Length]
-            : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+        Span<char> charSpan =
+            trimmedSpan.Length < 255
+                ? stackalloc char[trimmedSpan.Length]
+                : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
 
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
 
         int numberOfValues = charSpan.Count('\\') + 1;
         Range[]? sharedRanges = null;
-        Span<Range> ranges = numberOfValues < 16
-            ? stackalloc Range[numberOfValues]
-            : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
+        Span<Range> ranges =
+            numberOfValues < 16
+                ? stackalloc Range[numberOfValues]
+                : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
         values = new T[numberOfValues];
@@ -147,7 +158,14 @@ internal sealed class ISParser
         for (int i = 0; i < ranges.Length; i++)
         {
             Range range = ranges[i];
-            if (int.TryParse(charSpan[range], NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out int value))
+            if (
+                int.TryParse(
+                    charSpan[range],
+                    NumberStyles.Integer,
+                    NumberFormatInfo.InvariantInfo,
+                    out int value
+                )
+            )
             {
                 values[i] = converter(value);
             }
@@ -169,5 +187,4 @@ internal sealed class ISParser
 
         return allOk;
     }
-
 }

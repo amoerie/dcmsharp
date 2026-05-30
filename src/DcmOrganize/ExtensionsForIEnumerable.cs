@@ -7,7 +7,7 @@ internal static class ExtensionsForIEnumerable
         foreach (var item in enumerable)
         {
             await Task.Yield();
-                
+
             yield return item;
         }
     }

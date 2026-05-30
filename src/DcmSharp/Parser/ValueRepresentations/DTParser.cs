@@ -36,7 +36,7 @@ internal sealed class DTParser
         "yyyyMMddHHmmzzz",
         "yyyyMMddHHzzz",
         "yyyy.MM.dd",
-        "yyyy/MM/dd"
+        "yyyy/MM/dd",
     ];
 
     public bool TryParse(ReadOnlySpan<byte> span, out DateTime value)
@@ -53,7 +53,15 @@ internal sealed class DTParser
         charSpan = charSpan[..written];
 
         // TODO respect time zone specified in (0008,0201)
-        if (DateTime.TryParseExact(charSpan, _formats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out DateTime parsedDate))
+        if (
+            DateTime.TryParseExact(
+                charSpan,
+                _formats,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeLocal,
+                out DateTime parsedDate
+            )
+        )
         {
             value = parsedDate;
             return true;
@@ -87,18 +95,20 @@ internal sealed class DTParser
         ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimEndSpaces(span);
 
         char[]? sharedChars = null;
-        Span<char> charSpan = trimmedSpan.Length < 255
-            ? stackalloc char[trimmedSpan.Length]
-            : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+        Span<char> charSpan =
+            trimmedSpan.Length < 255
+                ? stackalloc char[trimmedSpan.Length]
+                : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
 
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
 
         int numberOfValues = charSpan.Count('\\') + 1;
         Range[]? sharedRanges = null;
-        Span<Range> ranges = numberOfValues < 16
-            ? stackalloc Range[numberOfValues]
-            : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
+        Span<Range> ranges =
+            numberOfValues < 16
+                ? stackalloc Range[numberOfValues]
+                : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
         values = new DateTime[numberOfValues];
@@ -108,7 +118,15 @@ internal sealed class DTParser
         {
             Range range = ranges[i];
 
-            if (!DateTime.TryParseExact(charSpan[range], _formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+            if (
+                !DateTime.TryParseExact(
+                    charSpan[range],
+                    _formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateTime parsedDate
+                )
+            )
             {
                 allOk = false;
                 break;
@@ -129,7 +147,6 @@ internal sealed class DTParser
         return allOk;
     }
 
-
     [SkipLocalsInit]
     public bool TryParseAll(ReadOnlySpan<byte> span, out string[] values)
     {
@@ -142,18 +159,20 @@ internal sealed class DTParser
         ReadOnlySpan<byte> trimmedSpan = DicomPadding.TrimEndSpaces(span);
 
         char[]? sharedChars = null;
-        Span<char> charSpan = trimmedSpan.Length < 255
-            ? stackalloc char[trimmedSpan.Length]
-            : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
+        Span<char> charSpan =
+            trimmedSpan.Length < 255
+                ? stackalloc char[trimmedSpan.Length]
+                : sharedChars = ArrayPool<char>.Shared.Rent(trimmedSpan.Length);
 
         int written = Encoding.ASCII.GetChars(trimmedSpan, charSpan);
         charSpan = charSpan[..written];
 
         int numberOfValues = charSpan.Count('\\') + 1;
         Range[]? sharedRanges = null;
-        Span<Range> ranges = numberOfValues < 16
-            ? stackalloc Range[numberOfValues]
-            : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
+        Span<Range> ranges =
+            numberOfValues < 16
+                ? stackalloc Range[numberOfValues]
+                : sharedRanges = ArrayPool<Range>.Shared.Rent(numberOfValues);
         MemoryExtensions.Split(charSpan, ranges, '\\');
 
         values = new string[numberOfValues];
@@ -175,5 +194,4 @@ internal sealed class DTParser
 
         return true;
     }
-
 }

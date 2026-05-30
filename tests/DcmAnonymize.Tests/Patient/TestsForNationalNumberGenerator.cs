@@ -36,7 +36,7 @@ public class TestsForNationalNumberGenerator
         month.Should().Be(12);
         day.Should().Be(5);
         (index % 2).Should().Be(1); // Male should produce an odd index
-        modulo.Should().Be((int) (97 - combined % 97));
+        modulo.Should().Be((int)(97 - combined % 97));
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class TestsForNationalNumberGenerator
         month.Should().Be(12);
         day.Should().Be(5);
         (index % 2).Should().Be(0); // Female should produce an even index
-        modulo.Should().Be((int) (97 - combined % 97));
+        modulo.Should().Be((int)(97 - combined % 97));
     }
 
     [Fact]
@@ -86,6 +86,6 @@ public class TestsForNationalNumberGenerator
         month.Should().Be(12);
         day.Should().Be(5);
         (index % 2).Should().Be(1); // Male should produce an odd index
-        modulo.Should().Be((int) (97 - combined % 97));
+        modulo.Should().Be((int)(97 - combined % 97));
     }
 }

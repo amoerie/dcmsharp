@@ -9,9 +9,10 @@ public class RecursiveAnonymizer
 
     public RecursiveAnonymizer(DicomTagCleaner dicomTagCleaner)
     {
-        _dicomTagCleaner = dicomTagCleaner ?? throw new ArgumentNullException(nameof(dicomTagCleaner));
+        _dicomTagCleaner =
+            dicomTagCleaner ?? throw new ArgumentNullException(nameof(dicomTagCleaner));
     }
-    
+
     public async Task AnonymizeAsync(DicomAnonymizationContext context)
     {
         var dicomDataset = context.Dataset;
@@ -21,9 +22,9 @@ public class RecursiveAnonymizer
         while (stack.Count > 0)
         {
             var next = stack.Pop();
-            
+
             next.Remove(item => KnownDicomTags.TagsToRemove.Contains(item.Tag));
-            
+
             var items = next.ToList();
             for (var i = 0; i < items.Count; i++)
             {
@@ -44,7 +45,10 @@ public class RecursiveAnonymizer
                     continue;
                 }
 
-                if (item.ValueRepresentation == DicomVR.UI && KnownDicomTags.UIDTagsToAnonymize.Contains(item.Tag))
+                if (
+                    item.ValueRepresentation == DicomVR.UI
+                    && KnownDicomTags.UIDTagsToAnonymize.Contains(item.Tag)
+                )
                 {
                     // Ensure referential integrity of anonymized UIDs
                     var originalUIDs = ((DicomUniqueIdentifier)item).Get<DicomUID[]>();
@@ -54,7 +58,10 @@ public class RecursiveAnonymizer
                     for (var j = 0; j < originalUIDs.Length; j++)
                     {
                         var originalUID = originalUIDs[j];
-                        if (anonymizedUIDs.TryGetValue(originalUID.UID, out var anonymizedUID) && originalUID.UID != anonymizedUID.UID)
+                        if (
+                            anonymizedUIDs.TryGetValue(originalUID.UID, out var anonymizedUID)
+                            && originalUID.UID != anonymizedUID.UID
+                        )
                         {
                             currentAnonymizedUIDs[j] = anonymizedUID;
                             hasChanged = true;
@@ -63,7 +70,10 @@ public class RecursiveAnonymizer
 
                         using (await KeyedSemaphore.LockAsync(originalUID.UID))
                         {
-                            anonymizedUID = anonymizedUIDs.GetOrAdd(originalUID.UID, _ => DicomUIDGenerator.GenerateDerivedFromUUID());
+                            anonymizedUID = anonymizedUIDs.GetOrAdd(
+                                originalUID.UID,
+                                _ => DicomUIDGenerator.GenerateDerivedFromUUID()
+                            );
                             currentAnonymizedUIDs[j] = anonymizedUID;
                             hasChanged = true;
                         }
@@ -71,11 +81,12 @@ public class RecursiveAnonymizer
 
                     if (hasChanged)
                     {
-                        next.AddOrUpdate(new DicomUniqueIdentifier(item.Tag, currentAnonymizedUIDs));
+                        next.AddOrUpdate(
+                            new DicomUniqueIdentifier(item.Tag, currentAnonymizedUIDs)
+                        );
                     }
                 }
             }
         }
     }
-
 }

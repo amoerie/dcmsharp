@@ -17,8 +17,7 @@ public ref struct DicomByteBuffer
         Reader = Span.IsEmpty ? new SequenceReader<byte>(sequence) : default;
     }
 
-    public bool IsEmpty =>
-        !Span.IsEmpty ? Span.Length == 0 : Reader.End;
+    public bool IsEmpty => !Span.IsEmpty ? Span.Length == 0 : Reader.End;
 
     public long Remaining => !Span.IsEmpty ? Span.Length : Reader.Remaining;
 
@@ -51,7 +50,6 @@ public ref struct DicomByteBuffer
 
         position += sizeof(short);
         return true;
-
     }
 
     public bool TryReadInt(ref long position, out int output)
@@ -83,7 +81,6 @@ public ref struct DicomByteBuffer
 
         position += sizeof(int);
         return true;
-
     }
 
     public bool TryRead(ref long position, Span<byte> output)
@@ -99,7 +96,6 @@ public ref struct DicomByteBuffer
             Span = Span[output.Length..];
             position += output.Length;
             return true;
-
         }
 
         if (!Reader.TryCopyTo(output))
@@ -110,7 +106,6 @@ public ref struct DicomByteBuffer
         position += output.Length;
         Reader.Advance(output.Length);
         return true;
-
     }
 
     public bool TryReadVr(ref long position, out byte b1, out byte b2)
@@ -194,7 +189,6 @@ public ref struct DicomByteBuffer
 
         position += 6;
         return true;
-
     }
 
     public bool TryReadImplicitVrLongValueLength(ref long position, out int output)
@@ -232,6 +226,5 @@ public ref struct DicomByteBuffer
 
         position += 4;
         return true;
-
     }
 }

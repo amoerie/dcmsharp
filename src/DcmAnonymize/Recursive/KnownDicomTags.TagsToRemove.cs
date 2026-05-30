@@ -418,6 +418,6 @@ public static partial class KnownDicomTags
         DicomTag.VerbalSourceIdentifierCodeSequenceTrialRETIRED,
         DicomTag.VerbalSourceTrialRETIRED,
         DicomTag.VisitComments,
-        DicomTag.XRayDetectorLabel
+        DicomTag.XRayDetectorLabel,
     }.ToHashSet();
 }

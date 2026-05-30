@@ -23,7 +23,10 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetStrings(DicomTags.SelectorAEValue, out string[]? values).Should().BeTrue();
+        dicomDataset
+            .TryGetStrings(DicomTags.SelectorAEValue, out string[]? values)
+            .Should()
+            .BeTrue();
 
         // Assert
         values.Should().BeEquivalentTo(["MODALITY1", "MODALITY2"]);
@@ -37,7 +40,10 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetStrings(DicomTags.SelectorASValue, out string[]? values).Should().BeTrue();
+        dicomDataset
+            .TryGetStrings(DicomTags.SelectorASValue, out string[]? values)
+            .Should()
+            .BeTrue();
 
         // Assert
         values.Should().BeEquivalentTo(["025Y", "030D"]);
@@ -51,10 +57,15 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetTags(DicomTags.SelectorATValue, out DicomTag[]? values).Should().BeTrue();
+        dicomDataset
+            .TryGetTags(DicomTags.SelectorATValue, out DicomTag[]? values)
+            .Should()
+            .BeTrue();
 
         // Assert
-        values.Should().BeEquivalentTo([DicomTags.TransferSyntaxUID, DicomTags.ImplementationClassUID]);
+        values
+            .Should()
+            .BeEquivalentTo([DicomTags.TransferSyntaxUID, DicomTags.ImplementationClassUID]);
     }
 
     [Fact]
@@ -65,10 +76,15 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetDates(DicomTags.SelectorDAValue, out DateOnly[]? values).Should().BeTrue();
+        dicomDataset
+            .TryGetDates(DicomTags.SelectorDAValue, out DateOnly[]? values)
+            .Should()
+            .BeTrue();
 
         // Assert
-        values.Should().BeEquivalentTo([DateOnly.Parse("2024-12-03"), DateOnly.Parse("2024-11-03")]);
+        values
+            .Should()
+            .BeEquivalentTo([DateOnly.Parse("2024-12-03"), DateOnly.Parse("2024-11-03")]);
     }
 
     [Fact]
@@ -79,7 +95,10 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetDecimals(DicomTags.SelectorDSValue, out decimal[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetDecimals(DicomTags.SelectorDSValue, out decimal[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
         values.Should().BeEquivalentTo([0.25m, 0.50m]);
@@ -93,10 +112,18 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetDateTimes(DicomTags.SelectorDTValue, out DateTime[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetDateTimes(DicomTags.SelectorDTValue, out DateTime[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
-        values.Should().BeEquivalentTo([DateTime.Parse("2024-12-03T12:00:00"), DateTime.Parse("2024-11-03T12:00:00")]);
+        values
+            .Should()
+            .BeEquivalentTo([
+                DateTime.Parse("2024-12-03T12:00:00"),
+                DateTime.Parse("2024-11-03T12:00:00"),
+            ]);
     }
 
     [Fact]
@@ -107,7 +134,10 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetDoubles(DicomTags.SelectorFDValue, out double[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetDoubles(DicomTags.SelectorFDValue, out double[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
         values.Should().BeEquivalentTo([-100.123, 200.456]);
@@ -149,7 +179,10 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetStrings(DicomTags.SelectorLOValue, out string[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetStrings(DicomTags.SelectorLOValue, out string[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
         values.Should().BeEquivalentTo(["Medical Center A", "Medical Center B"]);
@@ -163,7 +196,10 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetStrings(DicomTags.SelectorLTValue, out string[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetStrings(DicomTags.SelectorLTValue, out string[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
         values.Should().BeEquivalentTo(["Some long notes"]);
@@ -177,7 +213,10 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetPersonNames(DicomTags.SelectorPNValue, out PersonName[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetPersonNames(DicomTags.SelectorPNValue, out PersonName[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
         var expected1 = new PersonName("Dr", "Smith", null, null, null, null, null, null, null);
@@ -193,10 +232,13 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetStrings(DicomTags.SelectorSHValue, out string[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetStrings(DicomTags.SelectorSHValue, out string[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
-        values.Should().BeEquivalentTo([ "CT123", "CT456"]);
+        values.Should().BeEquivalentTo(["CT123", "CT456"]);
     }
 
     [Fact]
@@ -235,10 +277,13 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetStrings(DicomTags.SelectorSTValue, out string[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetStrings(DicomTags.SelectorSTValue, out string[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
-        values.Should().BeEquivalentTo([ "History1"]);
+        values.Should().BeEquivalentTo(["History1"]);
     }
 
     [Fact]
@@ -263,7 +308,10 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetTimes(DicomTags.SelectorTMValue, out TimeOnly[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetTimes(DicomTags.SelectorTMValue, out TimeOnly[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
         values.Should().BeEquivalentTo([TimeOnly.Parse("12:00:00"), TimeOnly.Parse("13:00:00")]);
@@ -277,7 +325,10 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetStrings(DicomTags.SelectorUCValue, out string[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetStrings(DicomTags.SelectorUCValue, out string[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
         values.Should().BeEquivalentTo(["Device A", "Device B"]);
@@ -291,7 +342,10 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetStrings(DicomTags.SelectorUIValue, out string[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetStrings(DicomTags.SelectorUIValue, out string[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
         values.Should().BeEquivalentTo(["1.2.3", "4.5.6"]);
@@ -320,7 +374,10 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetUShorts(DicomTags.SelectorUSValue, out ushort[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetUShorts(DicomTags.SelectorUSValue, out ushort[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
         values.Should().BeEquivalentTo([1, 100]);
@@ -334,10 +391,13 @@ public sealed class TestsForDicomMultiValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetStrings(DicomTags.SelectorUTValue, out string[] values).Should().BeTrue();
+        dicomDataset
+            .TryGetStrings(DicomTags.SelectorUTValue, out string[] values)
+            .Should()
+            .BeTrue();
 
         // Assert
-        values.Should().BeEquivalentTo([ "Modified" ]);
+        values.Should().BeEquivalentTo(["Modified"]);
     }
 
     [Fact]

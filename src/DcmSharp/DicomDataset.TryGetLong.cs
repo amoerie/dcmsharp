@@ -14,7 +14,13 @@ public sealed partial record DicomDataset
 
         switch (item)
         {
-            case DicomIntegerString { Value: { Length: > 0 } v } when long.TryParse(v[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed):
+            case DicomIntegerString { Value: { Length: > 0 } v }
+                when long.TryParse(
+                    v[0],
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out var parsed
+                ):
                 value = parsed;
                 return true;
             case DicomSignedLong { Value: { Length: > 0 } v }:

@@ -63,5 +63,5 @@ public enum DicomVM
     VM_16,
 
     /** Unknown */
-    VM_UN
+    VM_UN,
 }

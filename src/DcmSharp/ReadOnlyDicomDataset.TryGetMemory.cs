@@ -4,12 +4,20 @@ namespace DcmSharp;
 
 public readonly partial record struct ReadOnlyDicomDataset
 {
-    public bool TryGetMemory(DicomTag tag, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value, [NotNullWhen(true)] out DicomVR? vr) =>
-        TryGetMemory(tag.Group, tag.Element, out value, out vr);
+    public bool TryGetMemory(
+        DicomTag tag,
+        [NotNullWhen(true)] out ReadOnlyMemory<byte>? value,
+        [NotNullWhen(true)] out DicomVR? vr
+    ) => TryGetMemory(tag.Group, tag.Element, out value, out vr);
 
-    public bool TryGetMemory(ushort group, ushort element, [NotNullWhen(true)] out ReadOnlyMemory<byte>? value, [NotNullWhen(true)] out DicomVR? vr)
+    public bool TryGetMemory(
+        ushort group,
+        ushort element,
+        [NotNullWhen(true)] out ReadOnlyMemory<byte>? value,
+        [NotNullWhen(true)] out DicomVR? vr
+    )
     {
-        if(!_items.TryGetValue((uint)group << 16 | element, out var item))
+        if (!_items.TryGetValue((uint)group << 16 | element, out var item))
         {
             value = default;
             vr = default;
@@ -27,5 +35,4 @@ public readonly partial record struct ReadOnlyDicomDataset
         vr = default;
         return false;
     }
-
 }

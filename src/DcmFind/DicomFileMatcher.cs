@@ -13,7 +13,8 @@ public class DicomFileMatcher(IDicomParser dicomParser, ILogger<DicomFileMatcher
         bool writeToConsoleOutput,
         ChannelWriter<ConsoleOutput> consoleOutput,
         List<IQuery> queries,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         try
         {
@@ -31,11 +32,18 @@ public class DicomFileMatcher(IDicomParser dicomParser, ILogger<DicomFileMatcher
                     ReadOnlyDicomDataset dicomDataset;
                     try
                     {
-                        dicomDataset = await dicomParser.ParseReadOnlyAsync(new FileInfo(file), cancellationToken);
+                        dicomDataset = await dicomParser.ParseReadOnlyAsync(
+                            new FileInfo(file),
+                            cancellationToken
+                        );
                     }
                     catch (Exception ex) when (cancellationToken.IsCancellationRequested == false)
                     {
-                        logger.LogDebug(ex, "Skipping file {File}: could not be parsed as DICOM", file);
+                        logger.LogDebug(
+                            ex,
+                            "Skipping file {File}: could not be parsed as DICOM",
+                            file
+                        );
                         continue;
                     }
 
