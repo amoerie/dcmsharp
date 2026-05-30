@@ -1,6 +1,6 @@
-﻿namespace DcmSharp;
+namespace DcmSharp;
 
-public sealed partial record DicomDataset
+public sealed partial record DicomDataset : IDicomDataset
 {
     private readonly SortedDictionary<uint, IDicomItem> _items = new SortedDictionary<uint, IDicomItem>();
 

@@ -1,11 +1,11 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Text;
 using DcmSharp.Memory;
 using DcmSharp.Parser;
 
 namespace DcmSharp;
 
-public readonly partial record struct ReadOnlyDicomDataset : IReadOnlyDictionary<uint, ReadOnlyDicomItem>, IDisposable
+public readonly partial record struct ReadOnlyDicomDataset : IReadOnlyDictionary<uint, ReadOnlyDicomItem>, IDisposable, IDicomDataset
 {
     private readonly DicomItemDictionaryPool _pool;
     private readonly DicomMemories _memories;

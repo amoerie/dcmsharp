@@ -7,6 +7,8 @@ public static class ConsoleOutputWriter
 {
     public static async Task WriteAsync(ChannelReader<ConsoleOutput> input, ProgramOptions options, CancellationToken cancellationToken)
     {
+        var writer = options.AnsiConsole?.Profile.Out.Writer ?? Console.Out;
+
         try
         {
             ConsoleOutput? previous = null;
@@ -51,11 +53,7 @@ public static class ConsoleOutputWriter
                         outputToWrite.Append(Environment.NewLine);
                     }
 
-                    Console.ForegroundColor = current.Overwrite
-                        ? ConsoleColor.Yellow
-                        : ConsoleColor.Green;
-
-                    Console.Write(outputToWrite.ToString());
+                    writer.Write(outputToWrite.ToString());
 
                     outputToWrite.Clear();
 
@@ -68,16 +66,12 @@ public static class ConsoleOutputWriter
             {
                 outputToWrite.Append('\r');
                 outputToWrite.Append(' ', previous.Value.StringToWrite.Length);
-                Console.Write(outputToWrite.ToString());
+                writer.Write(outputToWrite.ToString());
             }
         }
         catch (OperationCanceledException)
         {
             // Ignore
-        }
-        finally
-        {
-            Console.ResetColor();
         }
     }
 }
