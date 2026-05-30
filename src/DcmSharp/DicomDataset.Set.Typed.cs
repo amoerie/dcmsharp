@@ -2,32 +2,32 @@ namespace DcmSharp;
 
 public sealed partial record DicomDataset
 {
-    private void AddOrUpdate(IDicomItem item)
+    private void SetItem(IDicomItem item)
     {
         uint key = ((uint)item.Group << 16) | item.Element;
         _items[key] = item;
     }
 
-    public void Set(DicomTag<string> tag, string value) => AddOrUpdate(DicomItemFactory.Create(tag, value));
+    public void Set(DicomTag<string> tag, string value) => SetItem(DicomItemFactory.Create(tag, value));
 
-    public void Set(DicomTag<DateOnly> tag, DateOnly value) => AddOrUpdate(DicomItemFactory.Create(tag, value));
+    public void Set(DicomTag<DateOnly> tag, DateOnly value) => SetItem(DicomItemFactory.Create(tag, value));
 
-    public void Set(DicomTag<int> tag, int value) => AddOrUpdate(DicomItemFactory.Create(tag, value));
+    public void Set(DicomTag<int> tag, int value) => SetItem(DicomItemFactory.Create(tag, value));
 
-    public void Set(DicomTag<ushort> tag, ushort value) => AddOrUpdate(DicomItemFactory.Create(tag, value));
+    public void Set(DicomTag<ushort> tag, ushort value) => SetItem(DicomItemFactory.Create(tag, value));
 
-    public void Set(DicomTag<short> tag, short value) => AddOrUpdate(DicomItemFactory.Create(tag, (int)value));
+    public void Set(DicomTag<short> tag, short value) => SetItem(DicomItemFactory.Create(tag, (int)value));
 
-    public void Set(DicomTag<uint> tag, uint value) => AddOrUpdate(DicomItemFactory.Create(tag, (int)value));
+    public void Set(DicomTag<uint> tag, uint value) => SetItem(DicomItemFactory.Create(tag, (int)value));
 
-    public void Set(DicomTag<long> tag, long value) => AddOrUpdate(DicomItemFactory.Create(tag, (int)value));
+    public void Set(DicomTag<long> tag, long value) => SetItem(DicomItemFactory.Create(tag, (int)value));
 
     public void Set(DicomTag<float> tag, float value)
-        => AddOrUpdate(new DicomFloatingPointSingle(tag.Group, tag.Element, [value]));
+        => SetItem(new DicomFloatingPointSingle(tag.Group, tag.Element, [value]));
 
     public void Set(DicomTag<double> tag, double value)
-        => AddOrUpdate(new DicomFloatingPointDouble(tag.Group, tag.Element, [value]));
+        => SetItem(new DicomFloatingPointDouble(tag.Group, tag.Element, [value]));
 
     public void Set(DicomTag<PersonName> tag, PersonName value)
-        => AddOrUpdate(new DicomPersonName(tag.Group, tag.Element, [value]));
+        => SetItem(new DicomPersonName(tag.Group, tag.Element, [value]));
 }
