@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Xunit;
+﻿using Xunit;
 
 namespace DcmOrganize.Tests;
 
@@ -20,6 +19,6 @@ public class TestsForHighestDirectoryNameDeterminer
         var highestDirectoryName = HighestDirectoryNameDeterminer.Determine(filePath);
 
         // Assert
-        highestDirectoryName.Should().Be(expectedHighestDirectoryName);
+        Assert.Equal(expectedHighestDirectoryName, highestDirectoryName);
     }
 }

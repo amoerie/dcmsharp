@@ -1,5 +1,4 @@
 using System.Text;
-using FluentAssertions;
 using Spectre.Console;
 using Xunit;
 using Xunit.Abstractions;
@@ -63,7 +62,7 @@ public class TestsForDcmFind : IDisposable
                 Environment.NewLine,
                 StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
             );
-        actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
+        Assert.Equivalent(expected, actual);
         Assert.Equal(0, statusCode);
     }
 
@@ -85,7 +84,7 @@ public class TestsForDcmFind : IDisposable
                 Environment.NewLine,
                 StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
             );
-        actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
+        Assert.Equivalent(expected, actual);
         Assert.Equal(0, statusCode);
     }
 
@@ -113,7 +112,7 @@ public class TestsForDcmFind : IDisposable
                 Environment.NewLine,
                 StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
             );
-        actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
+        Assert.Equivalent(expected, actual);
         Assert.Equal(0, statusCode);
     }
 
@@ -143,7 +142,7 @@ public class TestsForDcmFind : IDisposable
                 Environment.NewLine,
                 StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
             );
-        actual.Should().BeEquivalentTo(expected, c => c.WithoutStrictOrdering());
+        Assert.Equivalent(expected, actual);
         Assert.Equal(0, statusCode);
     }
 }

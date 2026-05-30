@@ -1,5 +1,4 @@
 using DcmAnonymize.Patient;
-using FluentAssertions;
 using Xunit;
 
 namespace DcmAnonymize.Tests.Patient;
@@ -32,11 +31,11 @@ public class TestsForNationalNumberGenerator
         var modulo = int.Parse(nationalNumber.Substring(9, 2));
         var combined = long.Parse(nationalNumber.Substring(0, 9));
 
-        year.Should().Be(94);
-        month.Should().Be(12);
-        day.Should().Be(5);
-        (index % 2).Should().Be(1); // Male should produce an odd index
-        modulo.Should().Be((int)(97 - combined % 97));
+        Assert.Equal(94, year);
+        Assert.Equal(12, month);
+        Assert.Equal(5, day);
+        Assert.Equal(1, (index % 2)); // Male should produce an odd index
+        Assert.Equal((int)(97 - combined % 97), modulo);
     }
 
     [Fact]
@@ -57,11 +56,11 @@ public class TestsForNationalNumberGenerator
         var modulo = int.Parse(nationalNumber.Substring(9, 2));
         var combined = long.Parse(nationalNumber.Substring(0, 9));
 
-        year.Should().Be(94);
-        month.Should().Be(12);
-        day.Should().Be(5);
-        (index % 2).Should().Be(0); // Female should produce an even index
-        modulo.Should().Be((int)(97 - combined % 97));
+        Assert.Equal(94, year);
+        Assert.Equal(12, month);
+        Assert.Equal(5, day);
+        Assert.Equal(0, (index % 2)); // Female should produce an even index
+        Assert.Equal((int)(97 - combined % 97), modulo);
     }
 
     [Fact]
@@ -82,10 +81,10 @@ public class TestsForNationalNumberGenerator
         var modulo = int.Parse(nationalNumber.Substring(9, 2));
         var combined = long.Parse("2" + nationalNumber.Substring(0, 9));
 
-        year.Should().Be(1);
-        month.Should().Be(12);
-        day.Should().Be(5);
-        (index % 2).Should().Be(1); // Male should produce an odd index
-        modulo.Should().Be((int)(97 - combined % 97));
+        Assert.Equal(1, year);
+        Assert.Equal(12, month);
+        Assert.Equal(5, day);
+        Assert.Equal(1, (index % 2)); // Male should produce an odd index
+        Assert.Equal((int)(97 - combined % 97), modulo);
     }
 }
