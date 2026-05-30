@@ -3,7 +3,7 @@
 /// <summary>
 /// The definition of a DICOM tag
 /// </summary>
-public sealed partial record DicomTag(
+public partial record DicomTag(
     ushort Group,
     ushort Element,
     DicomVR ValueRepresentation,
