@@ -10,10 +10,12 @@ public class TestsForDicomTagsGenerator
     {
         // Arrange
         var testCode = """
+            using System;
+
             /// <summary>
             /// The definition of a DICOM tag
             /// </summary>
-            public sealed partial record DicomTag(
+            public partial record DicomTag(
                 ushort Group,
                 ushort Element,
                 DicomVR ValueRepresentation,
@@ -27,6 +29,20 @@ public class TestsForDicomTagsGenerator
                     return $"({Group:x4},{Element:x4}) {Name}";
                 }
             }
+
+            /// <summary>
+            /// A strongly-typed DICOM tag.
+            /// </summary>
+            public sealed record DicomTag<T>(
+                ushort Group,
+                ushort Element,
+                DicomVR ValueRepresentation,
+                DicomVR[] AdditionalValueRepresentations,
+                DicomVM ValueMultiplicity,
+                string Keyword,
+                string Name) : DicomTag(Group, Element, ValueRepresentation, AdditionalValueRepresentations, ValueMultiplicity, Keyword, Name);
+
+            public readonly record struct PersonName(string Value);
 
             // <summary>
             /// DICOM value multiplicity

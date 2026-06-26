@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace DcmSharp;
 
-public sealed partial record DicomTag
+public partial record DicomTag
 {
     /// <summary>
     /// Parses a DICOM tag from a string in the following formats:

@@ -73,6 +73,11 @@ namespace DcmSharp.SourceGenerator
                 string group = tagParts[0].Trim().Replace("X", "0");
                 string element = tagParts[1].Trim().Replace("X", "0");
 
+                // Determine if we can emit a strongly-typed DicomTag<T>
+                string? clrType = GetClrType(vrs, vm);
+                bool isTyped = clrType != null;
+                string tagTypeName = isTyped ? $"DicomTag<{clrType}>" : "DicomTag";
+
                 sourceBuilder.AppendLine($"    /// <summary>");
                 sourceBuilder.AppendLine($"    /// {tag} {EscapeXmlComment(name!)}");
                 foreach (string vr in vrs)
@@ -89,7 +94,7 @@ namespace DcmSharp.SourceGenerator
                     sourceBuilder.AppendLine($"    [Obsolete(\"This DICOM tag is retired.\")]");
                 }
                 sourceBuilder.Append(
-                    $"    public static readonly DicomTag {keyword} = new DicomTag("
+                    $"    public static readonly {tagTypeName} {keyword} = new {tagTypeName}("
                 );
                 // Group
                 sourceBuilder.Append($"0x{group}");
@@ -154,6 +159,91 @@ namespace DcmSharp.SourceGenerator
                 "DicomTags.g.cs",
                 SourceText.From(sourceBuilder.ToString(), Encoding.UTF8)
             );
+        }
+
+        /// <summary>
+        /// Maps a VR + VM combination to the CLR type for DicomTag&lt;T&gt;.
+        /// Returns null if the tag should remain untyped (multi-VR tags, unknown VRs, sequences).
+        /// </summary>
+        private static string? GetClrType(string[] vrs, string vm)
+        {
+            // Multi-VR tags (e.g. "US or SS") remain untyped — ambiguous at compile time
+            if (vrs.Length != 1)
+                return null;
+
+            string vr = vrs[0];
+            bool isSingleValued = vm == "VM_1";
+
+            switch (vr)
+            {
+                // String-based VRs
+                case "AE":
+                case "AS":
+                case "CS":
+                case "DS":
+                case "IS":
+                case "LO":
+                case "SH":
+                case "UC":
+                case "UI":
+                    return isSingleValued ? "string" : "string[]";
+
+                // Always single-valued text VRs (VM is always 1 by definition)
+                case "LT":
+                case "ST":
+                case "UT":
+                case "UR":
+                    return "string";
+
+                // Date/Time
+                case "DA":
+                    return isSingleValued ? "DateOnly" : "DateOnly[]";
+                case "TM":
+                    return isSingleValued ? "TimeOnly" : "TimeOnly[]";
+                case "DT":
+                    return isSingleValued ? "DateTime" : "DateTime[]";
+
+                // Numeric
+                case "SS":
+                    return isSingleValued ? "short" : "short[]";
+                case "US":
+                    return isSingleValued ? "ushort" : "ushort[]";
+                case "SL":
+                    return isSingleValued ? "int" : "int[]";
+                case "UL":
+                    return isSingleValued ? "uint" : "uint[]";
+                case "SV":
+                    return isSingleValued ? "long" : "long[]";
+                case "UV":
+                    return isSingleValued ? "ulong" : "ulong[]";
+                case "FL":
+                    return isSingleValued ? "float" : "float[]";
+                case "FD":
+                    return isSingleValued ? "double" : "double[]";
+
+                // Person Name
+                case "PN":
+                    return isSingleValued ? "PersonName" : "PersonName[]";
+
+                // Attribute Tag — no typed TryGet overloads yet, remain untyped
+                case "AT":
+                    return null;
+
+                // Binary data VRs — always opaque bytes
+                case "OB":
+                case "OD":
+                case "OF":
+                case "OL":
+                case "OW":
+                case "OV":
+                case "UN":
+                    return "ReadOnlyMemory<byte>";
+
+                // Sequences and unknown — remain untyped
+                case "SQ":
+                default:
+                    return null;
+            }
         }
 
         private static string EscapeXmlComment(string text)
