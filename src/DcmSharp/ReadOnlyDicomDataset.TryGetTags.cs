@@ -2,8 +2,8 @@
 
 public readonly partial record struct ReadOnlyDicomDataset
 {
-    public bool TryGetTags(DicomTag tag, out DicomTag[] values)
-        => TryGetTags(tag.Group, tag.Element, out values);
+    public bool TryGetTags(DicomTag tag, out DicomTag[] values) =>
+        TryGetTags(tag.Group, tag.Element, out values);
 
     public bool TryGetTags(ushort group, ushort element, out DicomTag[] values)
     {

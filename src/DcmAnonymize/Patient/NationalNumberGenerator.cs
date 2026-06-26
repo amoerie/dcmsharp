@@ -36,9 +36,8 @@ public class NationalNumberGenerator
         {
             moduloBase = "2" + moduloBase;
         }
-        var checkSum = (97 - long.Parse(moduloBase)%97).ToString("00");
+        var checkSum = (97 - long.Parse(moduloBase) % 97).ToString("00");
 
         return $"{number}{checkSum}";
     }
-
 }

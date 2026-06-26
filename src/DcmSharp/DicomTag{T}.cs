@@ -12,4 +12,14 @@ public sealed record DicomTag<T>(
     DicomVR[] AdditionalValueRepresentations,
     DicomVM ValueMultiplicity,
     string Keyword,
-    string Name) : DicomTag(Group, Element, ValueRepresentation, AdditionalValueRepresentations, ValueMultiplicity, Keyword, Name);
+    string Name
+)
+    : DicomTag(
+        Group,
+        Element,
+        ValueRepresentation,
+        AdditionalValueRepresentations,
+        ValueMultiplicity,
+        Keyword,
+        Name
+    );

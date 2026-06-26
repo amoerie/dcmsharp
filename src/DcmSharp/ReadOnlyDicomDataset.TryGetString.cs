@@ -4,8 +4,8 @@ namespace DcmSharp;
 
 public readonly partial record struct ReadOnlyDicomDataset
 {
-    public bool TryGetString(DicomTag tag, [NotNullWhen(true)] out string? value)
-        => TryGetString(tag.Group, tag.Element, out value);
+    public bool TryGetString(DicomTag tag, [NotNullWhen(true)] out string? value) =>
+        TryGetString(tag.Group, tag.Element, out value);
 
     public bool TryGetString(ushort group, ushort element, [NotNullWhen(true)] out string? value)
     {

@@ -14,13 +14,14 @@ internal static class DicomAttributesLoader
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         ReadCommentHandling = JsonCommentHandling.Skip,
         PropertyNameCaseInsensitive = true,
-        AllowTrailingCommas = true
+        AllowTrailingCommas = true,
     };
 
     public static List<DicomAttribute> LoadAttributesFromZip()
     {
         var assembly = typeof(DicomTagsGenerator).Assembly;
-        string? resourceName = assembly.GetManifestResourceNames()
+        string? resourceName = assembly
+            .GetManifestResourceNames()
             .SingleOrDefault(n => n.EndsWith("standard.zip"));
 
         if (resourceName is null)
@@ -28,15 +29,19 @@ internal static class DicomAttributesLoader
             throw new DicomTagGeneratorException("Embedded resource 'standard.zip' not found");
         }
 
-        using var stream = assembly.GetManifestResourceStream(resourceName) ??
-                           throw new DicomTagGeneratorException("Embedded resource 'standard.zip' cannot be opened");
+        using var stream =
+            assembly.GetManifestResourceStream(resourceName)
+            ?? throw new DicomTagGeneratorException(
+                "Embedded resource 'standard.zip' cannot be opened"
+            );
         using var archive = new ZipArchive(stream, ZipArchiveMode.Read);
 
         var entry = archive.Entries.FirstOrDefault(e => e.Name == "attributes.json");
         if (entry == null)
         {
             throw new DicomTagGeneratorException(
-                "Embedded resource 'standard.zip' does not contain file named 'attributes.json'");
+                "Embedded resource 'standard.zip' does not contain file named 'attributes.json'"
+            );
         }
 
         using var entryStream = entry.Open();
@@ -44,7 +49,10 @@ internal static class DicomAttributesLoader
         string json = reader.ReadToEnd();
         try
         {
-            var dicomAttributes = JsonSerializer.Deserialize<List<DicomAttribute>>(json, JsonSerializerOptions);
+            var dicomAttributes = JsonSerializer.Deserialize<List<DicomAttribute>>(
+                json,
+                JsonSerializerOptions
+            );
             if (dicomAttributes is null)
             {
                 throw new DicomTagGeneratorException("Deserialized 'attributes.json' is null");

@@ -10,8 +10,10 @@ public interface IDicomTagParser
 
 public class DicomTagParser : IDicomTagParser
 {
-    private static readonly Lazy<IEnumerable<FieldInfo>> DicomTagFields = new Lazy<IEnumerable<FieldInfo>>(
-        () => typeof(DicomTag)
+    private static readonly Lazy<IEnumerable<FieldInfo>> DicomTagFields = new Lazy<
+        IEnumerable<FieldInfo>
+    >(() =>
+        typeof(DicomTag)
             .GetFields(BindingFlags.Static | BindingFlags.Public)
             .Where(f => f.FieldType == typeof(DicomTag))
             .ToList()
@@ -21,25 +23,30 @@ public class DicomTagParser : IDicomTagParser
     {
         try
         {
-            // hex syntax 
+            // hex syntax
             if (dicomTagAsString[0] == '(' || char.IsDigit(dicomTagAsString[0]))
             {
                 return DicomTag.Parse(dicomTagAsString);
             }
 
-            var field = DicomTagFields.Value
-                .FirstOrDefault(f => string.Equals(f.Name, dicomTagAsString));
+            var field = DicomTagFields.Value.FirstOrDefault(f =>
+                string.Equals(f.Name, dicomTagAsString)
+            );
 
             if (field != null)
             {
-                return (DicomTag?) field.GetValue(null)! ?? throw new DicomTagParserException($"Invalid DICOM tag '{dicomTagAsString}'");
+                return (DicomTag?)field.GetValue(null)!
+                    ?? throw new DicomTagParserException($"Invalid DICOM tag '{dicomTagAsString}'");
             }
 
             return DicomTag.Parse(dicomTagAsString);
         }
         catch (DicomDataException e)
         {
-            throw new DicomTagParserException($"Invalid DICOM tag '{dicomTagAsString}': " + e.Message, e);
+            throw new DicomTagParserException(
+                $"Invalid DICOM tag '{dicomTagAsString}': " + e.Message,
+                e
+            );
         }
     }
 }

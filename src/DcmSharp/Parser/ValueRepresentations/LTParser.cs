@@ -5,7 +5,11 @@ namespace DcmSharp.Parser.ValueRepresentations;
 
 internal sealed class LTParser
 {
-    public bool TryParse(ReadOnlySpan<byte> span, Encoding encoding, [NotNullWhen(true)] out string? value)
+    public bool TryParse(
+        ReadOnlySpan<byte> span,
+        Encoding encoding,
+        [NotNullWhen(true)] out string? value
+    )
     {
         if (span.IsEmpty)
         {

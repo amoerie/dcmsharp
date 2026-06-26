@@ -7,8 +7,8 @@ public class TestsForDicomTagIndex
     public class TestsForTryLookup : TestsForDicomTagIndex
     {
         [Theory]
-        [InlineData( 0x0008, 0x0018)]
-        [InlineData( 0x0010, 0x0010)]
+        [InlineData(0x0008, 0x0018)]
+        [InlineData(0x0010, 0x0010)]
         public void ShouldReturnTrueAndCorrectTagWhenGivenValidTag(ushort group, ushort element)
         {
             // Arrange & Act
@@ -36,7 +36,7 @@ public class TestsForDicomTagIndex
         public static readonly IEnumerable<object[]> DicomTagNames = typeof(DicomTags)
             .GetFields(BindingFlags.Static | BindingFlags.Public)
             .Where(f => f.FieldType == typeof(DicomTag))
-            .Select(f => (object[]) [ f.Name ])
+            .Select(f => (object[])[f.Name])
             .ToArray();
 
         [Theory]
@@ -55,7 +55,10 @@ public class TestsForDicomTagIndex
         public void ShouldReturnFalseWhenGivenUnknownTag()
         {
             // Arrange & Act
-            bool result = DicomTagsIndex.TryLookupByKeyword("VortexPhaseScintillator", out DicomTag? _);
+            bool result = DicomTagsIndex.TryLookupByKeyword(
+                "VortexPhaseScintillator",
+                out DicomTag? _
+            );
 
             // Assert
             Assert.False(result);

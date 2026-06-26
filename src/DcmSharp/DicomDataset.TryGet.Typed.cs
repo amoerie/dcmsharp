@@ -4,8 +4,8 @@ namespace DcmSharp;
 
 public sealed partial record DicomDataset
 {
-    public bool TryGet(DicomTag<string> tag, [NotNullWhen(true)] out string? value)
-        => TryGetString(tag, out value);
+    public bool TryGet(DicomTag<string> tag, [NotNullWhen(true)] out string? value) =>
+        TryGetString(tag, out value);
 
     public bool TryGet(DicomTag<string[]> tag, [NotNullWhen(true)] out string[]? value)
     {
@@ -68,8 +68,8 @@ public sealed partial record DicomDataset
         return false;
     }
 
-    public bool TryGet(DicomTag<DateTime> tag, out DateTime value)
-        => TryGetDateTime(tag, out value);
+    public bool TryGet(DicomTag<DateTime> tag, out DateTime value) =>
+        TryGetDateTime(tag, out value);
 
     public bool TryGet(DicomTag<short> tag, out short value)
     {
@@ -143,8 +143,7 @@ public sealed partial record DicomDataset
         return false;
     }
 
-    public bool TryGet(DicomTag<long> tag, out long value)
-        => TryGetLong(tag, out value);
+    public bool TryGet(DicomTag<long> tag, out long value) => TryGetLong(tag, out value);
 
     public bool TryGet(DicomTag<ulong> tag, out ulong value)
     {

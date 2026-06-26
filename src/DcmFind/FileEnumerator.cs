@@ -4,8 +4,13 @@ namespace DcmFind;
 
 public static class FileEnumerator
 {
-    public static async Task EnumerateAsync(ChannelWriter<string> output, string directory, string filePattern,
-        bool recursive, CancellationToken cancellationToken)
+    public static async Task EnumerateAsync(
+        ChannelWriter<string> output,
+        string directory,
+        string filePattern,
+        bool recursive,
+        CancellationToken cancellationToken
+    )
     {
         var enumerationOptions = new EnumerationOptions
         {
@@ -21,7 +26,7 @@ public static class FileEnumerator
             foreach (var file in files)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 var fileInfo = new FileInfo(file);
 
                 // Exclude files that were created after starting DcmFind

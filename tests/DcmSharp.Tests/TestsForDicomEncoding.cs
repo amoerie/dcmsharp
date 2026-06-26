@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using DcmSharp.Parser;
-using FluentAssertions;
 using Xunit.Abstractions;
 
 namespace DcmSharp.Tests;
@@ -24,16 +23,24 @@ public sealed class TestsForDicomEncoding
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SpecificCharacterSet, out string? specificCharacterSet).Should().BeTrue();
-        dicomDataset.TryGetPersonName(DicomTags.PatientName, out PersonName patientName).Should().BeTrue();
-        dicomDataset.TryGetString(DicomTags.PatientName, out string? patientNameString).Should().BeTrue();
+        Assert.True(
+            dicomDataset.TryGetString(
+                DicomTags.SpecificCharacterSet,
+                out string? specificCharacterSet
+            )
+        );
+        Assert.True(
+            dicomDataset.TryGetPersonName(DicomTags.PatientName, out PersonName patientName)
+        );
+        Assert.True(
+            dicomDataset.TryGetString(DicomTags.PatientName, out string? patientNameString)
+        );
 
         // Assert
-        DicomEncoding.TryParse(specificCharacterSet!, out var encoding).Should().BeTrue();
-        encoding.Should().Be(Encoding.Latin1);
-        patientName.GivenName.Should().Be("Jørgen");
-        patientName.FamilyName.Should().Be("Åseline");
-        patientNameString.Should().Be("Åseline^Jørgen");
+        Assert.True(DicomEncoding.TryParse(specificCharacterSet!, out var encoding));
+        Assert.Equal(Encoding.Latin1, encoding);
+        Assert.Equal("Jørgen", patientName.GivenName);
+        Assert.Equal("Åseline", patientName.FamilyName);
+        Assert.Equal("Åseline^Jørgen", patientNameString);
     }
-
 }

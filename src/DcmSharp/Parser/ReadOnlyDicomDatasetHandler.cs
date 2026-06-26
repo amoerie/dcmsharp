@@ -29,7 +29,8 @@ internal sealed class ReadOnlyDicomDatasetHandler : IDicomDatasetHandler
         DicomItemDictionaryPool largeDictionaryPool,
         DicomItemDictionaryPool smallDictionaryPool,
         DicomMemories memories,
-        DicomValueParser valueParser)
+        DicomValueParser valueParser
+    )
     {
         _smallDictionaryPool = smallDictionaryPool;
         _valueParser = valueParser;
@@ -38,7 +39,12 @@ internal sealed class ReadOnlyDicomDatasetHandler : IDicomDatasetHandler
 
     public void OnItem(ushort group, ushort element, DicomVR vr, ReadOnlyMemory<byte> rawValue)
     {
-        var item = new ReadOnlyDicomItem(group, element, vr, ReadOnlyDicomItemContent.Create(rawValue));
+        var item = new ReadOnlyDicomItem(
+            group,
+            element,
+            vr,
+            ReadOnlyDicomItemContent.Create(rawValue)
+        );
         var dataset = _currentSequenceItem?.ReadOnlyDicomDataset ?? _rootDataset;
         dataset.Add(group, element, item);
     }
@@ -55,7 +61,11 @@ internal sealed class ReadOnlyDicomDatasetHandler : IDicomDatasetHandler
 
     public void OnSequenceItemStart()
     {
-        var itemDataset = new ReadOnlyDicomDataset(_smallDictionaryPool, new DicomMemories(_memoriesPool), _valueParser);
+        var itemDataset = new ReadOnlyDicomDataset(
+            _smallDictionaryPool,
+            new DicomMemories(_memoriesPool),
+            _valueParser
+        );
         _currentSequenceItem = new ReadOnlyDicomSequenceItem(itemDataset, null);
     }
 
@@ -73,8 +83,12 @@ internal sealed class ReadOnlyDicomDatasetHandler : IDicomDatasetHandler
         if (_currentSequence is not { } cs)
             return;
 
-        var seqItem = new ReadOnlyDicomItem(cs.Group, cs.Element, DicomVR.SQ,
-            ReadOnlyDicomItemContent.Create(cs.Items.ToReadOnly()));
+        var seqItem = new ReadOnlyDicomItem(
+            cs.Group,
+            cs.Element,
+            DicomVR.SQ,
+            ReadOnlyDicomItemContent.Create(cs.Items.ToReadOnly())
+        );
 
         if (_sequenceItems.TryPop(out var parentItem))
         {
@@ -108,8 +122,12 @@ internal sealed class ReadOnlyDicomDatasetHandler : IDicomDatasetHandler
         if (_currentFragments is not { } frags)
             return;
 
-        var item = new ReadOnlyDicomItem(_fragmentsGroup, _fragmentsElement, _fragmentsVr,
-            ReadOnlyDicomItemContent.Create(frags.ToReadOnly()));
+        var item = new ReadOnlyDicomItem(
+            _fragmentsGroup,
+            _fragmentsElement,
+            _fragmentsVr,
+            ReadOnlyDicomItemContent.Create(frags.ToReadOnly())
+        );
         _rootDataset.Add(_fragmentsGroup, _fragmentsElement, item);
         _fragmentsGroup = default;
         _fragmentsElement = default;

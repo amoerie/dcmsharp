@@ -19,20 +19,33 @@ public class DicomAnonymizer
     private readonly RecursiveAnonymizer _recursiveAnonymizer;
     private readonly OrderAnonymizer _orderAnonymizer;
     private readonly BlankingAnonymizer _blankingAnonymizer;
-    private readonly ConcurrentDictionary<string, DicomUID> _anonymizedUIDs = new ConcurrentDictionary<string, DicomUID>();
+    private readonly ConcurrentDictionary<string, DicomUID> _anonymizedUIDs =
+        new ConcurrentDictionary<string, DicomUID>();
 
-    public DicomAnonymizer(PatientAnonymizer patientAnonymizer, StudyAnonymizer studyAnonymizer,
-        SeriesAnonymizer seriesAnonymizer, InstanceAnonymizer instanceAnonymizer, 
-        RecursiveAnonymizer recursiveAnonymizer, OrderAnonymizer orderAnonymizer,
-        BlankingAnonymizer blankingAnonymizer)
+    public DicomAnonymizer(
+        PatientAnonymizer patientAnonymizer,
+        StudyAnonymizer studyAnonymizer,
+        SeriesAnonymizer seriesAnonymizer,
+        InstanceAnonymizer instanceAnonymizer,
+        RecursiveAnonymizer recursiveAnonymizer,
+        OrderAnonymizer orderAnonymizer,
+        BlankingAnonymizer blankingAnonymizer
+    )
     {
-        _patientAnonymizer = patientAnonymizer ?? throw new ArgumentNullException(nameof(patientAnonymizer));
-        _studyAnonymizer = studyAnonymizer ?? throw new ArgumentNullException(nameof(studyAnonymizer));
-        _seriesAnonymizer = seriesAnonymizer ?? throw new ArgumentNullException(nameof(seriesAnonymizer));
-        _instanceAnonymizer = instanceAnonymizer ?? throw new ArgumentNullException(nameof(instanceAnonymizer));
-        _recursiveAnonymizer = recursiveAnonymizer ?? throw new ArgumentNullException(nameof(recursiveAnonymizer));
-        _orderAnonymizer = orderAnonymizer ?? throw new ArgumentNullException(nameof(orderAnonymizer));
-        _blankingAnonymizer = blankingAnonymizer ?? throw new ArgumentNullException(nameof(blankingAnonymizer));
+        _patientAnonymizer =
+            patientAnonymizer ?? throw new ArgumentNullException(nameof(patientAnonymizer));
+        _studyAnonymizer =
+            studyAnonymizer ?? throw new ArgumentNullException(nameof(studyAnonymizer));
+        _seriesAnonymizer =
+            seriesAnonymizer ?? throw new ArgumentNullException(nameof(seriesAnonymizer));
+        _instanceAnonymizer =
+            instanceAnonymizer ?? throw new ArgumentNullException(nameof(instanceAnonymizer));
+        _recursiveAnonymizer =
+            recursiveAnonymizer ?? throw new ArgumentNullException(nameof(recursiveAnonymizer));
+        _orderAnonymizer =
+            orderAnonymizer ?? throw new ArgumentNullException(nameof(orderAnonymizer));
+        _blankingAnonymizer =
+            blankingAnonymizer ?? throw new ArgumentNullException(nameof(blankingAnonymizer));
     }
 
     public Task AnonymizeAsync(DicomFile dicomFile, AnonymizationOptions anonymizationOptions)
@@ -40,7 +53,11 @@ public class DicomAnonymizer
         return AnonymizeAsync(dicomFile.FileMetaInfo, dicomFile.Dataset, anonymizationOptions);
     }
 
-    public async Task AnonymizeAsync(DicomFileMetaInformation metaInfo, DicomDataset dataset, AnonymizationOptions options)
+    public async Task AnonymizeAsync(
+        DicomFileMetaInformation metaInfo,
+        DicomDataset dataset,
+        AnonymizationOptions options
+    )
     {
         var context = new DicomAnonymizationContext(metaInfo, dataset, _anonymizedUIDs, options);
         await _orderAnonymizer.AnonymizeAsync(context);
@@ -51,5 +68,4 @@ public class DicomAnonymizer
         await _recursiveAnonymizer.AnonymizeAsync(context);
         await _blankingAnonymizer.AnonymizeAsync(context);
     }
-    
 }

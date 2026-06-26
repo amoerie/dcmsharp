@@ -4,7 +4,7 @@ namespace DcmAnonymize.Recursive;
 
 public static partial class KnownDicomTags
 {
-    public static readonly ISet<DicomTag> UIDTagsToAnonymize = new []
+    public static readonly ISet<DicomTag> UIDTagsToAnonymize = new[]
     {
         DicomTag.AcquisitionUID,
         DicomTag.AffectedSOPInstanceUID,
@@ -60,7 +60,6 @@ public static partial class KnownDicomTags
         DicomTag.TransactionUID,
         DicomTag.TreatmentPositionGroupUID,
         DicomTag.TreatmentSessionUID,
-        DicomTag.UID
+        DicomTag.UID,
     }.ToHashSet();
-
 }

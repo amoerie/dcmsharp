@@ -27,7 +27,9 @@ internal sealed class DicomFragments
     {
         if (Interlocked.CompareExchange(ref _readonly, 0, 0) == 1)
         {
-            throw new InvalidOperationException("Fragment has been made read-only and can no longer be modified");
+            throw new InvalidOperationException(
+                "Fragment has been made read-only and can no longer be modified"
+            );
         }
 
         lock (_fragments)

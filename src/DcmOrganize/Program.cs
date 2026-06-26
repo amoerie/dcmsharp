@@ -9,7 +9,9 @@ public static class Program
 {
     static Task<int> Main(string[] args)
     {
-        var filesFromConsoleInputReader = new FilesFromConsoleInputReader(new LinesFromConsoleInputReader(Console.In));
+        var filesFromConsoleInputReader = new FilesFromConsoleInputReader(
+            new LinesFromConsoleInputReader(Console.In)
+        );
         var rootCommandHandler = new RootCommandHandler(filesFromConsoleInputReader);
         var rootCommandFactory = new RootCommandFactory(rootCommandHandler);
         var rootCommand = rootCommandFactory.Create();

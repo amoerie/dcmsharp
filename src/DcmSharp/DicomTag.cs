@@ -10,7 +10,8 @@ public partial record DicomTag(
     DicomVR[] AdditionalValueRepresentations,
     DicomVM ValueMultiplicity,
     string Keyword,
-    string Name)
+    string Name
+)
 {
     public override string ToString()
     {

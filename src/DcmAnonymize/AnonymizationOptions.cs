@@ -17,7 +17,10 @@ public record AnonymizationOptions(List<RectangleToBlank> RectanglesToBlank)
     private static RectangleToBlank ParseRectangleToBlank(string rectangleToBlank)
     {
         ArgumentException.ThrowIfNullOrEmpty(rectangleToBlank);
-        var coordinates = rectangleToBlank.Split("->", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var coordinates = rectangleToBlank.Split(
+            "->",
+            StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
+        );
         if (coordinates.Length != 2)
         {
             throw new ArgumentException("Invalid rectangle to blank argument: " + rectangleToBlank);
@@ -33,18 +36,25 @@ public record AnonymizationOptions(List<RectangleToBlank> RectanglesToBlank)
         {
             throw new ArgumentException("Empty coordinate in rectangle to blank");
         }
-        var coordinateValues = coordinate.TrimStart('(').TrimEnd(')').Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var coordinateValues = coordinate
+            .TrimStart('(')
+            .TrimEnd(')')
+            .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         if (coordinateValues.Length != 2)
         {
             throw new ArgumentException("Invalid coordinate in rectangle to blank: " + coordinate);
         }
         if (!int.TryParse(coordinateValues[0], out int x))
         {
-            throw new ArgumentException("Invalid coordinate x value in rectangle to blank: " + coordinate);
+            throw new ArgumentException(
+                "Invalid coordinate x value in rectangle to blank: " + coordinate
+            );
         }
         if (!int.TryParse(coordinateValues[1], out int y))
         {
-            throw new ArgumentException("Invalid coordinate y value in rectangle to blank: " + coordinate);
+            throw new ArgumentException(
+                "Invalid coordinate y value in rectangle to blank: " + coordinate
+            );
         }
         return (x, y);
     }

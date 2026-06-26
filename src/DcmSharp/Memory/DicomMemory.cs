@@ -41,10 +41,7 @@ internal readonly struct DicomMemory : IMemoryOwner<byte>
     public Memory<byte> Memory
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get
-        {
-            return _array.AsMemory(0, Length);
-        }
+        get { return _array.AsMemory(0, Length); }
     }
 
     /// <inheritdoc/>

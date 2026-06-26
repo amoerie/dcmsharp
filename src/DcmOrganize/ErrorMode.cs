@@ -3,5 +3,5 @@
 public enum ErrorMode
 {
     Stop,
-    Continue
+    Continue,
 }

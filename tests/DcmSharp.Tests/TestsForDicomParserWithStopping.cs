@@ -1,5 +1,4 @@
 using DcmSharp.Parser;
-using FluentAssertions;
 using Xunit.Abstractions;
 
 namespace DcmSharp.Tests;
@@ -27,22 +26,21 @@ public sealed class TestsForDicomParserWithStopping
             {
                 Group = tag.Group,
                 Element = tag.Element,
-                Depth = 0
-            }
+                Depth = 0,
+            },
         };
 
         // Act + Assert
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
 
-        // Assert
-        dicomDataset.Should().NotBeNull();
-
         // The stopping tag should be present
-        dicomDataset.TryGetString(tag, out string? sopInstanceUID).Should().BeTrue();
-        sopInstanceUID.Should().Be("2.25.332838821141227624838581964210008219211");
+        Assert.True(dicomDataset.TryGetString(tag, out string? sopInstanceUID));
+        Assert.Equal("2.25.332838821141227624838581964210008219211", sopInstanceUID);
 
         // This tag comes after the stopping tag, so it should not be present
-        dicomDataset.TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out _).Should().BeFalse();
+        Assert.False(
+            dicomDataset.TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out _)
+        );
     }
 
     [Fact]
@@ -57,22 +55,19 @@ public sealed class TestsForDicomParserWithStopping
             {
                 Group = tag.Group,
                 Element = tag.Element,
-                Depth = 0
-            }
+                Depth = 0,
+            },
         };
 
         // Act + Assert
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
 
-        // Assert
-        dicomDataset.Should().NotBeNull();
-
         // The stopping tag should be present
-        dicomDataset.TryGetString(tag, out string? sopInstanceUID).Should().BeTrue();
-        sopInstanceUID.Should().Be("1.2.840.113619.2.1.2411.1031152382.365.1.736169244");
+        Assert.True(dicomDataset.TryGetString(tag, out string? sopInstanceUID));
+        Assert.Equal("1.2.840.113619.2.1.2411.1031152382.365.1.736169244", sopInstanceUID);
 
         // This tag comes after the stopping tag, so it should not be present
-        dicomDataset.TryGetString(DicomTags.RescaleType, out _).Should().BeFalse();
+        Assert.False(dicomDataset.TryGetString(DicomTags.RescaleType, out _));
     }
 
     [Fact]
@@ -87,24 +82,35 @@ public sealed class TestsForDicomParserWithStopping
             {
                 Group = tag.Group,
                 Element = tag.Element,
-                Depth = 2
-            }
+                Depth = 2,
+            },
         };
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
 
         // Act + Assert
-        dicomDataset.TryGetSequence(DicomTags.SourceImageSequence, out ReadOnlyDicomDataset[]? sourceImageSequence)
-            .Should().BeTrue();
-        sourceImageSequence.Should().NotBeNull();
+        Assert.True(
+            dicomDataset.TryGetSequence(
+                DicomTags.SourceImageSequence,
+                out ReadOnlyDicomDataset[]? sourceImageSequence
+            )
+        );
+        Assert.NotNull(sourceImageSequence);
         var firstSourceImage = sourceImageSequence![0];
-        firstSourceImage.Should().NotBeNull();
-        firstSourceImage.TryGetSequence(DicomTags.PurposeOfReferenceCodeSequence,
-                out ReadOnlyDicomDataset[]? purposeOfReferenceCodeSequence)
-            .Should().BeTrue();
-        purposeOfReferenceCodeSequence.Should().NotBeNull();
+        Assert.True(
+            firstSourceImage.TryGetSequence(
+                DicomTags.PurposeOfReferenceCodeSequence,
+                out ReadOnlyDicomDataset[]? purposeOfReferenceCodeSequence
+            )
+        );
+        Assert.NotNull(purposeOfReferenceCodeSequence);
         var firstPurposeOfReferenceCodeSequence = purposeOfReferenceCodeSequence![0];
-        firstPurposeOfReferenceCodeSequence.TryGetString(DicomTags.CodeMeaning, out string? codeMeaning).Should().BeTrue();
-        codeMeaning.Should().Be("Uncompressed predecessor");
+        Assert.True(
+            firstPurposeOfReferenceCodeSequence.TryGetString(
+                DicomTags.CodeMeaning,
+                out string? codeMeaning
+            )
+        );
+        Assert.Equal("Uncompressed predecessor", codeMeaning);
     }
 
     [Fact]
@@ -119,16 +125,20 @@ public sealed class TestsForDicomParserWithStopping
             {
                 Group = tag.Group,
                 Element = tag.Element,
-                Depth = 2
-            }
+                Depth = 2,
+            },
         };
 
         // Act
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file, options);
-        dicomDataset.TryGetString(DicomTags.PlacerOrderNumberImagingServiceRequest, out string? orderNumber).Should().BeTrue();
+        Assert.True(
+            dicomDataset.TryGetString(
+                DicomTags.PlacerOrderNumberImagingServiceRequest,
+                out string? orderNumber
+            )
+        );
 
         // Assert
-        orderNumber.Should().Be("ORDER2024112213363");
+        Assert.Equal("ORDER2024112213363", orderNumber);
     }
-
 }
