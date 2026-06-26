@@ -1,5 +1,4 @@
 ﻿using DcmSharp;
-using FluentAssertions;
 using Xunit;
 
 namespace DcmFind.Tests;
@@ -24,7 +23,7 @@ public class TestsForQuery
         {
             var query = new EqualsQuery(DicomTags.AccessionNumber, "Pineapple");
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -32,7 +31,7 @@ public class TestsForQuery
         {
             var query = new EqualsQuery(DicomTags.AccessionNumber, "Pineapple2");
 
-            query.Matches(_dicomDataset).Should().BeFalse();
+            Assert.False(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -42,7 +41,7 @@ public class TestsForQuery
 
             _dicomDataset.Clear();
 
-            query.Matches(_dicomDataset).Should().BeFalse();
+            Assert.False(query.Matches(_dicomDataset));
         }
 
         [Theory]
@@ -55,7 +54,7 @@ public class TestsForQuery
         {
             var query = new EqualsQuery(DicomTags.AccessionNumber, value);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
     }
 
@@ -66,7 +65,7 @@ public class TestsForQuery
         {
             var query = new NotEqualsQuery(DicomTags.AccessionNumber, "Pineapple");
 
-            query.Matches(_dicomDataset).Should().BeFalse();
+            Assert.False(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -74,7 +73,7 @@ public class TestsForQuery
         {
             var query = new NotEqualsQuery(DicomTags.AccessionNumber, "Pineapple2");
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -84,7 +83,7 @@ public class TestsForQuery
 
             _dicomDataset.Clear();
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Theory]
@@ -97,7 +96,7 @@ public class TestsForQuery
         {
             var query = new NotEqualsQuery(DicomTags.AccessionNumber, value);
 
-            query.Matches(_dicomDataset).Should().BeFalse();
+            Assert.False(query.Matches(_dicomDataset));
         }
 
         [Theory]
@@ -110,7 +109,7 @@ public class TestsForQuery
         {
             var query = new NotEqualsQuery(DicomTags.AccessionNumber, value);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
     }
 
@@ -121,7 +120,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.Rows, "1001", false);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -129,7 +128,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.Rows, "1001", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -137,7 +136,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.Rows, "1000", false);
 
-            query.Matches(_dicomDataset).Should().BeFalse();
+            Assert.False(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -145,7 +144,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.Rows, "1000", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -153,7 +152,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.AccessionNumber, "Pineapplf", false);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -161,7 +160,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.AccessionNumber, "Pineapplf", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -169,7 +168,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.AccessionNumber, "Pineapple", false);
 
-            query.Matches(_dicomDataset).Should().BeFalse();
+            Assert.False(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -177,7 +176,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.AccessionNumber, "Pineapple", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -185,7 +184,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.StudyDate, "20200103", false);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -193,7 +192,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.StudyDate, "20200103", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -201,7 +200,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.StudyDate, "20200102", false);
 
-            query.Matches(_dicomDataset).Should().BeFalse();
+            Assert.False(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -209,7 +208,7 @@ public class TestsForQuery
         {
             var query = new LowerThanQuery(DicomTags.StudyDate, "20200102", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
     }
 
@@ -220,7 +219,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.Rows, "999", false);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -228,7 +227,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.Rows, "999", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -236,7 +235,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.Rows, "1000", false);
 
-            query.Matches(_dicomDataset).Should().BeFalse();
+            Assert.False(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -244,7 +243,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.Rows, "1000", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -252,7 +251,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.AccessionNumber, "Pineappld", false);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -260,7 +259,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.AccessionNumber, "Pineappld", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -268,7 +267,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.AccessionNumber, "Pineapple", false);
 
-            query.Matches(_dicomDataset).Should().BeFalse();
+            Assert.False(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -276,7 +275,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.AccessionNumber, "Pineapple", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -284,7 +283,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.StudyDate, "20200101", false);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -292,7 +291,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.StudyDate, "20200101", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -300,7 +299,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.StudyDate, "20200102", false);
 
-            query.Matches(_dicomDataset).Should().BeFalse();
+            Assert.False(query.Matches(_dicomDataset));
         }
 
         [Fact]
@@ -308,7 +307,7 @@ public class TestsForQuery
         {
             var query = new GreaterThanQuery(DicomTags.StudyDate, "20200102", true);
 
-            query.Matches(_dicomDataset).Should().BeTrue();
+            Assert.True(query.Matches(_dicomDataset));
         }
     }
 }

@@ -1,5 +1,4 @@
 using FellowOakDicom;
-using FluentAssertions;
 using Xunit;
 
 namespace DcmOrganize.Tests;
@@ -30,7 +29,7 @@ public class TestsForPatternApplier
         var file = _patternApplier.Apply(dicomDataSet, pattern);
 
         // Assert
-        file.Should().Be(Path.Join("ABC123", "7.dcm"));
+        Assert.Equal(Path.Join("ABC123", "7.dcm"), file);
     }
 
     [Fact]
@@ -51,8 +50,10 @@ public class TestsForPatternApplier
         var file = _patternApplier.Apply(dicomDataSet, pattern);
 
         // Assert
-        file.Should()
-            .Be(Path.Join("Patient Samson Gert", "Study ABC123", "Series 20", "Image 7.dcm"));
+        Assert.Equal(
+            Path.Join("Patient Samson Gert", "Study ABC123", "Series 20", "Image 7.dcm"),
+            file
+        );
     }
 
     [Fact]
@@ -70,7 +71,7 @@ public class TestsForPatternApplier
         var file = _patternApplier.Apply(dicomDataSet, pattern);
 
         // Assert
-        file.Should().Be("10.dcm");
+        Assert.Equal("10.dcm", file);
     }
 
     [Fact]
@@ -84,7 +85,7 @@ public class TestsForPatternApplier
         var file = _patternApplier.Apply(dicomDataSet, pattern);
 
         // Assert
-        file.Should().Be("1.2.3.dcm");
+        Assert.Equal("1.2.3.dcm", file);
     }
 
     [Fact]
@@ -100,7 +101,7 @@ public class TestsForPatternApplier
         // Assert
         var guidAsString = file!.Substring(0, file.Length - ".dcm".Length);
 
-        Guid.TryParse(guidAsString, out var _).Should().BeTrue();
+        Assert.True(Guid.TryParse(guidAsString, out var _));
     }
 
     [Fact]
@@ -111,10 +112,7 @@ public class TestsForPatternApplier
         var pattern = "{Banana}.dcm";
 
         // Act
-        _patternApplier
-            .Invoking(p => p.Apply(dicomDataSet, pattern))
-            .Should()
-            .Throw<PatternException>();
+        Assert.Throws<PatternException>(() => _patternApplier.Apply(dicomDataSet, pattern));
     }
 
     [Fact]
@@ -125,6 +123,6 @@ public class TestsForPatternApplier
         var pattern = "{InstanceNumber ?? 'Constant'}.dcm";
 
         // Act
-        _patternApplier.Apply(dicomDataSet, pattern).Should().Be("Constant.dcm");
+        Assert.Equal("Constant.dcm", _patternApplier.Apply(dicomDataSet, pattern));
     }
 }

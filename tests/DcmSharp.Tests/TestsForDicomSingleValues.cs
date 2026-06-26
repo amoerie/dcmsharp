@@ -1,5 +1,4 @@
 ﻿using DcmSharp.Parser;
-using FluentAssertions;
 using Xunit.Abstractions;
 
 namespace DcmSharp.Tests;
@@ -23,10 +22,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SelectorAEValue, out string? value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetString(DicomTags.SelectorAEValue, out string? value));
 
         // Assert
-        value.Should().Be("MODALITY1");
+        Assert.Equal("MODALITY1", value);
     }
 
     [Fact]
@@ -37,10 +36,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SelectorASValue, out string? value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetString(DicomTags.SelectorASValue, out string? value));
 
         // Assert
-        value.Should().Be("025Y");
+        Assert.Equal("025Y", value);
     }
 
     [Fact]
@@ -51,10 +50,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetTag(DicomTags.SelectorATValue, out DicomTag? value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetTag(DicomTags.SelectorATValue, out DicomTag? value));
 
         // Assert
-        value.Should().Be(DicomTags.TransferSyntaxUID);
+        Assert.Equal(DicomTags.TransferSyntaxUID, value);
     }
 
     [Fact]
@@ -65,10 +64,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetDate(DicomTags.SelectorDAValue, out DateOnly value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetDate(DicomTags.SelectorDAValue, out DateOnly value));
 
         // Assert
-        value.Should().Be(DateOnly.Parse("2024-12-03"));
+        Assert.Equal(DateOnly.Parse("2024-12-03"), value);
     }
 
     [Fact]
@@ -79,10 +78,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetDecimal(DicomTags.SelectorDSValue, out decimal value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetDecimal(DicomTags.SelectorDSValue, out decimal value));
 
         // Assert
-        value.Should().Be(0.25m);
+        Assert.Equal(0.25m, value);
     }
 
     [Fact]
@@ -93,13 +92,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset
-            .TryGetDateTime(DicomTags.SelectorDTValue, out DateTime value)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetDateTime(DicomTags.SelectorDTValue, out DateTime value));
 
         // Assert
-        value.Should().Be(DateTime.Parse("2024-12-03T12:00:00"));
+        Assert.Equal(DateTime.Parse("2024-12-03T12:00:00"), value);
     }
 
     [Fact]
@@ -110,10 +106,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetDouble(DicomTags.SelectorFDValue, out double value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetDouble(DicomTags.SelectorFDValue, out double value));
 
         // Assert
-        value.Should().Be(-100.123);
+        Assert.Equal(-100.123, value);
     }
 
     [Fact]
@@ -124,10 +120,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetFloat(DicomTags.SelectorFLValue, out float value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetFloat(DicomTags.SelectorFLValue, out float value));
 
         // Assert
-        value.Should().Be(100.5f);
+        Assert.Equal(100.5f, value);
     }
 
     [Fact]
@@ -138,10 +134,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetInt(DicomTags.SelectorISValue, out int value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetInt(DicomTags.SelectorISValue, out int value));
 
         // Assert
-        value.Should().Be(1);
+        Assert.Equal(1, value);
     }
 
     [Fact]
@@ -152,10 +148,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SelectorLOValue, out string? value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetString(DicomTags.SelectorLOValue, out string? value));
 
         // Assert
-        value.Should().Be("Medical Center A");
+        Assert.Equal("Medical Center A", value);
     }
 
     [Fact]
@@ -166,10 +162,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SelectorLTValue, out string? value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetString(DicomTags.SelectorLTValue, out string? value));
 
         // Assert
-        value.Should().Be("Some long notes");
+        Assert.Equal("Some long notes", value);
     }
 
     [Fact]
@@ -180,14 +176,11 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset
-            .TryGetPersonName(DicomTags.SelectorPNValue, out PersonName value)
-            .Should()
-            .BeTrue();
+        Assert.True(dicomDataset.TryGetPersonName(DicomTags.SelectorPNValue, out PersonName value));
 
         // Assert
         var expected = new PersonName("Dr", "Smith", null, null, null, null, null, null, null);
-        value.Should().Be(expected);
+        Assert.Equal(expected, value);
     }
 
     [Fact]
@@ -198,10 +191,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SelectorSHValue, out string? value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetString(DicomTags.SelectorSHValue, out string? value));
 
         // Assert
-        value.Should().Be("CT123");
+        Assert.Equal("CT123", value);
     }
 
     [Fact]
@@ -212,10 +205,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetInt(DicomTags.SelectorSLValue, out int value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetInt(DicomTags.SelectorSLValue, out int value));
 
         // Assert
-        value.Should().Be(-1);
+        Assert.Equal(-1, value);
     }
 
     [Fact]
@@ -226,10 +219,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetShort(DicomTags.SelectorSSValue, out short value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetShort(DicomTags.SelectorSSValue, out short value));
 
         // Assert
-        value.Should().Be(-32768);
+        Assert.Equal(-32768, value);
     }
 
     [Fact]
@@ -240,10 +233,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SelectorSTValue, out string? value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetString(DicomTags.SelectorSTValue, out string? value));
 
         // Assert
-        value.Should().Be("History1");
+        Assert.Equal("History1", value);
     }
 
     [Fact]
@@ -254,10 +247,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetLong(DicomTags.SelectorSVValue, out long value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetLong(DicomTags.SelectorSVValue, out long value));
 
         // Assert
-        value.Should().Be(9223372036854775807);
+        Assert.Equal(9223372036854775807, value);
     }
 
     [Fact]
@@ -268,10 +261,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetTime(DicomTags.SelectorTMValue, out TimeOnly value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetTime(DicomTags.SelectorTMValue, out TimeOnly value));
 
         // Assert
-        value.Should().Be(TimeOnly.Parse("12:00:00"));
+        Assert.Equal(TimeOnly.Parse("12:00:00"), value);
     }
 
     [Fact]
@@ -282,10 +275,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SelectorUCValue, out string? value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetString(DicomTags.SelectorUCValue, out string? value));
 
         // Assert
-        value.Should().Be("Device A");
+        Assert.Equal("Device A", value);
     }
 
     [Fact]
@@ -296,10 +289,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SelectorUIValue, out string? value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetString(DicomTags.SelectorUIValue, out string? value));
 
         // Assert
-        value.Should().Be("1.2.3");
+        Assert.Equal("1.2.3", value);
     }
 
     [Fact]
@@ -310,10 +303,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetUInt(DicomTags.SelectorULValue, out uint value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetUInt(DicomTags.SelectorULValue, out uint value));
 
         // Assert
-        value.Should().Be(4294967295);
+        Assert.Equal(4294967295, value);
     }
 
     [Fact]
@@ -324,10 +317,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetUShort(DicomTags.SelectorUSValue, out ushort value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetUShort(DicomTags.SelectorUSValue, out ushort value));
 
         // Assert
-        value.Should().Be(1);
+        Assert.Equal(1, value);
     }
 
     [Fact]
@@ -338,10 +331,10 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetString(DicomTags.SelectorUTValue, out string? value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetString(DicomTags.SelectorUTValue, out string? value));
 
         // Assert
-        value.Should().Be("Modified");
+        Assert.Equal("Modified", value);
     }
 
     [Fact]
@@ -352,9 +345,9 @@ public sealed class TestsForDicomSingleValues
         using var dicomDataset = await _dicomParser.ParseReadOnlyAsync(file);
 
         // Act
-        dicomDataset.TryGetULong(DicomTags.SelectorUVValue, out ulong value).Should().BeTrue();
+        Assert.True(dicomDataset.TryGetULong(DicomTags.SelectorUVValue, out ulong value));
 
         // Assert
-        value.Should().Be(18446744073709551615);
+        Assert.Equal(18446744073709551615, value);
     }
 }
